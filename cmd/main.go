@@ -27,6 +27,7 @@ func main() {
 
 	// r.Use(gin.WrapF(cors.New(opts).HandlerFunc))
 
+	r.Use(CORSMiddleware())
 	NewRouter(r, db)
 
 	srv := http.Server{

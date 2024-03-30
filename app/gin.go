@@ -21,6 +21,22 @@ func (c *context) Bind(v any) error {
 	return c.ctx.ShouldBindJSON(v)
 }
 
+func (c *context) WriteHeader(key, value string) {
+	c.ctx.Writer.Header().Set(key, value)
+}
+
+func (c *context) Request() *http.Request {
+	return c.ctx.Request
+}
+
+func (c *context) AbortWithStatus(code int) {
+	c.ctx.AbortWithStatus(code)
+}
+
+func (c *context) Next() {
+	c.ctx.Next()
+}
+
 func (c *context) Param(key string) string {
 	return c.ctx.Param(key)
 }
