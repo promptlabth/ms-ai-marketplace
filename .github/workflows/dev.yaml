@@ -23,13 +23,6 @@ jobs:
     - name: Configure Docker
       run: |
         gcloud auth configure-docker
-
-    - name: create-cred-firebase-json
-      id: create-cred-firebase-json
-      uses: jsdaniell/create-json@v1.2.2
-      with:
-        name: "firebase_credential.json"
-        json: ${{secrets.FIREBASE_CREDENTIAL}}
     
     - name: Build and push Docker image
       run: |
