@@ -9,10 +9,10 @@ import (
 
 func NewRouter(router *app.RouterGin, db *sql.DB) {
 
-	userStorage := user.NewAdaptor(db)
+	userValidation := user.NewAdaptor(db)
 	userCore := user.NewCore(db)
-	userUsecase := user.NewUsecase(userStorage, userCore)
+	userUsecase := user.NewUsecase(userCore, userValidation)
 	userHandler := user.NewHandler(userUsecase)
 
-	router.GET("/", userHandler.NewUser)
+	router.POST("/user", userHandler.NewUser)
 }

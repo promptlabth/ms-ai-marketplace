@@ -1,8 +1,14 @@
 package user
 
-import "github.com/promptlabth/ms-orch-user-service/app"
+import (
+	"context"
+
+	"github.com/gin-gonic/gin"
+	"github.com/promptlabth/ms-orch-user-service/app"
+)
 
 type usecase interface {
+	NewUser(c context.Context, user User) error
 }
 
 type Handler struct {
@@ -14,7 +20,31 @@ func NewHandler(u usecase) *Handler {
 }
 
 func (h *Handler) NewUser(c app.Context) {
-	c.OK(map[string]string{
-		"hello": "world",
-	})
+	var req NewUserRequest
+
+	ginCtx, ok := c.(app.Context)
+	if !ok {
+		c.AbortWithStatus(204)
+		return
+	}
+
+	if err := ginCtx.Bind(&req); err != nil {
+		c.BadRequest(err)
+		return
+	}
+
+	user := User{
+		Username: req.Username,
+		Email:    req.Email,
+		Password: req.Password,
+	}
+
+	if err := h.usecase.NewUser(context.Background(), user); err != nil {
+		c.AbortWithStatus(500)
+		return
+	}
+
+	c.OK(gin.H{"message": "User created successfully"})
+
+
 }
