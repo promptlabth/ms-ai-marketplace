@@ -4,13 +4,14 @@ package user
 
 import (
 	"context"
+	"time"
 )
 
 // Assuming User struct is defined in user.go within the 'user' package.
 
 // storage outlines the methods required by the use case to interact with the data layer.
 type storage interface {
-	CreateUser(ctx context.Context, user User) (int64, error)
+	CreateUser(context.Context, UserEntity) (*string, error)
 	// Add other storage methods as necessary
 }
 
@@ -41,7 +42,17 @@ func (u *Usecase) NewUser(ctx context.Context, user User) error {
 		return err
 	}
 
+	userEntity := UserEntity{
+		FriebaseID:     user.FriebaseID,
+		Name:           user.Name,
+		Email:          user.Email,
+		Platform:       user.Platform,
+		PlanID:         user.PlanID,
+		StripeID:       user.StripeID,
+		LastActiveTime: time.Now(),
+	}
+
 	// If validation passes, proceed to create the user in the storage layer.
-	_, err := u.storage.CreateUser(ctx, user)
+	_, err := u.storage.CreateUser(ctx, userEntity)
 	return err
 }

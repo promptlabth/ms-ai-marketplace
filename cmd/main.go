@@ -9,22 +9,20 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/promptlabth/ms-orch-user-service/app"
+	"github.com/gin-gonic/gin"
 	"github.com/promptlabth/ms-orch-user-service/config"
 	"github.com/promptlabth/ms-orch-user-service/database"
 	"github.com/promptlabth/ms-orch-user-service/logger"
 )
 
 func main() {
-	db := database.NewSQLite()
-	defer func() {
-		_ = db.Close()
-	}()
+
+	db := database.NewGormDBWithDefault()
 
 	logger := logger.New()
 	// r := app.NewRouter(logger)
-	r := app.NewRouterGin(logger)
-
+	// r := app.NewRouterGin(logger)
+	r := gin.Default()
 	// r.Use(gin.WrapF(cors.New(opts).HandlerFunc))
 
 	r.Use(CORSMiddleware())

@@ -4,18 +4,19 @@ package user
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"regexp"
+
+	"gorm.io/gorm"
 )
 
 // Adaptor is responsible for implementing domain-specific logic for users.
 type Adaptor struct {
-	db *sql.DB
+	db *gorm.DB
 }
 
 // NewAdaptor creates a new instance of Adaptor with a database connection.
-func NewAdaptor(db *sql.DB) *Adaptor {
+func NewAdaptor(db *gorm.DB) *Adaptor {
 	return &Adaptor{db: db}
 }
 
@@ -28,7 +29,7 @@ func (a *Adaptor) ValidateNewUser(ctx context.Context, user User) error {
 	}
 
 	// Validate the username is not empty.
-	if user.Username == "" {
+	if user.FriebaseID == "" {
 		return errors.New("username cannot be empty")
 	}
 

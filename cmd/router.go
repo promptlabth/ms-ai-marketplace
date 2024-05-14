@@ -1,13 +1,12 @@
 package main
 
 import (
-	"database/sql"
-
-	"github.com/promptlabth/ms-orch-user-service/app"
+	"github.com/gin-gonic/gin"
 	"github.com/promptlabth/ms-orch-user-service/app/user"
+	"gorm.io/gorm"
 )
 
-func NewRouter(router *app.RouterGin, db *sql.DB) {
+func NewRouter(router *gin.Engine, db *gorm.DB) {
 
 	userValidation := user.NewAdaptor(db)
 	userCore := user.NewCore(db)

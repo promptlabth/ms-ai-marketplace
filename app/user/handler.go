@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/gin-gonic/gin"
-	"github.com/promptlabth/ms-orch-user-service/app"
 )
 
 type usecase interface {
@@ -19,24 +18,20 @@ func NewHandler(u usecase) *Handler {
 	return &Handler{usecase: u}
 }
 
-func (h *Handler) NewUser(c app.Context) {
+func (h *Handler) NewUser(c *gin.Context) {
 	var req NewUserRequest
 
-	ginCtx, ok := c.(app.Context)
-	if !ok {
-		c.AbortWithStatus(204)
-		return
-	}
-
-	if err := ginCtx.Bind(&req); err != nil {
-		c.BadRequest(err)
+	if err := c.Bind(&req); err != nil {
+		c.JSON(404, map[string]string{
+			"error": err.Error(),
+		})
 		return
 	}
 
 	user := User{
-		Username: req.Username,
-		Email:    req.Email,
-		Password: req.Password,
+		FriebaseID: req.Username,
+		Email:      req.Email,
+		Password:   req.Password,
 	}
 
 	if err := h.usecase.NewUser(context.Background(), user); err != nil {
@@ -44,7 +39,6 @@ func (h *Handler) NewUser(c app.Context) {
 		return
 	}
 
-	c.OK(gin.H{"message": "User created successfully"})
-
+	c.JSON(200, gin.H{"message": "User created successfully"})
 
 }
