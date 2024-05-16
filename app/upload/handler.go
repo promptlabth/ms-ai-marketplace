@@ -30,16 +30,16 @@ func (h *Handler) Uploadfile(c *gin.Context) {
 	}
 
 	blobFile, err := f.Open()
-
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
+	defer blobFile.Close()
 
 	ctx := c.Request.Context()
-	_, err = h.usecase.Uploadfile(ctx, blobFile, f.Filename)
+	url, err := h.usecase.Uploadfile(ctx, blobFile, f.Filename)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -48,6 +48,7 @@ func (h *Handler) Uploadfile(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
-		"success": "sucess",
+		"success": "success",
+		"url":     *url,
 	})
 }

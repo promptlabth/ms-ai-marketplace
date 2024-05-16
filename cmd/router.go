@@ -23,14 +23,6 @@ func NewRouter(router *gin.Engine, db *gorm.DB) {
 func UploadRouter(router *gin.Engine, client *storage.Client) {
 
 	uploadCore := upload.NewCore(client)
-	// if uploadCore == nil {
-	// 	fmt.Println("Checking Uploadcore")
-	// 	fmt.Printf("uploadCore: %+v\n", uploadCore)
-	// 	return
-	// } else {
-	// 	fmt.Println("uploadCore is nil")
-	// }
-
 	uploadUsecase := upload.NewUsecase(uploadCore)
 	uploadHandler := upload.NewHandler(uploadUsecase)
 

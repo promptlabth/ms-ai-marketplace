@@ -6,7 +6,7 @@ import (
 )
 
 type gcs interface {
-	Upload(context.Context, multipart.File, string) error
+	Upload(context.Context, multipart.File, string) (string, error)
 }
 
 type Usecase struct {
@@ -20,8 +20,9 @@ func NewUsecase(g gcs) *Usecase {
 }
 
 func (u *Usecase) Uploadfile(ctx context.Context, file multipart.File, filename string) (*string, error) {
-	m := "error"
-	_, err := m, u.gcs.Upload(ctx, file, filename)
-
-	return &m, err
+	url, err := u.gcs.Upload(ctx, file, filename)
+	if err != nil {
+		return nil, err
+	}
+	return &url, nil
 }

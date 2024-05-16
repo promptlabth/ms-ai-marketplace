@@ -22,25 +22,21 @@ func NewCore(
 	}
 }
 
-func (c *Core) Upload(ctx context.Context, file multipart.File, filename string) error {
-
-	bucketName := "promtlab-image-storage"
+func (c *Core) Upload(ctx context.Context, file multipart.File, filename string) (string, error) {
+	bucketName := "promptlab-image-storage"
 	uploadPath := "marketplace/"
-
-	// os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", "prompt-lab-383408-512938be4baf.json")
-	// cl, err := storage.NewClient(ctx)
-	// if err != nil {
-	// 	log.Fatalf("Failed to create client: %v", err)
-	// }
 
 	// Upload an object with storage.Writer.
 	wc := c.storeage.Bucket(bucketName).Object(uploadPath + filename).NewWriter(ctx)
 	if _, err := io.Copy(wc, file); err != nil {
-		return fmt.Errorf("io.Copy: %v", err)
+		return "e", fmt.Errorf("io.Copy: %v", err)
 	}
 	if err := wc.Close(); err != nil {
-		return fmt.Errorf("Writer.Close: %v", err)
+		return "", fmt.Errorf("Writer.Close: %v", err)
 	}
 
-	return nil
+	// Construct the URL of the uploaded file
+	url := fmt.Sprintf("https://storage.googleapis.com/%s/%s%s", bucketName, uploadPath, filename)
+
+	return url, nil
 }
