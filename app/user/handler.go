@@ -40,5 +40,4 @@ func (h *Handler) NewUser(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{"message": "User created successfully"})
-
 }

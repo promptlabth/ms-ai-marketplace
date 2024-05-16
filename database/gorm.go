@@ -3,7 +3,7 @@ package database
 import (
 	"fmt"
 	"log"
-	"os"
+	// "os"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -19,14 +19,21 @@ type GormConnection struct {
 
 func NewGormDBWithDefault() *gorm.DB {
 
+	// dbConfig := GormConnection{
+	// 	host:     os.Getenv("DB_HOST"),
+	// 	port:     os.Getenv("DB_PORT"),
+	// 	password: os.Getenv("DB_PASSWORD"),
+	// 	user:     os.Getenv("DB_USER"),
+	// 	name:     os.Getenv("DB_NAME"),
+	// }
 	dbConfig := GormConnection{
-		host:     os.Getenv("DB_HOST"),
-		port:     os.Getenv("DB_PORT"),
-		password: os.Getenv("DB_PASSWORD"),
-		user:     os.Getenv("DB_USER"),
-		name:     os.Getenv("DB_NAME"),
+		host:     "localhost",
+		port:     "5432",
+		password: "123456",
+		user:     "promptlabai",
+		name:     "promptlabai-db",
 	}
-	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", dbConfig.host, dbConfig.port, dbConfig.user, dbConfig.password, dbConfig.name)
+	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s database=%s sslmode=disable", dbConfig.host, dbConfig.port, dbConfig.user, dbConfig.password, dbConfig.name)
 
 	return NewGormDB(dsn)
 }
