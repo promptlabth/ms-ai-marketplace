@@ -20,32 +20,33 @@ func NewHandler(u usecase) *Handler {
 	return &Handler{usecase: u}
 }
 
-func (h *Handler) Uploadfile(c *gin.Context)  {
+func (h *Handler) Uploadfile(c *gin.Context) {
 	f, err := c.FormFile("file_input")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
-		return 
+		return
 	}
 
 	blobFile, err := f.Open()
-	
+
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
-		return 
+		return
 	}
 
 	ctx := c.Request.Context()
-	_, err = h.usecase.Uploadfile(ctx, blobFile, f.Filename) 
+	_, err = h.usecase.Uploadfile(ctx, blobFile, f.Filename)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
-		return 
+		return
 	}
+
 	c.JSON(http.StatusCreated, gin.H{
 		"success": "sucess",
 	})

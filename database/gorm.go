@@ -3,6 +3,7 @@ package database
 import (
 	"fmt"
 	"log"
+
 	// "os"
 
 	"gorm.io/driver/postgres"
@@ -29,9 +30,9 @@ func NewGormDBWithDefault() *gorm.DB {
 	dbConfig := GormConnection{
 		host:     "localhost",
 		port:     "5432",
-		password: "123456",
-		user:     "promptlabai",
-		name:     "promptlabai-db",
+		password: "1234",
+		user:     "prompty",
+		name:     "prompty",
 	}
 	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s database=%s sslmode=disable", dbConfig.host, dbConfig.port, dbConfig.user, dbConfig.password, dbConfig.name)
 

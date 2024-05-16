@@ -3,23 +3,30 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
+	"cloud.google.com/go/storage"
 	"github.com/gin-gonic/gin"
 	"github.com/promptlabth/ms-orch-user-service/config"
 	"github.com/promptlabth/ms-orch-user-service/database"
-	"github.com/promptlabth/ms-orch-user-service/logger"
+	"google.golang.org/api/option"
 )
 
 func main() {
+	ctx := context.Background()
 
 	db := database.NewGormDBWithDefault()
 
-	logger := logger.New()
+	// initial storage bucket
+	client, err := storage.NewClient(ctx, option.WithCredentialsFile("prompt-lab-383408-512938be4baf.json"))
+	if err != nil {
+		log.Fatal(err)
+	}
 	// r := app.NewRouter(logger)
 	// r := app.NewRouterGin(logger)
 	r := gin.Default()
@@ -27,7 +34,7 @@ func main() {
 
 	r.Use(CORSMiddleware())
 	NewRouter(r, db)
-	UploadRouter(r)
+	UploadRouter(r, client)
 
 	srv := http.Server{
 		Addr:              ":" + config.Val.Port,
@@ -49,7 +56,7 @@ func main() {
 		defer cancel()
 		if err := srv.Shutdown(ctx); err != nil {
 			// Error from closing listeners, or context timeout:
-			logger.Info("HTTP server Shutdown: " + err.Error())
+			log.Fatal(err)
 		}
 		close(idleConnsClosed)
 	}()
@@ -57,7 +64,7 @@ func main() {
 	fmt.Println(":" + config.Val.Port + " is serve")
 
 	if err := srv.ListenAndServe(); err != http.ErrServerClosed {
-		logger.Error("HTTP server ListenAndServe: " + err.Error())
+		log.Fatal(err)
 		return
 	}
 

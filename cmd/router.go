@@ -3,6 +3,7 @@ package main
 import (
 	// "fmt"
 
+	"cloud.google.com/go/storage"
 	"github.com/gin-gonic/gin"
 	"github.com/promptlabth/ms-orch-user-service/app/upload"
 	"github.com/promptlabth/ms-orch-user-service/app/user"
@@ -19,18 +20,17 @@ func NewRouter(router *gin.Engine, db *gorm.DB) {
 	router.POST("/user", userHandler.NewUser)
 }
 
+func UploadRouter(router *gin.Engine, client *storage.Client) {
 
-func UploadRouter(router *gin.Engine){
-	t := "upload"
-	uploadCore := upload.NewCore(&t)
+	uploadCore := upload.NewCore(client)
 	// if uploadCore == nil {
 	// 	fmt.Println("Checking Uploadcore")
 	// 	fmt.Printf("uploadCore: %+v\n", uploadCore)
-	// 	return 
+	// 	return
 	// } else {
 	// 	fmt.Println("uploadCore is nil")
 	// }
-	
+
 	uploadUsecase := upload.NewUsecase(uploadCore)
 	uploadHandler := upload.NewHandler(uploadUsecase)
 
