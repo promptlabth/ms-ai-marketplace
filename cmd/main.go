@@ -27,6 +27,7 @@ func main() {
 
 	r.Use(CORSMiddleware())
 	NewRouter(r, db)
+	UploadRouter(r)
 
 	srv := http.Server{
 		Addr:              ":" + config.Val.Port,
@@ -62,5 +63,4 @@ func main() {
 
 	<-idleConnsClosed
 	fmt.Println("gracefully")
-
 }

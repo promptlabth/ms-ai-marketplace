@@ -9,7 +9,7 @@ import (
 )
 
 type config struct {
-	Port             string        `env:"PORT" envDefault:"8910"`
+	Port             string        `env:"PORT" envDefault:"8080"`
 	AllowedOrigins   []string      `env:"ALLOWED_ORIGINS"`
 	AllowedMethods   []string      `env:"ALLOWED_METHODS" envDefault:"GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS"`
 	AllowedHeaders   []string      `env:"ALLOWED_HEADERS" envDefault:"X-Requested-With,Authorization,Origin,Content-Length,Content-Type"`
