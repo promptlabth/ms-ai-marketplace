@@ -29,7 +29,7 @@ func (a *Adaptor) ValidateNewUser(ctx context.Context, user User) error {
 	}
 
 	// Validate the username is not empty.
-	if user.FriebaseID == "" {
+	if user.FirebaseID == "" {
 		return errors.New("username cannot be empty")
 	}
 

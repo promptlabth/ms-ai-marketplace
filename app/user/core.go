@@ -44,7 +44,7 @@ func (c *Core) GetUserByID(ctx context.Context, frebaseId string) (*UserEntity, 
 
 // UpdateUser updates a user's information in the database.
 func (c *Core) UpdateUser(ctx context.Context, user UserEntity) error {
-	return c.db.Model(UserEntity{}).Where("firebase_id = ?", user.FriebaseID).Updates(user).Error
+	return c.db.Model(UserEntity{}).Where("firebase_id = ?", user.FirebaseID).Updates(user).Error
 }
 
 // DeleteUser removes a user from the database by their ID.

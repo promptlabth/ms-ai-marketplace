@@ -5,6 +5,7 @@ package user
 import (
 	"context"
 	"time"
+	"log"
 )
 
 // Assuming User struct is defined in user.go within the 'user' package.
@@ -37,21 +38,25 @@ func NewUsecase(s storage, d domain) *Usecase {
 
 // NewUser orchestrates the process of validating and creating a new user.
 func (u *Usecase) NewUser(ctx context.Context, user User) error {
+
 	// First, use the domain logic to validate the new user.
 	if err := u.domain.ValidateNewUser(ctx, user); err != nil {
+		log.Printf("Error validating new user: %v", err)
 		return err
 	}
-
+	
 	userEntity := UserEntity{
-		FriebaseID:     user.FriebaseID,
+		FirebaseID:     user.FirebaseID,
 		Name:           user.Name,
 		Email:          user.Email,
 		Platform:       user.Platform,
 		PlanID:         user.PlanID,
+		Password:       user.Password,
 		StripeID:       user.StripeID,
 		LastActiveTime: time.Now(),
 	}
-
+	 log.Printf("UserEntity : %+v\n", userEntity)
+	 
 	// If validation passes, proceed to create the user in the storage layer.
 	_, err := u.storage.CreateUser(ctx, userEntity)
 	return err

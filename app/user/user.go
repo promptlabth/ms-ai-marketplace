@@ -9,7 +9,7 @@ import (
 
 // User represents the structure of a user in the system.
 type User struct {
-	FriebaseID     string
+	FirebaseID     string
 	Name           string
 	Email          string
 	Platform       string // Note: In a real system, you would not store plain text passwords
@@ -28,8 +28,13 @@ type UserInterface interface {
 }
 
 type NewUserRequest struct {
-	Username string `json:"username"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	FirebaseID string `json:"firebase_id"`
+	Name       string `json:"name"`
+	Email      string `json:"profile_pic"`
+	Platform   string `json:"access_token"`
+	StripeID   string `json:"stripe_id"`
+	PlanID     string `json:"plan_id"`
+	Password   string `json:"password"`
+	// none LastActiveTime time.Time `json:"datetime_last_active"` because of is now().time
 	// Include other fields as necessary
 }

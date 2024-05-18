@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -29,9 +28,14 @@ func (h *Handler) NewUser(c *gin.Context) {
 	}
 
 	user := User{
-		FriebaseID: req.Username,
-		Email:      req.Email,
-		Password:   req.Password,
+		FirebaseID:     req.FirebaseID,
+		Name:           req.Name,
+		Email:          req.Email,
+		Platform:       req.Platform,
+		StripeID:       req.StripeID,
+		PlanID:         req.PlanID,
+		Password:       req.Password,
+
 	}
 
 	if err := h.usecase.NewUser(context.Background(), user); err != nil {
