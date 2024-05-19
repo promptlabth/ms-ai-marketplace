@@ -13,7 +13,9 @@ import (
 // storage outlines the methods required by the use case to interact with the data layer.
 type storage interface {
 	CreateUser(context.Context, UserEntity) (*string, error)
-	// Add other storage methods as necessary
+	GetUserByID(context.Context, string) (*UserEntity, error) 
+	UpdateUser(context.Context,  UserEntity) error
+	DeleteUser(context.Context,  string) error
 }
 
 // domain outlines the methods required by the use case for domain logic and validations.
@@ -60,4 +62,12 @@ func (u *Usecase) NewUser(ctx context.Context, user User) error {
 	// If validation passes, proceed to create the user in the storage layer.
 	_, err := u.storage.CreateUser(ctx, userEntity)
 	return err
+}
+
+func (u *Usecase) GetUser(ctx context.Context, firebaseID string) (*UserEntity, error) {
+    user, err := u.storage.GetUserByID(ctx, firebaseID)
+    if err != nil {
+        return nil, err
+    }
+    return user, nil
 }

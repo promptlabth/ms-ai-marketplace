@@ -34,6 +34,7 @@ func main() {
 
 	r.Use(CORSMiddleware())
 	UserRouter(r, db)
+	AgentDetailRouter(r, db)
 	UploadRouter(r, client)
 	RoleRouter(r, db)
 
