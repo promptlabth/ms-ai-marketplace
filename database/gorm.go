@@ -8,6 +8,11 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+
+	agentdetail "github.com/promptlabth/ms-orch-user-service/app/agent_detail"
+	"github.com/promptlabth/ms-orch-user-service/app/framework"
+	"github.com/promptlabth/ms-orch-user-service/app/role_framework"
+	"github.com/promptlabth/ms-orch-user-service/app/user"
 )
 
 type GormConnection struct {
@@ -44,5 +49,13 @@ func NewGormDB(dns string) *gorm.DB {
 	if err != nil {
 		log.Panic(err)
 	}
+	if err := db.AutoMigrate(
+		&user.UserEntity{},
+		&agentdetail.AgentDetailEntity{},
+		&framework.FrameworkEntity{},
+		&roleframework.RoleFrameworkEntity{}); err != nil {
+		log.Fatalf("Failed to run migrations: %v", err)
+	}
+
 	return db
 }
