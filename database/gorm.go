@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"log"
 
-	// "os"
-
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
@@ -13,6 +11,7 @@ import (
 	"github.com/promptlabth/ms-orch-user-service/app/framework"
 	"github.com/promptlabth/ms-orch-user-service/app/role_framework"
 	"github.com/promptlabth/ms-orch-user-service/app/user"
+	"github.com/promptlabth/ms-orch-user-service/app/role"
 )
 
 type GormConnection struct {
@@ -39,13 +38,13 @@ func NewGormDBWithDefault() *gorm.DB {
 		user:     "promptlabai",
 		name:     "promptlabai-db",
 	}
-	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s database=%s sslmode=disable", dbConfig.host, dbConfig.port, dbConfig.user, dbConfig.password, dbConfig.name)
+	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", dbConfig.host, dbConfig.port, dbConfig.user, dbConfig.password, dbConfig.name)
 
 	return NewGormDB(dsn)
 }
 
-func NewGormDB(dns string) *gorm.DB {
-	db, err := gorm.Open(postgres.Open(dns), &gorm.Config{})
+func NewGormDB(dsn string) *gorm.DB {
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Panic(err)
 	}
@@ -53,7 +52,8 @@ func NewGormDB(dns string) *gorm.DB {
 		&user.UserEntity{},
 		&agentdetail.AgentDetailEntity{},
 		&framework.FrameworkEntity{},
-		&roleframework.RoleFrameworkEntity{}); err != nil {
+		&roleframework.RoleFrameworkEntity{},
+		&role.RoleEntity{}); err != nil { // Add RoleEntity to the migrations
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
 

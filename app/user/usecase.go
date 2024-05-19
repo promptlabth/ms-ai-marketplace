@@ -24,7 +24,7 @@ type domain interface {
 
 // Usecase struct that combines storage and domain to execute user-related business logic.
 type Usecase struct {
-	storage storage
+	storage storage	
 	domain  domain
 }
 

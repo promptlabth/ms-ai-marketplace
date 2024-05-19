@@ -14,5 +14,5 @@ type AgentDetailEntity struct {
 }
 
 func (AgentDetailEntity) TableName() string {
-	return "agent_Details"
+	return "agent_Details"	
 }
