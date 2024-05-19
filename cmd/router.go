@@ -1,16 +1,15 @@
 package main
 
 import (
-	// "fmt"
-
 	"cloud.google.com/go/storage"
 	"github.com/gin-gonic/gin"
 	"github.com/promptlabth/ms-orch-user-service/app/upload"
 	"github.com/promptlabth/ms-orch-user-service/app/user"
+	"github.com/promptlabth/ms-orch-user-service/app/role"
 	"gorm.io/gorm"
 )
 
-func NewRouter(router *gin.Engine, db *gorm.DB) {
+func UserRouter(router *gin.Engine, db *gorm.DB) {
 
 	userValidation := user.NewAdaptor(db)
 	userCore := user.NewCore(db)
@@ -27,4 +26,14 @@ func UploadRouter(router *gin.Engine, client *storage.Client) {
 	uploadHandler := upload.NewHandler(uploadUsecase)
 
 	router.POST("/upload", uploadHandler.Uploadfile)
+}
+
+func RoleRouter(router *gin.Engine, db *gorm.DB) {
+
+	roleValidation := role.NewAdaptor(db)
+	roleCore := role.NewCore(db)
+	roleUsecase := role.NewUsecase(roleCore, roleValidation)
+	roleHandler := role.NewHandler(roleUsecase)
+
+	router.POST("/role", roleHandler.NewRole)
 }
