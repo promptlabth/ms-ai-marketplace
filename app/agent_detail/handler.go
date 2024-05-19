@@ -9,6 +9,7 @@ import (
 
 type usecase interface {
 	NewAgentDetail(c context.Context, agentDetail AgentDetail) error
+	GetAgentDetails(c context.Context, firebaseId string) (*[]AgentDetailEntity, error)
 }
 
 type Handler struct {
@@ -29,14 +30,14 @@ func (h *Handler) NewAgentDetail(c *gin.Context) {
 		return
 	}
 	agentDetail := AgentDetail{
-		AgentDetailID: req.AgentDetailID,
-		Name:          req.Name,
-		Description:   req.Description,
-		ImageURL:      req.ImageURL,
-		Prompt:        req.Prompt,
-		UserID:        req.UserID,
-		FrameworkID:   req.FrameworkID,
-		RoleFrameID:   req.RoleFrameID,
+		ID:          req.ID,
+		Name:        req.Name,
+		Description: req.Description,
+		ImageURL:    req.ImageURL,
+		Prompt:      req.Prompt,
+		UserID:      req.UserID,
+		FrameworkID: req.FrameworkID,
+		RoleFrameID: req.RoleFrameID,
 	}
 
 	if err := h.usecase.NewAgentDetail(context.Background(), agentDetail); err != nil {
@@ -46,5 +47,20 @@ func (h *Handler) NewAgentDetail(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{
 		"status":  "success",
 		"message": "creation sussess",
+	})
+}
+
+func (h *Handler) GetAgentDetails(c *gin.Context) {
+	firebaseID := c.Param("id")
+
+	agentDetails, err := h.usecase.GetAgentDetails(c.Request.Context(), firebaseID)
+	if err != nil {
+		c.JSON(500, gin.H{"error": "Failed to get user"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"status": "success",
+		"agents": agentDetails,
 	})
 }

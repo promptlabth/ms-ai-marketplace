@@ -32,10 +32,10 @@ func (c *Core) CreateUser(ctx context.Context, user UserEntity) (*string, error)
 }
 
 // GetUserByID retrieves a user by their ID from the database.
-func (c *Core) GetUserByID(ctx context.Context, frebaseId string) (*UserEntity, error) {
+func (c *Core) GetUserByID(ctx context.Context, firebaseId string) (*UserEntity, error) {
 
 	var user UserEntity
-	if err := c.db.First(&user).Error; err != nil {
+	if err := c.db.Where("id = ?", firebaseId).First(&user).Error; err != nil {
 		return nil, err
 	}
 

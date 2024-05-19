@@ -21,7 +21,25 @@ func (c *Core) CreateAgentDetail(ctx context.Context, agentDetail AgentDetailEnt
 	if err := c.db.Create(&agentDetail); err.Error != nil {
 		return nil, err.Error
 	}
-	return &agentDetail.AgentDetailID, nil
+	return &agentDetail.ID, nil
 }
 
-//can add Delete Update Get
+func (c *Core) GetAgentDetailsByUserID(ctx context.Context, firebaseId string) (*[]AgentDetailEntity, error){
+	var agentDetail []AgentDetailEntity
+	if err := c.db.Where("user_id = ?", firebaseId).Find(&agentDetail).Error; err != nil {
+		return nil, err
+	}
+
+	return &agentDetail, nil
+}
+
+//can add Delete Update
+// UpdateRole updates a role's information in the database.
+// func (c *Core) UpdateRole(ctx context.Context, agentDetail AgentDetailEntity) error {
+// 	return c.db.Model(AgentDetailEntity{}).Where("id = ?", agentDetail.ID).Updates(agentDetail).Error
+// }
+
+// // DeleteRole removes a role from the database by their ID.
+// func (c *Core) DeleteRole(ctx context.Context, id int) error {
+// 	return c.db.Delete(&AgentDetailEntity{}, id).Error
+// }

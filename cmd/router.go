@@ -3,10 +3,11 @@ package main
 import (
 	"cloud.google.com/go/storage"
 	"github.com/gin-gonic/gin"
-	agentdetail "github.com/promptlabth/ms-orch-user-service/app/agent_detail"
+	"github.com/promptlabth/ms-orch-user-service/app/agent_detail"
+	"github.com/promptlabth/ms-orch-user-service/app/framework"
+	"github.com/promptlabth/ms-orch-user-service/app/role"
 	"github.com/promptlabth/ms-orch-user-service/app/upload"
 	"github.com/promptlabth/ms-orch-user-service/app/user"
-	"github.com/promptlabth/ms-orch-user-service/app/role"
 	"gorm.io/gorm"
 )
 
@@ -16,8 +17,30 @@ func AgentDetailRouter(router *gin.Engine, db *gorm.DB) {
 	agentDetailUsecase := agentdetail.NewUsecase(agentDetailCore, agentDetailValidation)
 	agentDetailHandler := agentdetail.NewHandler(agentDetailUsecase)
 
-	router.POST("/agent_detail", agentDetailHandler.NewAgentDetail)
+	router.POST("/creator/agent_detail", agentDetailHandler.NewAgentDetail)
+	router.GET("/creator/:id", agentDetailHandler.GetAgentDetails)
 }
+
+func FrameworkRouter(router *gin.Engine, db *gorm.DB) {
+	frameworkValidation := framework.NewAdaptor(db)
+	frameworkCore := framework.NewCore(db)
+	frameworkUsecase := framework.NewUsecase(frameworkCore, frameworkValidation)
+	frameworkHandler := framework.NewHandler(frameworkUsecase)
+
+	router.POST("/creator/framework", frameworkHandler.NewFramework)
+	router.GET("/creator/frameworks", frameworkHandler.ListFrameworks)
+}
+
+func RoleRouter(router *gin.Engine, db *gorm.DB) {
+
+	roleValidation := role.NewAdaptor(db)
+	roleCore := role.NewCore(db)
+	roleUsecase := role.NewUsecase(roleCore, roleValidation)
+	roleHandler := role.NewHandler(roleUsecase)
+
+	router.POST("/creator/role", roleHandler.NewRole)
+}
+
 func UserRouter(router *gin.Engine, db *gorm.DB) {
 
 	userValidation := user.NewAdaptor(db)
@@ -38,12 +61,4 @@ func UploadRouter(router *gin.Engine, client *storage.Client) {
 	router.POST("/upload", uploadHandler.Uploadfile)
 }
 
-func RoleRouter(router *gin.Engine, db *gorm.DB) {
 
-	roleValidation := role.NewAdaptor(db)
-	roleCore := role.NewCore(db)
-	roleUsecase := role.NewUsecase(roleCore, roleValidation)
-	roleHandler := role.NewHandler(roleUsecase)
-
-	router.POST("/role", roleHandler.NewRole)
-}

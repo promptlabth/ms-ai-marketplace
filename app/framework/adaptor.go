@@ -1,11 +1,11 @@
 // adaptor.go
 
-package agentdetail
+package framework
 
 import (
 	"context"
 	"errors"
-
+	// "regexp"
 	"gorm.io/gorm"
 )
 
@@ -18,10 +18,10 @@ func NewAdaptor(db *gorm.DB) *Adaptor {
 	return &Adaptor{db: db}
 }
 
-func (a *Adaptor) ValidateNewAgentDetail(ctx context.Context, agentDetail AgentDetail) error {
-	// Validate the AgentDetail name is not empty.
-	if agentDetail.Name == "" {
-		return errors.New("AgentDetail name cannot be empty")
+func (a *Adaptor) ValidateNewFramework(ctx context.Context, framework Framework) error {
+	// Validate the framework name is not empty.
+	if framework.Name == "" {
+		return errors.New("Framework name cannot be empty")
 	}
 
 	// Add additional validations as needed.

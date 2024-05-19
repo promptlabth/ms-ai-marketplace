@@ -33,10 +33,12 @@ func main() {
 	// r.Use(gin.WrapF(cors.New(opts).HandlerFunc))
 
 	r.Use(CORSMiddleware())
-	UserRouter(r, db)
 	AgentDetailRouter(r, db)
-	UploadRouter(r, client)
+	FrameworkRouter(r,db)
 	RoleRouter(r, db)
+	UserRouter(r, db)
+	UploadRouter(r, client)
+	
 
 	srv := http.Server{
 		Addr:              ":" + config.Val.Port,
