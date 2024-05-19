@@ -8,6 +8,7 @@ import (
 	"github.com/promptlabth/ms-orch-user-service/app/role"
 	"github.com/promptlabth/ms-orch-user-service/app/upload"
 	"github.com/promptlabth/ms-orch-user-service/app/user"
+	"github.com/promptlabth/ms-orch-user-service/app/__mock__/role"
 	"gorm.io/gorm"
 )
 
