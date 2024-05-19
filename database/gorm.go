@@ -35,9 +35,9 @@ func NewGormDBWithDefault() *gorm.DB {
 	dbConfig := GormConnection{
 		host:     "localhost",
 		port:     "5432",
-		password: "1234",
-		user:     "prompty",
-		name:     "prompty",
+		password: "123456",
+		user:     "promptlabai",
+		name:     "promptlabai-db",
 	}
 	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s database=%s sslmode=disable", dbConfig.host, dbConfig.port, dbConfig.user, dbConfig.password, dbConfig.name)
 
