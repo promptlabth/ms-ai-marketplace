@@ -36,6 +36,7 @@ func main() {
 	UserRouter(r, db)
 	AgentDetailRouter(r, db)
 	UploadRouter(r, client)
+	RoleRouter(r, db)
 
 	srv := http.Server{
 		Addr:              ":" + config.Val.Port,
