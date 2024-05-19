@@ -3,10 +3,12 @@ package user
 import (
 	"context"
 	"github.com/gin-gonic/gin"
+	"log"
 )
 
 type usecase interface {
 	NewUser(c context.Context, user User) error
+	GetUser(c context.Context, firebase_id string) (*UserEntity, error) 
 }
 
 type Handler struct {
@@ -44,4 +46,16 @@ func (h *Handler) NewUser(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{"message": "User created successfully"})
+}
+
+func (h *Handler) GetUser(c *gin.Context) {
+	firebaseID := c.Param("id")
+	log.Printf("firebaseID : %+v\n", firebaseID)
+    userByID, err := h.usecase.GetUser(c.Request.Context(), firebaseID)
+    if err != nil {
+        c.JSON(500, gin.H{"error": "Failed to get user"})
+        return
+    }
+
+    c.JSON(200, gin.H{"data": userByID})
 }
