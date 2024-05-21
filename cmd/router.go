@@ -20,6 +20,7 @@ func AgentDetailRouter(router *gin.Engine, db *gorm.DB) {
 
 	router.POST("/creator/agent_detail", agentDetailHandler.NewAgentDetail)
 	router.GET("/creator/:id", agentDetailHandler.GetAgentDetails)
+	router.GET("/creator/search", agentDetailHandler.SearchAgentDetails)
 }
 
 func FrameworkRouter(router *gin.Engine, db *gorm.DB) {

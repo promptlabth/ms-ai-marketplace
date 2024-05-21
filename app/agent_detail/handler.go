@@ -10,6 +10,7 @@ import (
 type usecase interface {
 	NewAgentDetail(c context.Context, agentDetail AgentDetail) error
 	GetAgentDetails(c context.Context, firebaseId string) (*[]AgentDetailEntity, error)
+	SearchAgentDetails(c context.Context, keyword string) (*[]AgentDetailEntity, error)
 }
 
 type Handler struct {
@@ -63,4 +64,16 @@ func (h *Handler) GetAgentDetails(c *gin.Context) {
 		"status": "success",
 		"agents": agentDetails,
 	})
+}
+
+func (h *Handler) SearchAgentDetails(c *gin.Context) {
+	keyword := c.Query("keyword")
+
+	agentDetails, err := h.usecase.SearchAgentDetails(c.Request.Context(), keyword)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to search agent details"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status": "success", "agents": agentDetails})
 }
