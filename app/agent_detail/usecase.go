@@ -10,7 +10,6 @@ import (
 type storage interface {
 	CreateAgentDetail(context.Context, AgentDetailEntity) (*string, error)
 	GetAgentDetailsByUserID(context.Context, string) (*[]AgentDetailEntity, error) 
-	SearchAgentDetails(context.Context, string) (*[]AgentDetailEntity, error)
 }
 
 type domain interface {
@@ -59,16 +58,4 @@ func (u *Usecase) GetAgentDetails(ctx context.Context, firebaseId string) (*[]Ag
         return nil, err
     }
     return agentDetail, nil
-}
-
-
-func (u *Usecase) SearchAgentDetails(ctx context.Context, keyword string) (*[]AgentDetailEntity, error) {
-	// Search for agent details by keyword in the storage
-	agentDetails, err := u.storage.SearchAgentDetails(ctx, keyword)
-	if err != nil {
-		log.Printf("Error searching agent details: %v", err)
-		return nil, err
-	}
-
-	return agentDetails, nil
 }
