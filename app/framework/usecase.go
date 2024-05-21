@@ -42,7 +42,7 @@ func (u *Usecase) NewFramework(ctx context.Context, framework Framework) error {
 		ID:   framework.ID,
 		Name: framework.Name,
 		Detail: framework.Detail,
-		InputJSON: framework.InputJSON,
+		Component: framework.Component,
 	}
 	log.Printf("FrameworkEntity: %+v\n", frameworkEntity)
 

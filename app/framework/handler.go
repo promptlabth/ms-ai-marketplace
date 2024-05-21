@@ -34,7 +34,7 @@ func (h *Handler) NewFramework(c *gin.Context) {
 		ID:   req.ID,
 		Name: req.Name,
 		Detail: req.Detail,
-		InputJSON: req.InputJSON,
+		Component: req.Component,
 	}
 
 	if err := h.usecase.NewFramework(context.Background(), framework); err != nil {

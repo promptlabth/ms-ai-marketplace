@@ -9,7 +9,7 @@ type Framework struct {
 	ID   string
 	Name string
 	Detail string 
-	InputJSON json.RawMessage
+	Component json.RawMessage
 }
 
 type FrameworkInterface interface {
@@ -24,5 +24,5 @@ type NewFrameworkRequest struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
 	Detail string `json:"detail"`
-	InputJSON json.RawMessage `json:"input_json"`
+	Component json.RawMessage `json:"component"`
 }
