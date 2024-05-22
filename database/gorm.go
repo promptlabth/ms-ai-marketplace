@@ -34,7 +34,7 @@ func NewGormDBWithDefault() *gorm.DB {
 	dbConfig := GormConnection{
 		host:     "localhost",
 		port:     "5432",
-		password: "123456",
+		password: "myPasswordAtPromptLabAI",
 		user:     "promptlabai",
 		name:     "promptlabai-db",
 	}
