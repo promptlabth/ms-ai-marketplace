@@ -40,6 +40,7 @@ func RoleRouter(router *gin.Engine, db *gorm.DB) {
 	roleHandler := role.NewHandler(roleUsecase)
 
 	router.POST("/creator/role", roleHandler.NewRole)
+	router.GET("/creator/roles", roleHandler.ListRoles)
 }
 
 func UserRouter(router *gin.Engine, db *gorm.DB) {

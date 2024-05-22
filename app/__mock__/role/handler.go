@@ -7,6 +7,7 @@ import (
 
 type usecase interface {
 	NewRole(ctx context.Context, role Role) error
+	ListRoles(ctx context.Context) (*[]RoleEntity, error)
 }
 
 type Handler struct {
@@ -38,4 +39,15 @@ func (h *Handler) NewRole(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{"message": "Role created successfully"})
+}
+
+// NewRequest for get List of Roles
+func (h *Handler) ListRoles(c *gin.Context) {
+	roles, err := h.usecase.ListRoles(context.Background())
+	if err != nil {
+		c.AbortWithStatus(500)
+		return
+	}
+
+	c.JSON(200, gin.H{"roles": roles})
 }

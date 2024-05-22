@@ -13,6 +13,7 @@ type storage interface {
 	GetRoleByID(ctx context.Context, id int) (*RoleEntity, error)
 	UpdateRole(ctx context.Context, role RoleEntity) error
 	DeleteRole(ctx context.Context, id int) error
+	ListRoles(ctx context.Context) (*[]RoleEntity, error)
 	// Add other storage methods as necessary
 }
 
@@ -55,3 +56,13 @@ func (u *Usecase) NewRole(ctx context.Context, role Role) error {
 	_, err := u.storage.CreateRole(ctx, roleEntity)
 	return err
 }
+
+// Get List of Roles
+func (u *Usecase) ListRoles(ctx context.Context) (*[]RoleEntity, error) {
+	roles, err := u.storage.ListRoles(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return roles, nil
+}
+

@@ -33,6 +33,16 @@ func (c *Core) GetRoleByID(ctx context.Context, id int) (*RoleEntity, error) {
 	return &role, nil
 }
 
+//GET List of Roles
+func (c *Core) ListRoles(ctx context.Context) (*[]RoleEntity, error) {
+	var roles []RoleEntity
+	if err := c.db.Find(&roles).Error; err != nil {
+		return nil, err
+	}
+	return &roles, nil
+}
+
+
 // UpdateRole updates a role's information in the database.
 func (c *Core) UpdateRole(ctx context.Context, role RoleEntity) error {
 	return c.db.Model(RoleEntity{}).Where("id = ?", role.ID).Updates(role).Error
