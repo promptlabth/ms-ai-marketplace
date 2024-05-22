@@ -2,8 +2,10 @@ package user
 
 import (
 	"context"
-	"github.com/gin-gonic/gin"
 	"log"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type usecase interface {
@@ -45,7 +47,7 @@ func (h *Handler) NewUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, gin.H{"message": "User created successfully"})
+	c.JSON(http.StatusOK, gin.H{"message": "User created successfully"})
 }
 
 func (h *Handler) GetUser(c *gin.Context) {
@@ -57,5 +59,5 @@ func (h *Handler) GetUser(c *gin.Context) {
         return
     }
 
-    c.JSON(200, gin.H{"data": userByID})
+    c.JSON(http.StatusOK, gin.H{"data": userByID})
 }

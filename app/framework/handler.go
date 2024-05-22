@@ -42,7 +42,7 @@ func (h *Handler) NewFramework(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "Framework created successfully"})
+	c.JSON(http.StatusOK, gin.H{"message": "Framework created successfully"})
 }
 
 func (h *Handler) ListFrameworks(c *gin.Context) {
@@ -53,7 +53,7 @@ func (h *Handler) ListFrameworks(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
+	c.JSON(http.StatusOK, gin.H{
 		"status": "success",
 		"frameworks": frameworks,
 	})

@@ -44,7 +44,7 @@ func (h *Handler) NewAgentDetail(c *gin.Context) {
 		c.AbortWithStatus(500)
 		return
 	}
-	c.JSON(http.StatusCreated, gin.H{
+	c.JSON(http.StatusOK, gin.H{
 		"status":  "success",
 		"message": "creation sussess",
 	})
@@ -59,7 +59,7 @@ func (h *Handler) GetAgentDetails(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
+	c.JSON(http.StatusOK, gin.H{
 		"status": "success",
 		"agents": agentDetails,
 	})
