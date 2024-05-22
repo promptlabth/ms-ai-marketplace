@@ -3,7 +3,7 @@ package agentdetail
 import "encoding/json"
 
 type AgentDetailEntity struct {
-	ID          string          `gorm:"column:agent_detail_id;uniqueIndex"`
+	ID          string          `gorm:"column:id;uniqueIndex"`
 	Name        string          `gorm:"column:name;uniqueIndex"`
 	Description string          `gorm:"column:descriptoin"`
 	ImageURL    string          `gorm:"column:image_url"`
