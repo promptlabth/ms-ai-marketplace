@@ -24,7 +24,7 @@ func NewHandler(u usecase) *Handler {
 func (h *Handler) NewUser(c *gin.Context) {
 	var req NewUserRequest
 
-	if err := c.Bind(&req); err != nil {
+	if err :=c .Bind(&req); err != nil {
 		c.JSON(404, map[string]string{
 			"error": err.Error(),
 		})

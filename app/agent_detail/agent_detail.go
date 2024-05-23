@@ -27,7 +27,7 @@ type AgentDetailInterface interface {
 }
 
 type NewAgentDetailRequest struct {
-	ID string          `json:"agent_detail_id"`
+	ID string          `json:"id"`
 	Name          string          `json:"name"`
 	Description   string          `json:"description"`
 	ImageURL      string          `json:"image_url"`
