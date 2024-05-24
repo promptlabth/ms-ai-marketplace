@@ -14,8 +14,8 @@ type AgentDetail struct {
 	ImageURL      string
 	Prompt        json.RawMessage
 	UserID        string
-	FrameworkID   string
-	RoleFrameID   string
+	FrameworkID   int64
+	RoleFrameID   int64
 }
 
 // UserInterface defines the set of methods that any implementation of the User service must provide.
@@ -27,13 +27,12 @@ type AgentDetailInterface interface {
 }
 
 type NewAgentDetailRequest struct {
-	ID string          `json:"id"`
 	Name          string          `json:"name"`
 	Description   string          `json:"description"`
 	ImageURL      string          `json:"image_url"`
 	Prompt        json.RawMessage `json:"prompt"`
 	UserID        string           `json:"user_id"`
-	FrameworkID   string           `json:"framework_id"`
-	RoleFrameID   string           `json:"role_frame_id"`
+	FrameworkID   int64           `json:"framework_id"`
+	RoleFrameID   int64           `json:"role_frame_id"`
 	// Include other fields as necessary
 }

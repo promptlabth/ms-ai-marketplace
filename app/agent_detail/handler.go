@@ -30,7 +30,6 @@ func (h *Handler) NewAgentDetail(c *gin.Context) {
 		return
 	}
 	agentDetail := AgentDetail{
-		ID:          req.ID,
 		Name:        req.Name,
 		Description: req.Description,
 		ImageURL:    req.ImageURL,

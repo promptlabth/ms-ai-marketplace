@@ -30,14 +30,13 @@ func NewUsecase(s storage, d domain) *Usecase {
 
 func (u *Usecase) NewAgentDetail(ctx context.Context, agentDetail AgentDetail) error {
 
-	// First, use the domain logic to validate the new role.
-	if err := u.domain.ValidateNewAgentDetail(ctx, agentDetail); err != nil {
-		log.Printf("Error validating new role: %v", err)
-		return err
-	}
+	// // First, use the domain logic to validate the new role.
+	// if err := u.domain.ValidateNewAgentDetail(ctx, agentDetail); err != nil {
+	// 	log.Printf("Error validating new role: %v", err)
+	// 	return err
+	// }
 
 	agentDetailEntity := AgentDetailEntity{
-		ID: agentDetail.ID,
 		Name:          agentDetail.Name,
 		Description:   agentDetail.Description,
 		ImageURL:      agentDetail.ImageURL,

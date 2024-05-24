@@ -9,8 +9,8 @@ type AgentDetailEntity struct {
 	ImageURL    string          `gorm:"column:image_url"`
 	Prompt      json.RawMessage `gorm:"column:prompt"` // for a raw json
 	UserID      string          `gorm:"column:user_id"`
-	FrameworkID string          `gorm:"column:framework_id"`
-	RoleFrameID string          `gorm:"column:role_framework_id"`
+	FrameworkID int64          `gorm:"column:framework_id"`
+	RoleFrameID int64          `gorm:"column:role_framework_id"`
 }
 
 func (AgentDetailEntity) TableName() string {
