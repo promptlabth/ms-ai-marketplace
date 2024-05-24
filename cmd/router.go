@@ -60,7 +60,7 @@ func UploadRouter(router *gin.Engine, client *storage.Client) {
 	uploadUsecase := upload.NewUsecase(uploadCore)
 	uploadHandler := upload.NewHandler(uploadUsecase)
 
-	router.POST("/upload", uploadHandler.Uploadfile)
+	router.POST("/creator/upload", uploadHandler.Uploadfile)
 }
 
 
