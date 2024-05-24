@@ -18,7 +18,6 @@ func NewAdaptor(db *gorm.DB) *Adaptor {
 }
 
 // ValidateNewRole contains domain logic for creating a new role.
-// This example function might validate role data before creation.
 func (a *Adaptor) ValidateNewRole(ctx context.Context, role Role) error {
 	// Validate the role name is not empty.
 	if role.Name == "" {

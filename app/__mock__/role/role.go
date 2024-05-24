@@ -21,5 +21,4 @@ type RoleInterface interface {
 type NewRoleRequest struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
-	// Include other fields as necessary
 }
