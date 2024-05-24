@@ -31,7 +31,6 @@ func (h *Handler) NewFramework(c *gin.Context) {
 	}
 
 	framework := Framework{
-		ID:   req.ID,
 		Name: req.Name,
 		Detail: req.Detail,
 		Component: req.Component,

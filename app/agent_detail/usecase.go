@@ -8,7 +8,7 @@ import (
 )
 
 type storage interface {
-	CreateAgentDetail(context.Context, AgentDetailEntity) (*string, error)
+	CreateAgentDetail(context.Context, AgentDetailEntity) (*int64, error)
 	GetAgentDetailsByUserID(context.Context, string) (*[]AgentDetailEntity, error) 
 }
 

@@ -29,7 +29,6 @@ func (h *Handler) NewRole(c *gin.Context) {
 	}
 
 	role := Role{
-		ID:   req.ID,
 		Name: req.Name,
 	}
 

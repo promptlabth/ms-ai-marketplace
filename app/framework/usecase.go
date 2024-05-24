@@ -33,13 +33,12 @@ func NewUsecase(s storage, d domain) *Usecase {
 func (u *Usecase) NewFramework(ctx context.Context, framework Framework) error {
 
 	// First, use the domain logic to validate the new framework.
-	if err := u.domain.ValidateNewFramework(ctx, framework); err != nil {
-		log.Printf("Error validating new framework: %v", err)
-		return err
-	}
+	// if err := u.domain.ValidateNewFramework(ctx, framework); err != nil {
+	// 	log.Printf("Error validating new framework: %v", err)
+	// 	return err
+	// }
 
 	frameworkEntity := FrameworkEntity{
-		ID:   framework.ID,
 		Name: framework.Name,
 		Detail: framework.Detail,
 		Component: framework.Component,

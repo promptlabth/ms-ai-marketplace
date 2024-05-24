@@ -43,7 +43,7 @@ func (h *Handler) NewAgentDetail(c *gin.Context) {
 		c.AbortWithStatus(500)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
+	c.JSON(http.StatusCreated, gin.H{
 		"status":  "success",
 		"message": "creation sussess",
 	})

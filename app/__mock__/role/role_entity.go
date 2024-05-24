@@ -2,7 +2,7 @@ package role
 
 // RoleEntity is an interface to connect to the 'roles' table in the database
 type RoleEntity struct {
-    ID   int    `gorm:"column:id"`
+    ID   int    `gorm:"autoIncrement;column:id"`
     Name string `gorm:"column:name"`
 }
 

@@ -21,7 +21,7 @@ func (c *Core) CreateFramework(ctx context.Context, framework FrameworkEntity) (
 	if err := c.db.Create(&framework).Error; err != nil {
 		return nil, err
 	}
-	return &framework.ID, nil
+	return &framework.Name, nil
 }
 
 // GetFrameworkByID retrieves a framework by their ID from the database.

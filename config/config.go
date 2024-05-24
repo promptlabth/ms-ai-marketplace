@@ -10,7 +10,7 @@ import (
 
 type config struct {
 	Port             string        `env:"PORT" envDefault:"8081"`
-	AllowedOrigins   []string      `env:"ALLOWED_ORIGINS" envDefault:"*"`
+	AllowedOrigins   []string      `env:"ALLOWED_ORIGINS" envDefault:"http://localhost:3000"`
 	AllowedMethods   []string      `env:"ALLOWED_METHODS" envDefault:"GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS"`
 	AllowedHeaders   []string      `env:"ALLOWED_HEADERS" envDefault:"X-Requested-With,Authorization,Origin,Content-Length,Content-Type"`
 	AllowCredentials bool          `env:"ALLOW_CREDENTIALS" envDefault:"true"`

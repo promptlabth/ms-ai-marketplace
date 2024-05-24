@@ -6,7 +6,6 @@ import (
 )
 
 type Framework struct {
-	ID   string
 	Name string
 	Detail string 
 	Component json.RawMessage
@@ -21,7 +20,6 @@ type FrameworkInterface interface {
 }
 
 type NewFrameworkRequest struct {
-	ID   string `json:"id"`
 	Name string `json:"name"`
 	Detail string `json:"detail"`
 	Component json.RawMessage `json:"component"`

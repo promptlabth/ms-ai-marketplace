@@ -5,8 +5,8 @@ CREATE TABLE agent_details (
   image_url VARCHAR(255),
   prompt JSON,
   user_id VARCHAR(255),
-  framework_id VARCHAR(255),
-  role_framework_id VARCHAR(255)
+  framework_id INTEGER,
+  role_framework_id INTEGER
 );
 
 CREATE TABLE role_frameworks (

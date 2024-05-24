@@ -16,7 +16,7 @@ func NewCore(db *gorm.DB) *Core {
 	return &Core{db: db}
 }
 
-func (c *Core) CreateAgentDetail(ctx context.Context, agentDetail AgentDetailEntity) (*string, error) {
+func (c *Core) CreateAgentDetail(ctx context.Context, agentDetail AgentDetailEntity) (*int64, error) {
 
 	if err := c.db.Create(&agentDetail); err.Error != nil {
 		return nil, err.Error

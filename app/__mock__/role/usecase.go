@@ -47,7 +47,6 @@ func (u *Usecase) NewRole(ctx context.Context, role Role) error {
 	}
 
 	roleEntity := RoleEntity{
-		ID:   role.ID,
 		Name: role.Name,
 	}
 	log.Printf("RoleEntity: %+v\n", roleEntity)
