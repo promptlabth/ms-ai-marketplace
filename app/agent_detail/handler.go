@@ -10,6 +10,8 @@ import (
 type usecase interface {
 	NewAgentDetail(c context.Context, agentDetail AgentDetail) error
 	GetAgentDetails(c context.Context, firebaseId string) (*[]AgentDetailEntity, error)
+	ListAgentDetails(c context.Context) (*[]AgentDetailEntity, error)
+
 }
 
 type Handler struct {
@@ -62,4 +64,15 @@ func (h *Handler) GetAgentDetails(c *gin.Context) {
 		"status": "success",
 		"agents": agentDetails,
 	})
+}
+
+
+func (h *Handler) ListAgentDetails(c *gin.Context) {
+	agents, err := h.usecase.ListAgentDetails(context.Background())
+	if err != nil {
+		c.AbortWithStatus(500)
+		return
+	}
+
+	c.JSON(200, gin.H{"agents": agents})
 }

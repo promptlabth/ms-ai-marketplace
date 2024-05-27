@@ -24,13 +24,21 @@ func (c *Core) CreateAgentDetail(ctx context.Context, agentDetail AgentDetailEnt
 	return &agentDetail.ID, nil
 }
 
-func (c *Core) GetAgentDetailsByUserID(ctx context.Context, firebaseId string) (*[]AgentDetailEntity, error){
+func (c *Core) GetAgentDetailsByUserID(ctx context.Context, firebaseId string) (*[]AgentDetailEntity, error) {
 	var agentDetail []AgentDetailEntity
 	if err := c.db.Where("user_id = ?", firebaseId).Find(&agentDetail).Error; err != nil {
 		return nil, err
 	}
 
 	return &agentDetail, nil
+}
+
+func (c *Core) ListAgentDetails(ctx context.Context) (*[]AgentDetailEntity, error) {
+	var agents []AgentDetailEntity
+	if err := c.db.Find(&agents).Error; err != nil {
+		return nil, err
+	}
+	return &agents, nil
 }
 
 //can add Delete Update

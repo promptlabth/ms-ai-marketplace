@@ -14,7 +14,6 @@ type storage interface {
 	UpdateRole(ctx context.Context, role RoleEntity) error
 	DeleteRole(ctx context.Context, id int) error
 	ListRoles(ctx context.Context) (*[]RoleEntity, error)
-	// Add other storage methods as necessary
 }
 
 // domain outlines the methods required by the use case for domain logic and validations.

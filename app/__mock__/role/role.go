@@ -16,6 +16,7 @@ type RoleInterface interface {
 	GetRoleByID(ctx context.Context, id int64) (*Role, error) // Fetches a role by their ID
 	UpdateRole(ctx context.Context, role Role) error          // Updates an existing role
 	DeleteRole(ctx context.Context, id int64) error           // Deletes a role by their ID
+	ListRoles(ctx context.Context) (*[]RoleEntity, error)
 }
 
 type NewRoleRequest struct {

@@ -10,6 +10,7 @@ import (
 type storage interface {
 	CreateAgentDetail(context.Context, AgentDetailEntity) (*int64, error)
 	GetAgentDetailsByUserID(context.Context, string) (*[]AgentDetailEntity, error) 
+	ListAgentDetails(context.Context) (*[]AgentDetailEntity, error)
 }
 
 type domain interface {
@@ -29,13 +30,6 @@ func NewUsecase(s storage, d domain) *Usecase {
 }
 
 func (u *Usecase) NewAgentDetail(ctx context.Context, agentDetail AgentDetail) error {
-
-	// // First, use the domain logic to validate the new role.
-	// if err := u.domain.ValidateNewAgentDetail(ctx, agentDetail); err != nil {
-	// 	log.Printf("Error validating new role: %v", err)
-	// 	return err
-	// }
-
 	agentDetailEntity := AgentDetailEntity{
 		Name:          agentDetail.Name,
 		Description:   agentDetail.Description,
@@ -57,4 +51,13 @@ func (u *Usecase) GetAgentDetails(ctx context.Context, firebaseId string) (*[]Ag
         return nil, err
     }
     return agentDetail, nil
+}
+
+
+func (u *Usecase) ListAgentDetails(ctx context.Context) (*[]AgentDetailEntity, error){
+	agents, err := u.storage.ListAgentDetails(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return agents, nil
 }
