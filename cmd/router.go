@@ -19,8 +19,9 @@ func AgentDetailRouter(router *gin.Engine, db *gorm.DB) {
 	agentDetailHandler := agentdetail.NewHandler(agentDetailUsecase)
 
 	router.POST("/creator/agent_detail", agentDetailHandler.NewAgentDetail)
-	router.GET("/creator/:id", agentDetailHandler.GetAgentDetails)
+	router.GET("/creator/agent/user_id/:id", agentDetailHandler.GetAgentDetails)
 	router.GET("/creator/agents", agentDetailHandler.ListAgentDetails)
+	router.GET("/creator/agent/:id", agentDetailHandler.GetAgentByID)
 }
 
 func FrameworkRouter(router *gin.Engine, db *gorm.DB) {
@@ -31,6 +32,7 @@ func FrameworkRouter(router *gin.Engine, db *gorm.DB) {
 
 	router.POST("/creator/framework", frameworkHandler.NewFramework)
 	router.GET("/creator/frameworks", frameworkHandler.ListFrameworks)
+	router.GET("creator/framework/:id", frameworkHandler.GetFrameworkByID)
 }
 
 func RoleRouter(router *gin.Engine, db *gorm.DB) {
@@ -42,6 +44,7 @@ func RoleRouter(router *gin.Engine, db *gorm.DB) {
 
 	router.POST("/creator/role", roleHandler.NewRole)
 	router.GET("/creator/roles", roleHandler.ListRoles)
+	router.GET("/creator/role/:id", roleHandler.GetRoleByID)
 }
 
 func UserRouter(router *gin.Engine, db *gorm.DB) {

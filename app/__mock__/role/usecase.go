@@ -9,10 +9,10 @@ import (
 
 // storage outlines the methods required by the use case to interact with the data layer.
 type storage interface {
-	CreateRole(ctx context.Context, role RoleEntity) (*int, error)
-	GetRoleByID(ctx context.Context, id int) (*RoleEntity, error)
+	CreateRole(ctx context.Context, role RoleEntity) (*uint, error)
+	GetRoleByID(ctx context.Context, id uint) (*RoleEntity, error)
 	UpdateRole(ctx context.Context, role RoleEntity) error
-	DeleteRole(ctx context.Context, id int) error
+	DeleteRole(ctx context.Context, id uint) error
 	ListRoles(ctx context.Context) (*[]RoleEntity, error)
 }
 
@@ -55,6 +55,35 @@ func (u *Usecase) NewRole(ctx context.Context, role Role) error {
 	return err
 }
 
+func (u *Usecase) GetRoleByID(ctx context.Context, id uint) (*RoleEntity, error) {
+    role, err := u.storage.GetRoleByID(ctx, id)
+    if err != nil {
+        log.Printf("Error getting role by ID: %v", err)
+        return nil, err
+    }
+    return role, nil
+}
+
+func (u *Usecase) UpdateRole(ctx context.Context, role RoleEntity) error {
+    err := u.storage.UpdateRole(ctx, role)
+    if err != nil {
+        log.Printf("Error updating role: %v", err)
+        return err
+    }
+    return nil
+}
+
+
+func (u *Usecase) DeleteRole(ctx context.Context, id uint) error {
+    err := u.storage.DeleteRole(ctx, id)
+    if err != nil {
+        log.Printf("Error deleting role: %v", err)
+        return err
+    }
+    return nil
+}
+
+
 // Get List of Roles
 func (u *Usecase) ListRoles(ctx context.Context) (*[]RoleEntity, error) {
 	roles, err := u.storage.ListRoles(ctx)
@@ -63,4 +92,3 @@ func (u *Usecase) ListRoles(ctx context.Context) (*[]RoleEntity, error) {
 	}
 	return roles, nil
 }
-

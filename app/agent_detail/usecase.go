@@ -11,6 +11,7 @@ type storage interface {
 	CreateAgentDetail(context.Context, AgentDetailEntity) (*int64, error)
 	GetAgentDetailsByUserID(context.Context, string) (*[]AgentDetailEntity, error) 
 	ListAgentDetails(context.Context) (*[]AgentDetailEntity, error)
+	GetAgentByID(context.Context, int) (*AgentDetailEntity, error)
 }
 
 type domain interface {
@@ -51,6 +52,15 @@ func (u *Usecase) GetAgentDetails(ctx context.Context, firebaseId string) (*[]Ag
         return nil, err
     }
     return agentDetail, nil
+}
+
+func (u *Usecase)  GetAgentByID(ctx context.Context, id int) (*AgentDetailEntity, error) {
+    agent, err := u.storage.GetAgentByID(ctx, id)
+    if err != nil {
+        log.Printf("Error getting agent by ID: %v", err)
+        return nil, err
+    }
+    return agent, nil	 
 }
 
 

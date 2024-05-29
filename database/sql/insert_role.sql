@@ -1,6 +1,6 @@
 -- insert role in to role_frameworks like (id, name) id is auto increment
 -- role is mean occupation of user like engineer, doctor, lawyer, scientist, etc
-INSERT INTO role_frameworks (name) VALUES 
+INSERT INTO roles (name) VALUES 
     ('Engineer'),
     ('Doctor'),
     ('Lawyer'),

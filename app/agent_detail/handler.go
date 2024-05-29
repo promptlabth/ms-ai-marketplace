@@ -3,6 +3,7 @@ package agentdetail
 import (
 	"context"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,7 +12,7 @@ type usecase interface {
 	NewAgentDetail(c context.Context, agentDetail AgentDetail) error
 	GetAgentDetails(c context.Context, firebaseId string) (*[]AgentDetailEntity, error)
 	ListAgentDetails(c context.Context) (*[]AgentDetailEntity, error)
-
+	GetAgentByID(c context.Context, id int) (*AgentDetailEntity, error)
 }
 
 type Handler struct {
@@ -65,6 +66,28 @@ func (h *Handler) GetAgentDetails(c *gin.Context) {
 		"agents": agentDetails,
 	})
 }
+
+
+func (h *Handler) GetAgentByID(c *gin.Context) {
+    id := c.Param("id")
+    roleID, err := strconv.Atoi(id)
+    if err != nil {
+        c.JSON(400, map[string]string{
+            "error": "Invalid role ID",
+        })
+        return
+    }
+	// role_id := uint(roleID) 
+
+    agent, err := h.usecase.GetAgentByID(context.Background(), roleID)
+    if err != nil {
+        c.AbortWithStatus(500)
+        return
+    }
+
+    c.JSON(200, gin.H{"agent": agent})
+}
+
 
 
 func (h *Handler) ListAgentDetails(c *gin.Context) {

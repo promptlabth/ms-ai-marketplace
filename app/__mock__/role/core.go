@@ -17,7 +17,7 @@ func NewCore(db *gorm.DB) *Core {
 }
 
 // CreateRole inserts a new role into the database.
-func (c *Core) CreateRole(ctx context.Context, role RoleEntity) (*int, error) {
+func (c *Core) CreateRole(ctx context.Context, role RoleEntity) (*uint, error) {
 	if err := c.db.Create(&role); err.Error != nil {
 		return nil, err.Error
 	}
@@ -25,7 +25,7 @@ func (c *Core) CreateRole(ctx context.Context, role RoleEntity) (*int, error) {
 }
 
 // GetRoleByID retrieves a role by their ID from the database.
-func (c *Core) GetRoleByID(ctx context.Context, id int) (*RoleEntity, error) {
+func (c *Core) GetRoleByID(ctx context.Context, id uint) (*RoleEntity, error) {
 	var role RoleEntity
 	if err := c.db.First(&role, id).Error; err != nil {
 		return nil, err
@@ -49,6 +49,6 @@ func (c *Core) UpdateRole(ctx context.Context, role RoleEntity) error {
 }
 
 // DeleteRole removes a role from the database by their ID.
-func (c *Core) DeleteRole(ctx context.Context, id int) error {
+func (c *Core) DeleteRole(ctx context.Context, id uint) error {
 	return c.db.Delete(&RoleEntity{}, id).Error
 }

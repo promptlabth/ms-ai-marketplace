@@ -33,6 +33,14 @@ func (c *Core) GetAgentDetailsByUserID(ctx context.Context, firebaseId string) (
 	return &agentDetail, nil
 }
 
+func (c *Core) GetAgentByID(ctx context.Context, id int) (*AgentDetailEntity, error) {
+	var agent AgentDetailEntity
+	if err := c.db.First(&agent, id).Error; err != nil {
+		return nil, err	
+	}
+	return &agent, nil
+}
+
 func (c *Core) ListAgentDetails(ctx context.Context) (*[]AgentDetailEntity, error) {
 	var agents []AgentDetailEntity
 	if err := c.db.Find(&agents).Error; err != nil {

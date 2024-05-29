@@ -20,7 +20,8 @@ type AgentDetail struct {
 
 type AgentDetailInterface interface {
 	CreateAgentDetail(ctx context.Context, agent_Detail AgentDetail) (*int64, error) // Creates a new user and returns the user ID
-	GetAgentDetailByID(ctx context.Context, id string) (*AgentDetail, error)          // Fetches a user by their ID
+	GetAgentDetailByID(ctx context.Context, id string) (*AgentDetail, error)         // Fetches a user by their ID
+	GetAgentByID(ctx context.Context, id int) (*AgentDetail, error)
 	// UpdateAgentDetail(ctx context.Context, agent_Detail AgentDetail) error          // Updates an existing user
 	// DeleteAgentDetail(ctx context.Context, id string) error           // Deletes a user by their ID
 	ListAgentDetails(ctx context.Context) (*[]AgentDetail, error)

@@ -7,8 +7,8 @@ import (
 
 type storage interface {
 	CreateFramework(context.Context, FrameworkEntity) (*string, error)
-	GetFrameworkByID(context.Context, string) (*FrameworkEntity, error)
-	ListFrameworks(context.Context) (*[]FrameworkEntity, error)  
+	GetFrameworkByID(context.Context, int) (*FrameworkEntity, error)
+	ListFrameworks(context.Context) (*[]FrameworkEntity, error)
 	UpdateFramework(context.Context, FrameworkEntity) error
 	DeleteFramework(context.Context, string) error
 }
@@ -39,8 +39,8 @@ func (u *Usecase) NewFramework(ctx context.Context, framework Framework) error {
 	// }
 
 	frameworkEntity := FrameworkEntity{
-		Name: framework.Name,
-		Detail: framework.Detail,
+		Name:      framework.Name,
+		Detail:    framework.Detail,
 		Component: framework.Component,
 	}
 	log.Printf("FrameworkEntity: %+v\n", frameworkEntity)
@@ -50,11 +50,19 @@ func (u *Usecase) NewFramework(ctx context.Context, framework Framework) error {
 	return err
 }
 
-func (u *Usecase) ListFrameworks(ctx context.Context) (*[]FrameworkEntity, error) {
-	frameworks, err := u.storage.ListFrameworks(ctx)
-    if err != nil {
-        return nil, err
-    }
-    return frameworks, nil
+func (u *Usecase) GetFrameworkByID(ctx context.Context, id int) (*FrameworkEntity, error) {
+	framework, err := u.storage.GetFrameworkByID(ctx, id)
+	if err != nil {
+		log.Printf("Error getting framwork by ID: %v", err)
+		return nil, err
+	}
+	return framework, nil
 }
 
+func (u *Usecase) ListFrameworks(ctx context.Context) (*[]FrameworkEntity, error) {
+	frameworks, err := u.storage.ListFrameworks(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return frameworks, nil
+}
