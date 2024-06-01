@@ -25,7 +25,7 @@ func (h *Handler) NewUser(c *gin.Context) {
 	var req NewUserRequest
 
 	if err :=c .Bind(&req); err != nil {
-		c.JSON(404, map[string]string{
+		c.JSON(http.StatusNotFound, map[string]string{
 			"error": err.Error(),
 		})
 		return
@@ -43,7 +43,7 @@ func (h *Handler) NewUser(c *gin.Context) {
 	}
 
 	if err := h.usecase.NewUser(context.Background(), user); err != nil {
-		c.AbortWithStatus(500)
+		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
@@ -55,7 +55,7 @@ func (h *Handler) GetUser(c *gin.Context) {
 	log.Printf("firebaseID : %+v\n", firebaseID)
     userByID, err := h.usecase.GetUser(c.Request.Context(), firebaseID)
     if err != nil {
-        c.JSON(500, gin.H{"error": "Failed to get user"})
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get user"})
         return
     }
 

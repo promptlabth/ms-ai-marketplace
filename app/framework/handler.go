@@ -63,7 +63,7 @@ func (h *Handler) GetFrameworkByID(c *gin.Context) {
         return
     }
 
-    c.JSON(200, gin.H{"framework": framework})
+    c.JSON(http.StatusOK, gin.H{"framework": framework})
 }
 
 func (h *Handler) ListFrameworks(c *gin.Context) {
@@ -74,7 +74,7 @@ func (h *Handler) ListFrameworks(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
+	c.JSON(http.StatusOK, gin.H{
 		"status":     "success",
 		"frameworks": frameworks,
 	})

@@ -27,7 +27,7 @@ func (h *Handler) NewAgentDetail(c *gin.Context) {
 	var req NewAgentDetailRequest
 
 	if err := c.Bind(&req); err != nil {
-		c.JSON(404, map[string]string{
+		c.JSON(http.StatusNotFound, map[string]string{
 			"error": err.Error(),
 		})
 		return
@@ -43,7 +43,7 @@ func (h *Handler) NewAgentDetail(c *gin.Context) {
 	}
 
 	if err := h.usecase.NewAgentDetail(context.Background(), agentDetail); err != nil {
-		c.AbortWithStatus(500)
+		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 	c.JSON(http.StatusCreated, gin.H{
@@ -57,7 +57,7 @@ func (h *Handler) GetAgentDetails(c *gin.Context) {
 
 	agentDetails, err := h.usecase.GetAgentDetails(c.Request.Context(), firebaseID)
 	if err != nil {
-		c.JSON(500, gin.H{"error": "Failed to get user"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get user"})
 		return
 	}
 
@@ -72,7 +72,7 @@ func (h *Handler) GetAgentByID(c *gin.Context) {
     id := c.Param("id")
     roleID, err := strconv.Atoi(id)
     if err != nil {
-        c.JSON(400, map[string]string{
+        c.JSON(http.StatusBadRequest, map[string]string{
             "error": "Invalid role ID",
         })
         return
@@ -85,17 +85,16 @@ func (h *Handler) GetAgentByID(c *gin.Context) {
         return
     }
 
-    c.JSON(200, gin.H{"agent": agent})
+    c.JSON(http.StatusOK, gin.H{"agent": agent})
 }
-
 
 
 func (h *Handler) ListAgentDetails(c *gin.Context) {
 	agents, err := h.usecase.ListAgentDetails(context.Background())
 	if err != nil {
-		c.AbortWithStatus(500)
+		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
-	c.JSON(200, gin.H{"agents": agents})
+	c.JSON(http.StatusOK, gin.H{"agents": agents})
 }
