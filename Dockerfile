@@ -68,7 +68,7 @@ ENV TZ=Asia/Bangkok
 # Copy the necessary files from the builder stage
 COPY prompt-lab-383408-512938be4baf.json ./prompt-lab-383408-512938be4baf.json
 COPY --from=builder /app/main ./
-
+# COPY .env ./.env
 # Expose port 8080
 EXPOSE 8080
 

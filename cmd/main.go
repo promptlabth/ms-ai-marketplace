@@ -48,7 +48,7 @@ func main() {
 	if port == "" {
 		port = "8080" // Default port if not specified
 	}
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
+	// log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
 	
 	srv := http.Server{
 		Addr: ":" + port,
