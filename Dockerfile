@@ -1,32 +1,28 @@
-# Use a base image that includes the C compiler and other build tools
-FROM golang:1.22-alpine as builder
+FROM golang:1.22 as builder
 
-# Install GCC and other necessary tools
-RUN apk add --no-cache gcc musl-dev
-
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the Go Modules manifests
-COPY go.mod go.sum ./
-# Download Go module dependencies
+COPY . ./
+
 RUN go mod download
 
-# Copy the source code into the container
-COPY . .
 
-# Set environment variable to enable CGO
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main ./cmd/*.go
+
+
 ENV CGO_ENABLED=1
 
-# Build the Go app
-RUN go build -o /main ./cmd/
+FROM alpine:3.17.0
 
-# Start a new stage from scratch
-FROM alpine:latest  
-WORKDIR /
-COPY .env ./.env
-COPY prompt-lab-383408-512938be4baf.json ./prompt-lab-383408-512938be4baf.json
-COPY --from=builder /main ./
+# Set work directory
+WORKDIR /app
 
-# Command to run the executable
-CMD ["/main"]
+RUN apk --no-cache add ca-certificates tzdata libc6-compat
+
+# Set timezone
+ENV TZ=Asia/Bangkok
+
+# Copy build result from builder
+COPY --from=builder /app/main .
+
+ENTRYPOINT ["./main"]
