@@ -50,11 +50,12 @@ func (h *Handler) NewRole(c *gin.Context) {
 func (h *Handler) ListRoles(c *gin.Context) {
 	roles, err := h.usecase.ListRoles(context.Background())
 	if err != nil {
-		c.AbortWithStatus(500)
+		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"roles": roles})
+<<<<<<< HEAD
 }
 
 // GetRoleByID gets a role by its ID
@@ -77,30 +78,6 @@ func (h *Handler) GetRoleByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"role": role})
 }
-
-// UpdateRole updates the details of an existing role
-// func (h *Handler) UpdateRole(c *gin.Context) {
-//     var req UpdateRoleRequest
-
-//     if err := c.Bind(&req); err != nil {
-//         c.JSON(400, map[string]string{
-//             "error": err.Error(),
-//         })
-//         return
-//     }
-
-//     role := RoleEntity{
-//         ID:   req.ID,
-//         Name: req.Name,
-//     }
-
-//     if err := h.usecase.UpdateRole(context.Background(), role); err != nil {
-//         c.AbortWithStatus(500)
-//         return
-//     }
-
-//     c.JSON(200, gin.H{"message": "Role updated successfully"})
-// }
 
 // DeleteRole removes a role by its ID
 func (h *Handler) DeleteRole(c *gin.Context) {
