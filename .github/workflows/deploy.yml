@@ -48,15 +48,9 @@ jobs:
         --region asia-southeast1 \
         --platform managed \
         --allow-unauthenticated \
-        --set-env-vars DB_USER=${{ secrets.DB_USER_DEV }},DB_PASSWORD=${{ secrets.DB_PASSWORD_DEV }},DB_HOST=${{ secrets.DB_HOST }},DB_PORT=${{ secrets.DB_PORT_DEV }},DB_NAME=${{ secrets.DB_NAME }},ENV=PROD,GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }} \
+        --set-env-vars DB_USER=${{ secrets.DB_USER_DEV }},DB_PASSWORD=${{ secrets.DB_PASSWORD_DEV }},DB_HOST=${{ secrets.DB_HOST }},DB_PORT=${{ secrets.DB_PORT_DEV }},DB_NAME=${{ secrets.DB_NAME }},ENV=PROD,GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }},PORT=8080 \
         --max-instances=10 \
         --memory=2Gi \
         --concurrency=80 \
         --tag=prod \
         --timeout=300s
-
-    # - name: Update traffic tags to staging
-    #   run: |
-    #     gcloud run services update-traffic prompt-lab-be-marketplace \
-    #     --to-tags=prod=100 \
-    #     --region=asia-southeast1
