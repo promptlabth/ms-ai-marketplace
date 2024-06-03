@@ -28,7 +28,7 @@ jobs:
       id: create-cred-vertex-json
       uses: jsdaniell/create-json@v1.2.2
       with:
-        name: "gcp_sa_key.json"
+        name: "prompt-lab-383408-512938be4baf.json"
         json: ${{secrets.GCP_GCS_KEY}}
 
     - name: Build and push Docker image
