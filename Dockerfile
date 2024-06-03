@@ -27,7 +27,7 @@ WORKDIR /
 
 COPY prompt-lab-383408-512938be4baf.json ./prompt-lab-383408-512938be4baf.json
 COPY --from=builder /main ./
-
+COPY .env ./.env
 EXPOSE 8080
 # Command to run the executable
 CMD ["/main"]
