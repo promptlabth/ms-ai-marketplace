@@ -48,7 +48,7 @@ jobs:
         --region asia-southeast1 \
         --platform managed \
         --allow-unauthenticated \
-        --set-env-vars DB_USER=${{ secrets.DB_USER_DEV }},DB_PASSWORD=${{ secrets.DB_PASSWORD_DEV }},DB_HOST=${{ secrets.DB_HOST }},DB_PORT=${{ secrets.DB_PORT_DEV }},DB_NAME=${{ secrets.DB_NAME }},ENV=PROD,GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }},PORT=${{ secrets.PORT }} \
+        --set-env-vars DB_USER=${{ secrets.DB_USER_DEV }},DB_PASSWORD=${{ secrets.DB_PASSWORD_DEV }},DB_HOST=${{ secrets.DB_HOST }},DB_PORT=${{ secrets.DB_PORT_DEV }},DB_NAME=${{ secrets.DB_NAME }},ENV=PROD,GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }} \
         --max-instances=10 \
         --memory=2Gi \
         --concurrency=80 \
