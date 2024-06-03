@@ -44,8 +44,14 @@ func main() {
 	UserRouter(r, db)
 	UploadRouter(r, client)
 
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080" // Default port if not specified
+	}
+
 	srv := http.Server{
-		Addr:              ":" + config.Val.Port,
+		Addr: ":" + port,
+		// Addr:              ":" + config.Val.Port,
 		// Addr:              ":" + "8080",
 		Handler:           r,
 		ReadHeaderTimeout: 5 * time.Second,
