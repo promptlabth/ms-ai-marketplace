@@ -37,6 +37,8 @@
 
 FROM golang:1.22 as builder
 
+RUN apk --no-cache add ca-certificates tzdata libc6-compat
+
 WORKDIR /app
 
 COPY . ./
@@ -52,7 +54,7 @@ FROM alpine:3.17.0
 # Set work directory
 WORKDIR /app
 
-RUN apk --no-cache add ca-certificates tzdata libc6-compat
+
 
 # Set timezone
 ENV TZ=Asia/Bangkok
