@@ -56,6 +56,8 @@ RUN go build -o /main ./cmd/
 # Start a new stage from scratch
 FROM alpine:latest  
 WORKDIR /
+COPY .env ./.env
+COPY prompt-lab-383408-512938be4baf.json ./prompt-lab-383408-512938be4baf.json
 COPY --from=builder /main ./
 
 # Command to run the executable

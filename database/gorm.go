@@ -8,11 +8,11 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
-	"github.com/promptlabth/ms-orch-user-service/app/__mock__/role"
-	agentdetail "github.com/promptlabth/ms-orch-user-service/app/agent_detail"
-	"github.com/promptlabth/ms-orch-user-service/app/framework"
-	"github.com/promptlabth/ms-orch-user-service/app/role_framework"
-	"github.com/promptlabth/ms-orch-user-service/app/user"
+	// "github.com/promptlabth/ms-orch-user-service/app/__mock__/role"
+	// agentdetail "github.com/promptlabth/ms-orch-user-service/app/agent_detail"
+	// "github.com/promptlabth/ms-orch-user-service/app/framework"
+	// "github.com/promptlabth/ms-orch-user-service/app/role_framework"
+	// "github.com/promptlabth/ms-orch-user-service/app/user"
 )
 
 type GormConnection struct {
@@ -49,14 +49,7 @@ func NewGormDB(dsn string) *gorm.DB {
 	if err != nil {
 		log.Panic(err)
 	}
-	if err := db.AutoMigrate(
-		&user.UserEntity{},
-		&agentdetail.AgentDetailEntity{},
-		&framework.FrameworkEntity{},
-		&roleframework.RoleFrameworkEntity{},
-		&role.RoleEntity{}); err != nil { // Add RoleEntity to the migrations
-		log.Fatalf("Failed to run migrations: %v", err)
-	}
+	
 
 	return db
 }
