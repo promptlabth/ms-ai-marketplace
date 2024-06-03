@@ -55,7 +55,6 @@ func (h *Handler) ListRoles(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"roles": roles})
-<<<<<<< HEAD
 }
 
 // GetRoleByID gets a role by its ID
