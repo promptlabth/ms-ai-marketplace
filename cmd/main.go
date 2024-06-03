@@ -45,7 +45,8 @@ func main() {
 	UploadRouter(r, client)
 
 	srv := http.Server{
-		Addr:              ":" + config.Val.Port,
+		// Addr:              ":" + config.Val.Port,
+		Addr:              ":" + "8080",
 		Handler:           r,
 		ReadHeaderTimeout: 5 * time.Second,
 	}
