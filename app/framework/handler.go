@@ -39,12 +39,14 @@ func (h *Handler) NewFramework(c *gin.Context) {
 	}
 
 	if err := h.usecase.NewFramework(context.Background(), framework); err != nil {
-		c.AbortWithStatus(500)
+		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Framework created successfully"})
+	c.JSON(http.StatusCreated, gin.H{"message": "Framework created successfully"})
 }
+
+
 
 func (h *Handler) GetFrameworkByID(c *gin.Context) {
 	id := c.Param("id")

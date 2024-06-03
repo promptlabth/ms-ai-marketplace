@@ -32,12 +32,6 @@ func NewUsecase(s storage, d domain) *Usecase {
 // NewRole orchestrates the process of validating and creating a new role.
 func (u *Usecase) NewFramework(ctx context.Context, framework Framework) error {
 
-	// First, use the domain logic to validate the new framework.
-	// if err := u.domain.ValidateNewFramework(ctx, framework); err != nil {
-	// 	log.Printf("Error validating new framework: %v", err)
-	// 	return err
-	// }
-
 	frameworkEntity := FrameworkEntity{
 		Name:      framework.Name,
 		Detail:    framework.Detail,
@@ -45,10 +39,11 @@ func (u *Usecase) NewFramework(ctx context.Context, framework Framework) error {
 	}
 	log.Printf("FrameworkEntity: %+v\n", frameworkEntity)
 
-	// If validation passes, proceed to create the frameworkEntity in the storage layer.
 	_, err := u.storage.CreateFramework(ctx, frameworkEntity)
 	return err
 }
+
+
 
 func (u *Usecase) GetFrameworkByID(ctx context.Context, id int) (*FrameworkEntity, error) {
 	framework, err := u.storage.GetFrameworkByID(ctx, id)
