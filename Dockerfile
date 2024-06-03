@@ -58,6 +58,7 @@ RUN apk --no-cache add ca-certificates tzdata libc6-compat
 ENV TZ=Asia/Bangkok
 
 COPY prompt-lab-383408-512938be4baf.json ./prompt-lab-383408-512938be4baf.json
+
 COPY --from=builder /main ./
 # COPY .env ./.env
 EXPOSE 8080
