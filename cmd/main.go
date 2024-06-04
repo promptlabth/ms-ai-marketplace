@@ -14,7 +14,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/promptlabth/ms-orch-user-service/config"
 	"github.com/promptlabth/ms-orch-user-service/database"
-	"github.com/promptlabth/ms-orch-user-service/initializers"
+	// "github.com/promptlabth/ms-orch-user-service/initializers"
 	"google.golang.org/api/option"
 )
 
