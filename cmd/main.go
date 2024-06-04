@@ -18,9 +18,9 @@ import (
 	"google.golang.org/api/option"
 )
 
-func init() {
-	initializers.LoadEnvVariables()
-}
+// func init() {
+// 	initializers.LoadEnvVariables()
+// }
 
 func main() {
 	ctx := context.Background()
