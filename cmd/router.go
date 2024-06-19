@@ -31,7 +31,8 @@ func FrameworkRouter(router *gin.Engine, db *gorm.DB) {
 	frameworkHandler := framework.NewHandler(frameworkUsecase)
 
 	router.POST("/creator/framework", frameworkHandler.NewFramework)
-	router.GET("/creator/frameworks", frameworkHandler.ListFrameworks)
+	// router.GET("/creator/frameworks", frameworkHandler.ListFrameworks)
+	router.GET("/:lang/creator/frameworks", frameworkHandler.ListFrameworks)
 	router.GET("creator/framework/:id", frameworkHandler.GetFrameworkByID)
 }
 
