@@ -19,10 +19,12 @@ func CORSMiddleware() gin.HandlerFunc {
         }
 		
 		path := c.Request.URL.Path
+		println("path: ",path)
 		segments := strings.Split(path, "/")
-		println(segments)
+		println("segments: ",segments)
 		if len(segments) > 1 {
 			lang := segments[1]
+			println("lang: ",lang)
 			switch lang {
 			case "en":
 				c.Set("language", "en")
