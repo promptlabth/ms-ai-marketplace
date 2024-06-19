@@ -10,7 +10,7 @@ import (
 
 type usecase interface {
 	NewFramework(ctx context.Context, framework Framework) error
-	ListFrameworks(ctx context.Context) (*[]FrameworkEntity, error)
+	ListFrameworks(ctx context.Context, language string) (*[]FrameworkEntity, error)
 	GetFrameworkByID(ctx context.Context, id int) (*FrameworkEntity, error)
 }
 
@@ -36,6 +36,7 @@ func (h *Handler) NewFramework(c *gin.Context) {
 		Name:      req.Name,
 		Detail:    req.Detail,
 		Component: req.Component,
+		Language:  req.Language ,
 	}
 
 	if err := h.usecase.NewFramework(context.Background(), framework); err != nil {
@@ -53,11 +54,10 @@ func (h *Handler) GetFrameworkByID(c *gin.Context) {
 	framwork_id, err := strconv.Atoi(id)
 	if err != nil {
         c.JSON(400, map[string]string{
-            "error": "Invalid role ID",
+            "error": "Invalid framework ID",
         })
         return
     }
-	// role_id := uint(roleID) 
 
     framework, err := h.usecase.GetFrameworkByID(context.Background(), framwork_id)
     if err != nil {
@@ -69,8 +69,15 @@ func (h *Handler) GetFrameworkByID(c *gin.Context) {
 }
 
 func (h *Handler) ListFrameworks(c *gin.Context) {
-
-	frameworks, err := h.usecase.ListFrameworks(c.Request.Context())
+	language := c.GetString("language")
+	if language == "" {
+        c.JSON(400, map[string]string{
+            "error": "Language not set",
+        })
+        return
+    }
+	
+	frameworks, err := h.usecase.ListFrameworks(c.Request.Context(), language)
 	if err != nil {
 		c.JSON(500, gin.H{"error": "Failed to get user"})
 		return

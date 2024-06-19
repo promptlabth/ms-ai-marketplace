@@ -8,7 +8,7 @@ import (
 type storage interface {
 	CreateFramework(context.Context, FrameworkEntity) (*string, error)
 	GetFrameworkByID(context.Context, int) (*FrameworkEntity, error)
-	ListFrameworks(context.Context) (*[]FrameworkEntity, error)
+	ListFrameworks(context.Context, string) (*[]FrameworkEntity, error)
 	UpdateFramework(context.Context, FrameworkEntity) error
 	DeleteFramework(context.Context, string) error
 }
@@ -36,14 +36,13 @@ func (u *Usecase) NewFramework(ctx context.Context, framework Framework) error {
 		Name:      framework.Name,
 		Detail:    framework.Detail,
 		Component: framework.Component,
+		Language: framework.Language, 
 	}
 	log.Printf("FrameworkEntity: %+v\n", frameworkEntity)
 
 	_, err := u.storage.CreateFramework(ctx, frameworkEntity)
 	return err
 }
-
-
 
 func (u *Usecase) GetFrameworkByID(ctx context.Context, id int) (*FrameworkEntity, error) {
 	framework, err := u.storage.GetFrameworkByID(ctx, id)
@@ -54,8 +53,8 @@ func (u *Usecase) GetFrameworkByID(ctx context.Context, id int) (*FrameworkEntit
 	return framework, nil
 }
 
-func (u *Usecase) ListFrameworks(ctx context.Context) (*[]FrameworkEntity, error) {
-	frameworks, err := u.storage.ListFrameworks(ctx)
+func (u *Usecase) ListFrameworks(ctx context.Context, language string) (*[]FrameworkEntity, error) {
+	frameworks, err := u.storage.ListFrameworks(ctx, language)
 	if err != nil {
 		return nil, err
 	}

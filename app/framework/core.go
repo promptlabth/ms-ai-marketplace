@@ -34,10 +34,11 @@ func (c *Core) GetFrameworkByID(ctx context.Context, id int) (*FrameworkEntity, 
 }
 
 // ListFrameworks retrieves  frameworks by their ID from the database.
-func (c *Core) ListFrameworks(ctx context.Context) (*[]FrameworkEntity, error) {
+func (c *Core) ListFrameworks(ctx context.Context, language string) (*[]FrameworkEntity, error) {
 	var frameworks []FrameworkEntity
-	if err := c.db.Find(&frameworks,).Error; err != nil {
-		return nil, err
+	query := c.db.WithContext(ctx).Where("language = ?", language).Find(&frameworks)
+	if query.Error != nil {
+		return nil, query.Error
 	}
 	return &frameworks, nil
 }

@@ -9,6 +9,7 @@ type Framework struct {
 	Name string
 	Detail string 
 	Component json.RawMessage
+	Language  string 
 }
 
 type FrameworkInterface interface {
@@ -23,4 +24,5 @@ type NewFrameworkRequest struct {
 	Name string `json:"name"`
 	Detail string `json:"detail"`
 	Component json.RawMessage `json:"component"`
+	Language  string  `json:"language"`
 }

@@ -7,6 +7,7 @@ type FrameworkEntity struct {
 	Name      string          `gorm:"column:name;uniqueIndex"`
 	Detail    string          `gorm:"column:detail"`
 	Component json.RawMessage `gorm:"column:component"`
+	Language  string          `gorm:"column:language"`
 }
 
 func (FrameworkEntity) TableName() string {
