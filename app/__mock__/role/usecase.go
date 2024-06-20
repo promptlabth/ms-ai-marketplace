@@ -13,7 +13,7 @@ type storage interface {
 	GetRoleByID(ctx context.Context, id uint) (*RoleEntity, error)
 	UpdateRole(ctx context.Context, role RoleEntity) error
 	DeleteRole(ctx context.Context, id uint) error
-	ListRoles(ctx context.Context) (*[]RoleEntity, error)
+	ListRoles(ctx context.Context,language string) (*[]RoleEntity, error)
 }
 
 // domain outlines the methods required by the use case for domain logic and validations.
@@ -85,8 +85,8 @@ func (u *Usecase) DeleteRole(ctx context.Context, id uint) error {
 
 
 // Get List of Roles
-func (u *Usecase) ListRoles(ctx context.Context) (*[]RoleEntity, error) {
-	roles, err := u.storage.ListRoles(ctx)
+func (u *Usecase) ListRoles(ctx context.Context,language string) (*[]RoleEntity, error) {
+	roles, err := u.storage.ListRoles(ctx,language)
 	if err != nil {
 		return nil, err
 	}

@@ -34,10 +34,11 @@ func (c *Core) GetRoleByID(ctx context.Context, id uint) (*RoleEntity, error) {
 }
 
 //GET List of Roles
-func (c *Core) ListRoles(ctx context.Context) (*[]RoleEntity, error) {
+func (c *Core) ListRoles(ctx context.Context,language string) (*[]RoleEntity, error) {
 	var roles []RoleEntity
-	if err := c.db.Find(&roles).Error; err != nil {
-		return nil, err
+	query := c.db.WithContext(ctx).Where("language = ?", language).Find(&roles)
+	if query.Error != nil {
+		return nil, query.Error
 	}
 	return &roles, nil
 }

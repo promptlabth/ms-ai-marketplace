@@ -4,6 +4,7 @@ package role
 type RoleEntity struct {
     ID   uint   `gorm:"autoIncrement;column:id"`
     Name string `gorm:"column:name"`
+    Language  string  `gorm:"column:language"`
 }
 
 // TableName sets the insert table name for this struct type

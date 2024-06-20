@@ -10,7 +10,7 @@ import (
 
 type usecase interface {
 	NewRole(ctx context.Context, role Role) error
-	ListRoles(ctx context.Context) (*[]RoleEntity, error)
+	ListRoles(ctx context.Context,language string) (*[]RoleEntity, error)
 	GetRoleByID(ctx context.Context, id uint) (*RoleEntity, error)
 	UpdateRole(ctx context.Context, role RoleEntity) error
 	DeleteRole(ctx context.Context, id uint) error
@@ -48,7 +48,15 @@ func (h *Handler) NewRole(c *gin.Context) {
 
 // ListRoles gets a list of roles
 func (h *Handler) ListRoles(c *gin.Context) {
-	roles, err := h.usecase.ListRoles(context.Background())
+
+	language := c.GetString("language")
+	if language == "" {
+        c.JSON(400, map[string]string{
+            "error": "Language not set",
+        })
+        return
+    }
+	roles, err := h.usecase.ListRoles(context.Background(),language)
 	if err != nil {
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return

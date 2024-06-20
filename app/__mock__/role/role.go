@@ -8,6 +8,7 @@ import (
 type Role struct {
 	ID   int
 	Name string
+	Language  string
 }
 
 // RoleInterface defines the set of methods that any implementation of the Role service must provide.
@@ -16,14 +17,16 @@ type RoleInterface interface {
 	GetRoleByID(ctx context.Context, id int64) (*Role, error) // Fetches a role by their ID
 	UpdateRole(ctx context.Context, role Role) error          // Updates an existing role
 	DeleteRole(ctx context.Context, id int64) error           // Deletes a role by their ID
-	ListRoles(ctx context.Context) (*[]RoleEntity, error)
+	ListRoles(ctx context.Context, language string) (*[]RoleEntity, error)
 }
 
 type NewRoleRequest struct {
 	Name string `json:"name"`
+	Language  string  `json:"language"`
 }
 
 type UpdateRoleRequest struct {
 	ID   uint   `json:"id"`
 	Name string `json:"name"`
+	Language  string  `json:"language"`
 }

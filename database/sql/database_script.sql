@@ -52,19 +52,22 @@ CREATE TABLE agent_details (
 
 CREATE TABLE role_frameworks (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(255) UNIQUE
+  name VARCHAR(255),
+  language VARCHAR(255)
 );
 
 CREATE TABLE roles (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(255) UNIQUE
+  name VARCHAR(255),
+  language VARCHAR(255)
 );
 
 CREATE TABLE frameworks (
-  id SERIAL PRIMARY KEY,
-  name VARCHAR(255) NOT NULL UNIQUE,
-  detail VARCHAR(255),
-  component JSONB
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    detail VARCHAR(255),
+    component JSONB,
+    language VARCHAR(255)
 );
 
 CREATE TABLE users (
