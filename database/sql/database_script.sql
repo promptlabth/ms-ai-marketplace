@@ -81,3 +81,15 @@ CREATE TABLE users (
   password VARCHAR(255),
   datetime_last_active TIMESTAMP
 );
+
+CREATE TABLE history (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    agent_id INT NOT NULL,
+    framework_id INT NOT NULL,
+    prompt TEXT NOT NULL,
+    style_message_id INT NOT NULL,
+    language_id INT NOT NULL,
+    result TEXT NOT NULL,
+    time_stamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
