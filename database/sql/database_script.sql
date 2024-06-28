@@ -93,3 +93,9 @@ CREATE TABLE history (
     result TEXT NOT NULL,
     time_stamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE style_prompts (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    language TEXT NOT NULL
+);

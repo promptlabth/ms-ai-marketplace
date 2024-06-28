@@ -5,10 +5,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/promptlabth/ms-orch-user-service/app/agent_detail"
 	"github.com/promptlabth/ms-orch-user-service/app/framework"
+	styleprompt "github.com/promptlabth/ms-orch-user-service/app/style_prompt"
+
 	// "github.com/promptlabth/ms-orch-user-service/app/role"
+	"github.com/promptlabth/ms-orch-user-service/app/__mock__/role"
 	"github.com/promptlabth/ms-orch-user-service/app/upload"
 	"github.com/promptlabth/ms-orch-user-service/app/user"
-	"github.com/promptlabth/ms-orch-user-service/app/__mock__/role"
 	"gorm.io/gorm"
 )
 
@@ -68,4 +70,13 @@ func UploadRouter(router *gin.Engine, client *storage.Client) {
 	router.POST("/creator/upload", uploadHandler.Uploadfile)
 }
 
+func StylePromptRouter(router *gin.Engine, db *gorm.DB) {
+	stylePromptValidation := styleprompt.NewAdaptor(db)
+	stylePromptCore := styleprompt.NewCore(db)
+	stylePromptUsecase := styleprompt.NewUsecase(stylePromptCore,stylePromptValidation)
+	stylePromptHandler := styleprompt.NewHandler(stylePromptUsecase)
+
+	router.GET("/:lang/customer/style_prompts", stylePromptHandler.ListStylePrompts)
+	router.GET("/:lang/customer/style_prompt", stylePromptHandler.GetStylePromptByID)
+}
 
