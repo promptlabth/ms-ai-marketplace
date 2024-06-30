@@ -77,6 +77,6 @@ func StylePromptRouter(router *gin.Engine, db *gorm.DB) {
 	stylePromptHandler := styleprompt.NewHandler(stylePromptUsecase)
 
 	router.GET("/:lang/customer/style_prompts", stylePromptHandler.ListStylePrompts)
-	router.GET("/:lang/customer/style_prompt", stylePromptHandler.GetStylePromptByID)
+	router.GET("/:lang/customer/style_prompt/:id", stylePromptHandler.GetStylePromptByID)
 }
 
