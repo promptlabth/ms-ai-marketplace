@@ -7,12 +7,12 @@ import (
 
 type History struct {
 	ID             int     
-	UserID         int      
+	UserID         string      
 	AgentID        int     
 	FrameworkID    int       
 	Prompt         string   
 	StyleMessageID int      
-	LanguageID     int      
+	Language       string      
 	Result         string 
 	TimeStamp      time.Time 
 }
@@ -26,11 +26,9 @@ type HistoryInterface interface {
 }
 
 type NewHistoryRequest struct {
-	UserID         int    `json:"user_id"` 
+	UserID         string    `json:"user_id"` 
 	AgentID        int    `json:"agent_id"`
 	FrameworkID    int    `json:"framework_id"`
 	Prompt         string `json:"prompt"`
 	StyleMessageID int    `json:"style_message_id"`
-	LanguageID     int    `json:"language_id"`
-	Result         string `json:"result"`
 }

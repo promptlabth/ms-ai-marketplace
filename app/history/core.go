@@ -3,6 +3,7 @@ package history
 import (
 	"context"
 
+	agentdetail "github.com/promptlabth/ms-orch-user-service/app/agent_detail"
 	"gorm.io/gorm"
 )
 
@@ -24,6 +25,13 @@ func (c *Core) CreateHistory(ctx context.Context, history HistoryEntity) (*int, 
 	return &history.ID, nil
 }
 
+func (c *Core) GetAgentByID(ctx context.Context, id int) (*agentdetail.AgentDetailEntity, error) {
+	var agent agentdetail.AgentDetailEntity
+	if err := c.db.First(&agent, id).Error; err != nil {
+		return nil, err	
+	}
+	return &agent, nil
+}
 // // GetHistoryByID retrieves a history record by its ID from the database.
 // func (c *Core) GetHistoryByID(ctx context.Context, id int) (*History, error) {
 // 	var history History

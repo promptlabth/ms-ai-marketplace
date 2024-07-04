@@ -84,12 +84,12 @@ CREATE TABLE users (
 
 CREATE TABLE history (
     id SERIAL PRIMARY KEY,
-    user_id INT NOT NULL,
+    user_id TEXT NOT NULL,
     agent_id INT NOT NULL,
     framework_id INT NOT NULL,
     prompt TEXT NOT NULL,
     style_message_id INT NOT NULL,
-    language_id INT NOT NULL,
+    language TEXT NOT NULL,
     result TEXT NOT NULL,
     time_stamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

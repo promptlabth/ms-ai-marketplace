@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/promptlabth/ms-orch-user-service/app/agent_detail"
 	"github.com/promptlabth/ms-orch-user-service/app/framework"
+	"github.com/promptlabth/ms-orch-user-service/app/history"
 	styleprompt "github.com/promptlabth/ms-orch-user-service/app/style_prompt"
 
 	// "github.com/promptlabth/ms-orch-user-service/app/role"
@@ -78,5 +79,14 @@ func StylePromptRouter(router *gin.Engine, db *gorm.DB) {
 
 	router.GET("/:lang/customer/style_prompts", stylePromptHandler.ListStylePrompts)
 	router.GET("/:lang/customer/style_prompt/:id", stylePromptHandler.GetStylePromptByID)
+}
+func GenerateMessageRouter(router *gin.Engine, db *gorm.DB) {
+	generateMessageValidation := history.NewAdaptor(db)
+	generateMessageCore := history.NewCore(db)
+	generateMessageUsecase := history.NewUsecase(generateMessageCore,generateMessageValidation)
+	generateMessageHandler := history.NewHandler(generateMessageUsecase)
+
+	router.POST("/:lang/customer/use_agent/messages", generateMessageHandler.GenerateMessage)
+	// router.GET("/:lang/customer/style_prompt/:id", stylePromptHandler.GetStylePromptByID)
 }
 

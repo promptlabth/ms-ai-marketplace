@@ -23,13 +23,12 @@ type Handler struct {
 	usecase usecase
 }
 
-// NewHandler creates a new Handler with the given usecase
 func NewHandler(u usecase) *Handler {
 	return &Handler{usecase: u}
 }
 
-// CreateHistory creates a new history record
-func (h *Handler) CreateHistory(c *gin.Context) {
+// CreateHistory creates a new history 
+func (h *Handler) GenerateMessage(c *gin.Context) {
 	var req NewHistoryRequest
 
 	if err := c.Bind(&req); err != nil {
@@ -39,18 +38,26 @@ func (h *Handler) CreateHistory(c *gin.Context) {
 		return
 	}
 
+	language := c.GetString("language")
+	if language == "" {
+        c.JSON(400, map[string]string{
+            "error": "Language not set",
+        })
+        return
+    }
+
 	history := History{
 		UserID:         req.UserID,
 		AgentID:        req.AgentID,
 		FrameworkID:    req.FrameworkID,
 		Prompt:         req.Prompt,
 		StyleMessageID: req.StyleMessageID,
-		LanguageID:     req.LanguageID,
-		Result:         req.Result,
+		Language:       language,
+		Result:         language,
 		TimeStamp:      time.Now(),
 	}
 
-	 result,err := h.usecase.CreateHistory(context.Background(), history); 
+	result , err := h.usecase.CreateHistory(context.Background(), history); 
 	if err != nil {
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
