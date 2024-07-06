@@ -100,7 +100,7 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, 
 	inputPromptTemplate := " Provide guidance in the role of {{.role}} which includes {{.frameworkDetail}} needing an answer in the style of {{.styleMessage}} language {{.language}}"
 	inputPrompt, err := formatInputPrompt(inputPromptTemplate, role, frameworkDetail.String(), styleMessage.Name, history)
 	if err != nil {
-		log.Printf("Error generating message: %v", err)
+		log.Printf("Error formatInputPrompt: %v", err)
 		return nil, err
 	}
 

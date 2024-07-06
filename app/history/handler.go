@@ -58,7 +58,7 @@ func (h *Handler) GenerateMessage(c *gin.Context) {
 
 	result , err := h.usecase.CreateHistory(context.Background(), history); 
 	if err != nil {
-		c.AbortWithStatus(http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"err": err})
 		return
 	}
 
