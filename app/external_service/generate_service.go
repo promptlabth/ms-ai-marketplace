@@ -1,145 +1,148 @@
 package generateservice
 
+import (
+	"context"
+	"os"
+
+	"github.com/google/generative-ai-go/genai"
+	"google.golang.org/api/option"
+)
+
 // import (
 // 	"context"
-// 	"encoding/json"
+// 	// "encoding/json"
+// 	"fmt"
 // 	"io/ioutil"
-// 	"net/http"
+// 	"log"
 // 	"os"
+
 // 	openai "github.com/sashabaranov/go-openai"
-// 	"golang.org/x/oauth2/google"
+// 	"cloud.google.com/go/compute/metadata"
 // 	"google.golang.org/api/option"
-// 	vertexai "google.golang.org/api/vertexai/v1"
+// 	"google.golang.org/api/storage/v1"
 // )
 
-// type GenerateService struct {
-// 	openaiClient     *openai.Client
-// 	vertexAIService  *vertexai.Service
-// 	anthropicAPIKey  string
+type Generate struct {
+	
+}
+
+func NewGenerate() *Generate {
+	return &Generate{}
+}
+
+// type VertexModel struct {
+// 	ModelName string
 // }
 
-// func NewGenerateService() *GenerateService {
+// type ModelParameter struct {
+// 	MaxOutputTokens int     `json:"max_output_tokens"`
+// 	Temperature     float64 `json:"temperature"`
+// 	TopP            float64 `json:"top_p"`
+// 	TopK            int     `json:"top_k"`
+// }
+
+// func main() {
+// 	app := App{}
+// 	app.init()
+// 	inputPrompt := "Your prompt here"
+// 	featureName := "เขียนบทความ"
+// 	response := app.generateMessageOpenAI(inputPrompt)
+// 	fmt.Println("OpenAI Response: ", response)
+
+// 	vertexResponse := app.generateMessageVertexAI(inputPrompt, featureName)
+// 	fmt.Println("Vertex AI Response: ", vertexResponse)
+// }
+
+// func (a *App) init() {
+// 	apiKey := os.Getenv("OPENAI_KEY")
+// 	gcpProjectID := os.Getenv("GCP_PROJECT_ID")
+
 // 	// Initialize OpenAI client
-// 	openaiClient := openai.NewClient(os.Getenv("OPENAI_KEY"))
+// 	a.anthropicClient = openai.Client{
+// 		AuthToken: apiKey,
+// 	}
 
-// 	// Initialize Vertex AI client
+// 	// Initialize Google Cloud credentials
+// 	cred, err := ioutil.ReadFile("gcp_sa_key.json")
+// 	if err != nil {
+// 		log.Fatalf("Failed to read GCP service account key file: %v", err)
+// 	}
+
 // 	ctx := context.Background()
-// 	cred, err := google.CredentialsFromJSON(ctx, []byte(os.Getenv("GCP_SA_KEY_JSON")), vertexai.VertexaiScope)
+// 	storageService, err := storage.NewService(ctx, option.WithCredentialsJSON(cred))
 // 	if err != nil {
-// 		panic(err)
-// 	}
-// 	vertexAIService, err := vertexai.NewService(ctx, option.WithCredentials(cred))
-// 	if err != nil {
-// 		panic(err)
+// 		log.Fatalf("Failed to create storage service: %v", err)
 // 	}
 
-// 	return &GenerateService{
-// 		openaiClient:    openaiClient,
-// 		vertexAIService: vertexAIService,
-// 		anthropicAPIKey: os.Getenv("ANTHROPIC_API_KEY"),
-// 	}
+// 	// Use storageService as needed...
+// 	_ = storageService
+
+// 	fmt.Println("Initialization complete")
 // }
 
-// func (gs *GenerateService) GenerateMessageOpenAI(inputPrompt string) (string, error) {
-// 	req := openai.ChatCompletionRequest{
-// 		Model: "gpt-3.5-turbo",
+// func (a *App) generateMessageOpenAI(inputPrompt string) string {
+// 	resp, err := a.anthropicClient.Completions.Create(context.TODO(), openai.CompletionRequest{
+// 		Model: openai.GPT3_5_Turbo,
 // 		Messages: []openai.ChatCompletionMessage{
 // 			{Role: "user", Content: inputPrompt},
 // 		},
-// 	}
-// 	resp, err := gs.openaiClient.CreateChatCompletion(context.Background(), req)
-// 	if err != nil {
-// 		return "", err
-// 	}
-// 	return resp.Choices[0].Message.Content, nil
-// }
-
-// func (gs *GenerateService) GetModelAndParameter(featureName string) (string, map[string]interface{}) {
-// 	model := "gemini-1.0-pro-002"
-// 	modelList := map[string]map[string]interface{}{
-// 		"เขียนแคปชั่นขายของ": {
-// 			"model": model,
-// 			"parametor": map[string]interface{}{
-// 				"max_output_tokens": 4096,
-// 				"temperature":       0.6,
-// 				"top_p":             0.8,
-// 				"top_k":             40,
-// 			},
-// 		},
-// 		"ช่วยคิดคอนเทนต์": {
-// 			"model": model,
-// 			"parametor": map[string]interface{}{
-// 				"max_output_tokens": 8192,
-// 				"temperature":       0.2,
-// 				"top_p":             0.8,
-// 				"top_k":             40,
-// 			},
-// 		},
-// 		"เขียนบทความ": {
-// 			"model": model,
-// 			"parametor": map[string]interface{}{
-// 				"max_output_tokens": 8192,
-// 				"temperature":       0.2,
-// 				"top_p":             0.8,
-// 				"top_k":             40,
-// 			},
-// 		},
-// 		"เขียนสคริปวิดีโอสั้น": {
-// 			"model": model,
-// 			"parametor": map[string]interface{}{
-// 				"max_output_tokens": 8192,
-// 				"temperature":       0.4,
-// 				"top_p":             0.8,
-// 				"top_k":             40,
-// 			},
-// 		},
-// 		"เขียนประโยคเปิดคลิป": {
-// 			"model": model,
-// 			"parametor": map[string]interface{}{
-// 				"max_output_tokens": 1024,
-// 				"temperature":       0.5,
-// 				"top_p":             0.8,
-// 				"top_k":             40,
-// 			},
-// 		},
-// 	}
-// 	return modelList[featureName]["model"].(string), modelList[featureName]["parametor"].(map[string]interface{})
-// }
-
-// func (gs *GenerateService) GenerateMessageVertexAI(inputPrompt, featureName string) (string, error) {
-// 	model, params := gs.GetModelAndParameter(featureName)
-// 	generationConfig := map[string]interface{}{
-// 		"max_output_tokens": 8192,
-// 		"temperature":       1,
-// 		"top_p":             0.95,
-// 	}
-
-// 	requestBody, err := json.Marshal(map[string]interface{}{
-// 		"prompt":         inputPrompt,
-// 		"generationConfig": generationConfig,
 // 	})
+
 // 	if err != nil {
-// 		return "", err
+// 		log.Fatalf("OpenAI API call failed: %v", err)
 // 	}
 
-// 	req, err := http.NewRequest("POST", "https://vertex.googleapis.com/v1/projects/"+os.Getenv("GCP_PROJECT_ID")+"/locations/asia-southeast1/models/"+model+":predict", ioutil.NopCloser(bytes.NewReader(requestBody)))
-// 	if err != nil {
-// 		return "", err
-// 	}
-// 	req.Header.Set("Authorization", "Bearer "+cred.Token)
-// 	req.Header.Set("Content-Type", "application/json")
-
-// 	resp, err := http.DefaultClient.Do(req)
-// 	if err != nil {
-// 		return "", err
-// 	}
-// 	defer resp.Body.Close()
-
-// 	var result map[string]interface{}
-// 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
-// 		return "", err
-// 	}
-
-// 	return result["predictions"].([]interface{})[0].(map[string]interface{})["content"].(string), nil
+// 	return resp.Choices[0].Message.Content
 // }
 
+// func (a *App) getModelAndParameter(featureName string) (string, ModelParameter) {
+// 	model := "gemini-1.0-pro-002"
+// 	modelList := map[string]ModelParameter{
+// 		"เขียนแคปชั่นขายของ":  {4096, 0.6, 0.8, 40},
+// 		"ช่วยคิดคอนเทนต์":   {8192, 0.2, 0.8, 40},
+// 		"เขียนบทความ":       {8192, 0.2, 0.8, 40},
+// 		"เขียนสคริปวิดีโอสั้น": {8192, 0.4, 0.8, 40},
+// 		"เขียนประโยคเปิดคลิป":  {1024, 0.5, 0.8, 40},
+// 	}
+
+// 	return model, modelList[featureName]
+// }
+
+// func (a *App) getVertexModel(modelName string) VertexModel {
+// 	return VertexModel{ModelName: modelName}
+// }
+
+// func (a *App) generateMessageVertexAI(inputPrompt, featureName string) string {
+// 	model, params := a.getModelAndParameter(featureName)
+
+// 	generationConfig := ModelParameter{
+// 		MaxOutputTokens: 8192,
+// 		Temperature:     1,
+// 		TopP:            0.95,
+// 	}
+
+// 	vertexModel := a.getVertexModel(model)
+
+// 	// Assuming vertexModel.GenerateContent is the method to generate content
+// 	// Replace with actual method to generate content using the vertexModel
+
+// 	// For demonstration, we're returning a placeholder string
+// 	return fmt.Sprintf("Generated content for prompt: %s with model: %s and parameters: %+v", inputPrompt, vertexModel.ModelName, generationConfig)
+// }
+
+func (g *Generate) GenerateMessageGemini(inputPrompt string) (string, error) { // Exported method
+	ctx := context.Background()
+
+	client, err := genai.NewClient(ctx, option.WithAPIKey(os.Getenv("API_KEY")))
+	if err != nil {
+		return "", err
+	}
+	defer client.Close()
+
+	model := client.GenerativeModel("gemini-1.5-flash")
+	resp, err := model.GenerateContent(ctx, genai.Text(inputPrompt))
+	if err != nil {
+		return "", err
+	}
+	return resp.PromptFeedback.BlockReason.String(), nil
+}

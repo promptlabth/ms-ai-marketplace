@@ -3,7 +3,10 @@ package history
 import (
 	"context"
 
+	"github.com/promptlabth/ms-orch-user-service/app/__mock__/role"
 	agentdetail "github.com/promptlabth/ms-orch-user-service/app/agent_detail"
+	"github.com/promptlabth/ms-orch-user-service/app/framework"
+	styleprompt "github.com/promptlabth/ms-orch-user-service/app/style_prompt"
 	"gorm.io/gorm"
 )
 
@@ -31,6 +34,27 @@ func (c *Core) GetAgentByID(ctx context.Context, id int) (*agentdetail.AgentDeta
 		return nil, err	
 	}
 	return &agent, nil
+}
+func (c *Core) GetFrameworkByID(ctx context.Context, id int) (*framework.FrameworkEntity, error) {
+	var framework framework.FrameworkEntity
+	if err := c.db.First(&framework, id).Error; err != nil {
+		return nil, err	
+	}
+	return &framework, nil
+}
+func (c *Core) GetStyleMessageByID(ctx context.Context, id int) (*styleprompt.StylePromptEntity, error) {
+	var styleMessage styleprompt.StylePromptEntity
+	if err := c.db.First(&styleMessage, id).Error; err != nil {
+		return nil, err	
+	}
+	return &styleMessage, nil
+}
+func (c *Core) GetRoleByID(ctx context.Context, id int) (*role.RoleEntity, error) {
+	var role role.RoleEntity
+	if err := c.db.First(&role, id).Error; err != nil {
+		return nil, err	
+	}
+	return &role, nil
 }
 // // GetHistoryByID retrieves a history record by its ID from the database.
 // func (c *Core) GetHistoryByID(ctx context.Context, id int) (*History, error) {

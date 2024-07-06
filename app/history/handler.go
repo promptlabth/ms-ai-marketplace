@@ -53,7 +53,6 @@ func (h *Handler) GenerateMessage(c *gin.Context) {
 		Prompt:         req.Prompt,
 		StyleMessageID: req.StyleMessageID,
 		Language:       language,
-		Result:         language,
 		TimeStamp:      time.Now(),
 	}
 
