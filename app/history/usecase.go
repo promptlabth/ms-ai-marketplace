@@ -123,7 +123,7 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, 
 
 	_, err = u.storage.CreateHistory(ctx, historyEntity)
 	if err != nil {
-		log.Printf("Error generating message: %v", err)
+		log.Printf("Error CreateHistory: %v", err)
 		return nil, err
 	}
 	
