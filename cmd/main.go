@@ -43,6 +43,7 @@ func main() {
 	RoleRouter(r, db)
 	UserRouter(r, db)
 	StylePromptRouter(r, db)
+	GenerateMessageRouter(r, db)
 	UploadRouter(r, client)
 
 	port := os.Getenv("PORT")
