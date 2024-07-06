@@ -66,7 +66,7 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, 
 	agent, err := u.storage.GetAgentByID(ctx, history.AgentID)
 	if err != nil {
 		log.Printf("Error fetching agent: %v", err)
-		return nil,errors.New("Error fetching agent")
+		return nil,errors.New("error fetching agent")
 	}
 
 	// // Check if FrameworkID exists
@@ -81,13 +81,13 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, 
 	styleMessage, err := u.storage.GetStyleMessageByID(ctx, history.StyleMessageID)
 	if err != nil {
 		log.Printf("Error fetching styleMessage: %v", err)
-		return nil, errors.New("Error fetching styleMessage:")
+		return nil, errors.New("error fetching style message")
 	}
 	// Check if role exists (optional)
 	role, err := u.storage.GetRoleByID(ctx, int(agent.RoleFrameID))
 	if err != nil {
 		log.Printf("Error fetching role: %v", err)
-		return nil, errors.New("Error fetching role")
+		return nil, errors.New("error fetching role")
 	}
 	
 	// Generate framework detail from agent.Prompt
@@ -101,13 +101,13 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, 
 	inputPrompt, err := formatInputPrompt(inputPromptTemplate, role, frameworkDetail.String(), styleMessage.Name, history)
 	if err != nil {
 		log.Printf("Error formatInputPrompt: %v", err)
-		return nil, errors.New("Error formatInputPrompt")
+		return nil, errors.New("error format inputPrompt")
 	}
 
 	result, err :=  handleModelGeneration(inputPrompt);
 	if err != nil {
 		log.Printf("Error generating message: %v", err)
-		return nil, errors.New("Error generating message:")
+		return nil, errors.New("error generating message")
 	}
 
 	historyEntity := HistoryEntity{
@@ -124,7 +124,7 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, 
 	_, err = u.storage.CreateHistory(ctx, historyEntity)
 	if err != nil {
 		log.Printf("Error CreateHistory: %v", err)
-		return nil, errors.New("Error CreateHistory")
+		return nil, errors.New("error CreateHistory")
 	}
 	
 	return &result,nil
