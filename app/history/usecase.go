@@ -51,16 +51,16 @@ func NewUsecase(s storage, d domain) *Usecase {
 }
 
 func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, error) {
-	// Validate the new history
-	if err := u.domain.ValidateNewHistory(ctx, history); err != nil {
-		log.Printf("Validation error: %v", err)
-		return nil,err
-	}
+	// // Validate the new history
+	// if err := u.domain.ValidateNewHistory(ctx, history); err != nil {
+	// 	log.Printf("Validation error: %v", err)
+	// 	return nil,err
+	// }
 
-	// Check if UserID exists
-	if !u.domain.existsInDatabase(ctx, "users", history.UserID) {
-		return nil,errors.New("User ID does not exist")
-	}
+	// // Check if UserID exists
+	// if !u.domain.existsInDatabase(ctx, "users", history.UserID) {
+	// 	return nil,errors.New("User ID does not exist")
+	// }
 
 	// Get Agent by ID
 	agent, err := u.storage.GetAgentByID(ctx, history.AgentID)
@@ -69,13 +69,13 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, 
 		return nil, err
 	}
 
-	// Check if FrameworkID exists
-	framework, err := u.storage.GetFrameworkByID(ctx, history.FrameworkID)
-	if err != nil {
-		log.Printf("Error fetching framework: %v", err)
-		return nil, err
-	}
-	fmt.Print(framework)
+	// // Check if FrameworkID exists
+	// framework, err := u.storage.GetFrameworkByID(ctx, history.FrameworkID)
+	// if err != nil {
+	// 	log.Printf("Error fetching framework: %v", err)
+	// 	return nil, err
+	// }
+	// fmt.Print(framework)
 
 	// Check if StyleMessageID exists (optional)
 	styleMessage, err := u.storage.GetStyleMessageByID(ctx, history.StyleMessageID)
@@ -122,7 +122,12 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, 
 	}
 
 	_, err = u.storage.CreateHistory(ctx, historyEntity)
-	return nil,err
+	if err != nil {
+		log.Printf("Error generating message: %v", err)
+		return nil, err
+	}
+	
+	return &result,nil
 }
 
 func handleModelGeneration(imputPromtp string) (string, error) {
