@@ -31,6 +31,8 @@ func NewHandler(u usecase) *Handler {
 func (h *Handler) GenerateMessage(c *gin.Context) {
 	var req NewHistoryRequest
 
+	c.JSON(http.StatusCreated, gin.H{"err": "err"})
+
 	if err := c.Bind(&req); err != nil {
 		c.JSON(http.StatusBadRequest, map[string]string{
 			"error": err.Error(),
