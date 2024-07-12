@@ -53,20 +53,18 @@ func NewUsecase(s storage, d domain) *Usecase {
 func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, error) {
 	// // Validate the new history
 	// if err := u.domain.ValidateNewHistory(ctx, history); err != nil {
-	// 	log.Printf("Validation error: %v", err)
 	// 	return nil,err
 	// }
 
 	// // Check if UserID exists
 	// if !u.domain.existsInDatabase(ctx, "users", history.UserID) {
-	// 	return nil,errors.New("User ID does not exist")
+	// 	return nil,err
 	// }
 
 	// Get Agent by ID
 	agent, err := u.storage.GetAgentByID(ctx, history.AgentID)
 	if err != nil {
-		log.Printf("Error fetching agent: %v", err)
-		return nil,errors.New("error fetching agent")
+		return nil, err
 	}
 
 	// // Check if FrameworkID exists
@@ -80,14 +78,12 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, 
 	// Check if StyleMessageID exists (optional)
 	styleMessage, err := u.storage.GetStyleMessageByID(ctx, history.StyleMessageID)
 	if err != nil {
-		log.Printf("Error fetching styleMessage: %v", err)
-		return nil, errors.New("error fetching style message")
+		return nil, err
 	}
 	// Check if role exists (optional)
 	role, err := u.storage.GetRoleByID(ctx, int(agent.RoleFrameID))
 	if err != nil {
-		log.Printf("Error fetching role: %v", err)
-		return nil, errors.New("error fetching role")
+		return nil, err
 	}
 	
 	// Generate framework detail from agent.Prompt
@@ -100,14 +96,12 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, 
 	inputPromptTemplate := " Provide guidance in the role of {{.role}} which includes {{.frameworkDetail}} needing an answer in the style of {{.styleMessage}} language {{.language}}"
 	inputPrompt, err := formatInputPrompt(inputPromptTemplate, role, frameworkDetail.String(), styleMessage.Name, history)
 	if err != nil {
-		log.Printf("Error formatInputPrompt: %v", err)
-		return nil, errors.New("error format inputPrompt")
+		return nil, err
 	}
 
 	result, err :=  handleModelGeneration(inputPrompt);
 	if err != nil {
-		log.Printf("Error generating message: %v", err)
-		return nil, errors.New("error generating message")
+		return nil, err
 	}
 
 	historyEntity := HistoryEntity{
@@ -123,8 +117,7 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, 
 
 	_, err = u.storage.CreateHistory(ctx, historyEntity)
 	if err != nil {
-		log.Printf("Error CreateHistory: %v", err)
-		return nil, errors.New("error CreateHistory")
+		return nil, err
 	}
 	
 	return &result,nil
