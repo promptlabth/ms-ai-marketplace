@@ -86,7 +86,7 @@ func GenerateMessageRouter(router *gin.Engine, db *gorm.DB) {
 	generateMessageUsecase := history.NewUsecase(generateMessageCore,generateMessageValidation)
 	generateMessageHandler := history.NewHandler(generateMessageUsecase)
 
-	router.POST("/:lang/customer/use_agent/messages", generateMessageHandler.GenerateMessage)
+	router.GET("/:lang/customer/use_agent/messages", generateMessageHandler.GenerateMessage)
 	// router.GET("/:lang/customer/style_prompt/:id", stylePromptHandler.GetStylePromptByID)
 }
 
