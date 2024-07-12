@@ -11,7 +11,7 @@ import (
 
 // Define the usecase interface for history operations
 type usecase interface {
-	CreateHistory(ctx context.Context, history History) (*string, error)
+	CreateHistory(ctx context.Context, history History) (*string, string)
 // 	GetHistoryByID(ctx context.Context, id int) (*History, error)
 // 	ListHistories(ctx context.Context, userID int) (*[]History, error)
 // 	UpdateHistory(ctx context.Context, history History) error
@@ -59,8 +59,8 @@ func (h *Handler) GenerateMessage(c *gin.Context) {
 	}
 
 	result , err := h.usecase.CreateHistory(context.Background(), history); 
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"err": err})
+	if err != "" {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
 	}
 

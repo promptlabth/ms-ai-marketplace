@@ -50,7 +50,7 @@ func NewUsecase(s storage, d domain) *Usecase {
 	}
 }
 
-func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, error) {
+func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, string) {
 	// // Validate the new history
 	// if err := u.domain.ValidateNewHistory(ctx, history); err != nil {
 	// 	return nil,err
@@ -64,7 +64,7 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, 
 	// Get Agent by ID
 	agent, err := u.storage.GetAgentByID(ctx, history.AgentID)
 	if err != nil {
-		return nil, err
+		return nil, "err GetAgentByID"
 	}
 
 	// // Check if FrameworkID exists
@@ -78,12 +78,12 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, 
 	// Check if StyleMessageID exists (optional)
 	styleMessage, err := u.storage.GetStyleMessageByID(ctx, history.StyleMessageID)
 	if err != nil {
-		return nil, err
+		return nil, "err GetStyleMessageByID"
 	}
 	// Check if role exists (optional)
 	role, err := u.storage.GetRoleByID(ctx, int(agent.RoleFrameID))
 	if err != nil {
-		return nil, err
+		return nil, "err GetRoleByID"
 	}
 	
 	// Generate framework detail from agent.Prompt
@@ -96,12 +96,12 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, 
 	inputPromptTemplate := " Provide guidance in the role of {{.role}} which includes {{.frameworkDetail}} needing an answer in the style of {{.styleMessage}} language {{.language}}"
 	inputPrompt, err := formatInputPrompt(inputPromptTemplate, role, frameworkDetail.String(), styleMessage.Name, history)
 	if err != nil {
-		return nil, err
+		return nil, "err formatInputPrompt"
 	}
 
 	result, err :=  handleModelGeneration(inputPrompt);
 	if err != nil {
-		return nil, err
+		return nil, "err handleModelGeneration"
 	}
 
 	historyEntity := HistoryEntity{
@@ -117,10 +117,10 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, 
 
 	_, err = u.storage.CreateHistory(ctx, historyEntity)
 	if err != nil {
-		return nil, err
+		return nil, err.Error()
 	}
 	
-	return &result,nil
+	return &result,""
 }
 
 func handleModelGeneration(imputPromtp string) (string, error) {
