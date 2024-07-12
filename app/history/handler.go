@@ -29,9 +29,11 @@ func NewHandler(u usecase) *Handler {
 
 // CreateHistory creates a new history 
 func (h *Handler) GenerateMessage(c *gin.Context) {
-	var req NewHistoryRequest
 
-	if err := c.Bind(&req); err != nil {
+	var req NewHistoryRequest
+	
+	// Bind query parameters to the struct
+	if err := c.ShouldBindQuery(&req); err != nil {
 		c.JSON(http.StatusBadRequest, map[string]string{
 			"error": err.Error(),
 		})
