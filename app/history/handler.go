@@ -3,8 +3,6 @@ package history
 import (
 	"context"
 	"net/http"
-	"strconv"
-
 	// "strconv"
 	"time"
 
@@ -34,29 +32,13 @@ func (h *Handler) GenerateMessage(c *gin.Context) {
 
 	var req NewHistoryRequest
 	
-	req.UserID = c.Query("UserID")
-	agentID, err := strconv.Atoi(c.Query("AgentID"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid AgentID"})
+	// Bind query parameters to the struct
+	if err := c.ShouldBindQuery(&req); err != nil {
+		c.JSON(http.StatusBadRequest, map[string]string{
+			"error": err.Error(),
+		})
 		return
 	}
-	req.AgentID = agentID
-
-	frameworkID, err := strconv.Atoi(c.Query("FrameworkID"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid FrameworkID"})
-		return
-	}
-	req.FrameworkID = frameworkID
-
-	req.Prompt = c.Query("Prompt")
-
-	styleMessageID, err := strconv.Atoi(c.Query("StyleMessageID"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid StyleMessageID"})
-		return
-	}
-	req.StyleMessageID = styleMessageID
 
 	language := c.GetString("language")
 	if language == "" {
