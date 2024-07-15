@@ -3,9 +3,8 @@ package history
 import (
 	"context"
 	"errors"
-	"fmt"
-
 	// "fmt"
+
 	"log"
 	"math/rand"
 	"strings"
@@ -62,10 +61,10 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, 
 	// }
 
 	// Get Agent by ID
-	agent, err := u.storage.GetAgentByID(ctx, history.AgentID)
-	if err != nil {
-		return nil, "err GetAgentByID"
-	}
+	// agent, err := u.storage.GetAgentByID(ctx, history.AgentID)
+	// if err != nil {
+	// 	return nil, "err GetAgentByID"
+	// }
 
 	// // Check if FrameworkID exists
 	// framework, err := u.storage.GetFrameworkByID(ctx, history.FrameworkID)
@@ -76,28 +75,29 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, 
 	// fmt.Print(framework)
 
 	// Check if StyleMessageID exists (optional)
-	styleMessage, err := u.storage.GetStyleMessageByID(ctx, history.StyleMessageID)
-	if err != nil {
-		return nil, "err GetStyleMessageByID"
-	}
-	// Check if role exists (optional)
-	role, err := u.storage.GetRoleByID(ctx, int(agent.RoleFrameID))
-	if err != nil {
-		return nil, "err GetRoleByID"
-	}
+	// styleMessage, err := u.storage.GetStyleMessageByID(ctx, history.StyleMessageID)
+	// if err != nil {
+	// 	return nil, "err GetStyleMessageByID"
+	// }
+	// // Check if role exists (optional)
+	// role, err := u.storage.GetRoleByID(ctx, int(agent.RoleFrameID))
+	// if err != nil {
+	// 	return nil, "err GetRoleByID"
+	// }
 	
 	// Generate framework detail from agent.Prompt
-	var frameworkDetail strings.Builder
-	for key, value := range agent.Prompt {
-		frameworkDetail.WriteString(fmt.Sprintf("%s is %s ", key, value))
-	}
+	// var frameworkDetail strings.Builder
+	// for key, value := range agent.Prompt {
+	// 	frameworkDetail.WriteString(fmt.Sprintf("%s is %s ", key, value))
+	// }
 
 	// Prepare the input prompt
-	inputPromptTemplate := " Provide guidance in the role of {{.role}} which includes {{.frameworkDetail}} needing an answer in the style of {{.styleMessage}} language {{.language}}"
-	inputPrompt, err := formatInputPrompt(inputPromptTemplate, role, frameworkDetail.String(), styleMessage.Name, history)
-	if err != nil {
-		return nil, "err formatInputPrompt"
-	}
+	inputPrompt := " Provide guidance in the role of {{docter}} which includes {{Safety}} needing an answer in the style of happy language th"
+	// inputPromptTemplate := " Provide guidance in the role of {{.role}} which includes {{.frameworkDetail}} needing an answer in the style of {{.styleMessage}} language {{.language}}"
+	// inputPrompt, err := formatInputPrompt(inputPromptTemplate, role, frameworkDetail.String(), styleMessage.Name, history)
+	// if err != nil {
+	// 	return nil, "err formatInputPrompt"
+	// }
 
 	result, err :=  handleModelGeneration(inputPrompt);
 	if err != nil {

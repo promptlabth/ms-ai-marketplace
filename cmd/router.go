@@ -25,6 +25,7 @@ func AgentDetailRouter(router *gin.Engine, db *gorm.DB) {
 	router.GET("/creator/agent/user_id/:id", agentDetailHandler.GetAgentDetails)
 	router.GET("/creator/agents", agentDetailHandler.ListAgentDetails)
 	router.GET("/creator/agent/:id", agentDetailHandler.GetAgentByID)
+	router.GET("/customer/:id", agentDetailHandler.GetAgentByID)
 }
 
 func FrameworkRouter(router *gin.Engine, db *gorm.DB) {
