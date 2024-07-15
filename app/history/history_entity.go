@@ -12,7 +12,7 @@ type HistoryEntity struct {
 	FrameworkID    int             `gorm:"column:framework_id"`
 	Prompt         string          `gorm:"column:prompt"`
 	StyleMessageID int             `gorm:"column:style_message_id"`
-	Language     string             `gorm:"column:language_id"`
+	Language     string             `gorm:"column:language"`
 	Result         string          `gorm:"column:result"`
 	TimeStamp      time.Time       `gorm:"column:time_stamp"`
 }

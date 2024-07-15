@@ -117,7 +117,7 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, 
 
 	_, err = u.storage.CreateHistory(ctx, historyEntity)
 	if err != nil {
-		return nil, err.Error()
+		return nil, "u CreateHistory"
 	}
 	
 	return &result,""
