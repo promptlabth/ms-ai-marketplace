@@ -56,9 +56,10 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, 
 		return nil, "validation error: " + err.Error()
 	}
 
-	generateService := generateservice.Generate{}
+	generateService := generateservice.NewGenerate()
 
 	resultOpenAI, err := generateService.GenerateMessageOpenAI("Hi, What is OpenAI")
+
 	if err != nil {
 		log.Printf("Error generating message with OpenAI: %v", err)
 		return nil, "Error generating message with OpenAI: " + err.Error()

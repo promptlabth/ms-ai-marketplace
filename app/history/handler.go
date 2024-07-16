@@ -2,7 +2,9 @@ package history
 
 import (
 	"context"
+	// "fmt"
 	"net/http"
+
 	// "strconv"
 	"time"
 
@@ -32,8 +34,7 @@ func (h *Handler) GenerateMessage(c *gin.Context) {
 
 	var req NewHistoryRequest
 	
-	// Bind query parameters to the struct
-	if err := c.ShouldBindQuery(&req); err != nil {
+	if err := c.Bind(&req); err != nil {
 		c.JSON(http.StatusBadRequest, map[string]string{
 			"error": err.Error(),
 		})
