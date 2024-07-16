@@ -4,7 +4,6 @@ package history
 
 import (
 	"context"
-	"errors"
 	"gorm.io/gorm"
 )
 
@@ -21,24 +20,24 @@ func NewAdaptor(db *gorm.DB) *Adaptor {
 // ValidateNewHistory performs validation on a new history record.
 func (a *Adaptor) ValidateNewHistory(ctx context.Context, history History) error {
 	// Validate the user ID is not zero.
-	if history.UserID == "" {
-		return errors.New("User ID cannot be zero")
-	}
+	// if history.UserID == "" {
+	// 	return errors.New("User ID cannot be zero")
+	// }
 
-	// Validate the agent ID is not zero.
-	if history.AgentID == 0 {
-		return errors.New("Agent ID cannot be zero")
-	}
+	// // Validate the agent ID is not zero.
+	// if history.AgentID == 0 {
+	// 	return errors.New("Agent ID cannot be zero")
+	// }
 
-	// Validate the framework ID is not zero.
-	if history.FrameworkID == 0 {
-		return errors.New("Framework ID cannot be zero")
-	}
+	// // Validate the framework ID is not zero.
+	// if history.FrameworkID == 0 {
+	// 	return errors.New("Framework ID cannot be zero")
+	// }
 
-	// Validate the prompt is not empty.
-	if history.Prompt == "" {
-		return errors.New("Prompt cannot be empty")
-	}
+	// // Validate the prompt is not empty.
+	// if history.Prompt == "" {
+	// 	return errors.New("Prompt cannot be empty")
+	// }
 
 	// // Validate the result is not empty.
 	// if history.Result == "" {

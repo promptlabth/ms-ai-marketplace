@@ -133,6 +133,7 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, 
 	if err != nil {
 		return nil, "validation error: " + err.Error()
 	}
+	
 	historyEntity := HistoryEntity{
 		UserID:         history.UserID,
 		AgentID:        history.AgentID,
