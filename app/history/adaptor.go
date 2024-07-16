@@ -6,7 +6,6 @@ import (
 	"context"
 	"errors"
 	"gorm.io/gorm"
-	"log"
 )
 
 // Adaptor is responsible for the data storage operations and validation logic related to histories.
@@ -52,50 +51,13 @@ func (a *Adaptor) ValidateNewHistory(ctx context.Context, history History) error
 	return nil
 }
 
-func (a *Adaptor) existsInDatabase(ctx context.Context, tableName string, id string) bool {
-	var exists bool
-	query := "SELECT EXISTS (SELECT 1 FROM " + tableName + " WHERE id = ?)"
-	err := a.db.Raw(query, id).Scan(&exists).Error
-	if err != nil {
-		log.Printf("Error checking existence in %s: %v", tableName, err)
-		return false
-	}
-	return exists
-}
-
-// CreateHistory inserts a new history record into the database.
-func (a *Adaptor) CreateHistory(ctx context.Context, history History) (*int, error) {
-	if err := a.db.Create(&history).Error; err != nil {
-		return nil, err
-	}
-	return &history.ID, nil
-}
-
-// GetHistoryByID retrieves a history record by its ID from the database.
-func (a *Adaptor) GetHistoryByID(ctx context.Context, id int) (*History, error) {
-	var history History
-	if err := a.db.First(&history, id).Error; err != nil {
-		return nil, err
-	}
-	return &history, nil
-}
-
-// ListHistories retrieves history records by user ID from the database.
-func (a *Adaptor) ListHistories(ctx context.Context, userID int) (*[]History, error) {
-	var histories []History
-	query := a.db.WithContext(ctx).Where("user_id = ?", userID).Find(&histories)
-	if query.Error != nil {
-		return nil, query.Error
-	}
-	return &histories, nil
-}
-
-// UpdateHistory updates a history record's information in the database.
-func (a *Adaptor) UpdateHistory(ctx context.Context, history History) error {
-	return a.db.Model(&History{}).Where("id = ?", history.ID).Updates(history).Error
-}
-
-// DeleteHistory removes a history record from the database by its ID.
-func (a *Adaptor) DeleteHistory(ctx context.Context, id int) error {
-	return a.db.Delete(&History{}, "id = ?", id).Error
-}
+// func (a *Adaptor) existsInDatabase(ctx context.Context, tableName string, id string) bool {
+// 	var exists bool
+// 	query := "SELECT EXISTS (SELECT 1 FROM " + tableName + " WHERE id = ?)"
+// 	err := a.db.Raw(query, id).Scan(&exists).Error
+// 	if err != nil {
+// 		log.Printf("Error checking existence in %s: %v", tableName, err)
+// 		return false
+// 	}
+// 	return exists
+// }

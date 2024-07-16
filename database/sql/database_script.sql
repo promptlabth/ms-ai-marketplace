@@ -82,7 +82,7 @@ CREATE TABLE users (
   datetime_last_active TIMESTAMP
 );
 
-CREATE TABLE history (
+CREATE TABLE historys (
     id SERIAL PRIMARY KEY,
     user_id TEXT NOT NULL,
     agent_id INT NOT NULL,

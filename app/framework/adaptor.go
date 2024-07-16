@@ -24,8 +24,5 @@ func (a *Adaptor) ValidateNewFramework(ctx context.Context, framework Framework)
 		return errors.New("Framework name cannot be empty")
 	}
 
-	// Add additional validations as needed.
-
-	// If all validations pass, no error is returned.
 	return nil
 }

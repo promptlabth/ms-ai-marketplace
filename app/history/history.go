@@ -26,7 +26,7 @@ type HistoryInterface interface {
 }
 
 type NewHistoryRequest struct {
-	UserID         string    `json:"user_id"` 
+	UserID         string `json:"user_id"` 
 	AgentID        int    `json:"agent_id"`
 	FrameworkID    int    `json:"framework_id"`
 	Prompt         string `json:"prompt"`

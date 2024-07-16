@@ -48,14 +48,3 @@ func (c *Core) ListAgentDetails(ctx context.Context) (*[]AgentDetailEntity, erro
 	}
 	return &agents, nil
 }
-
-//can add Delete Update
-// UpdateRole updates a role's information in the database.
-// func (c *Core) UpdateRole(ctx context.Context, agentDetail AgentDetailEntity) error {
-// 	return c.db.Model(AgentDetailEntity{}).Where("id = ?", agentDetail.ID).Updates(agentDetail).Error
-// }
-
-// // DeleteRole removes a role from the database by their ID.
-// func (c *Core) DeleteRole(ctx context.Context, id int) error {
-// 	return c.db.Delete(&AgentDetailEntity{}, id).Error
-// }
