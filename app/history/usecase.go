@@ -75,15 +75,15 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, 
 	// fmt.Print(framework)
 
 	// Check if StyleMessageID exists (optional)
-	// styleMessage, err := u.storage.GetStyleMessageByID(ctx, history.StyleMessageID)
-	// if err != nil {
-	// 	return nil, "err GetStyleMessageByID"
-	// }
+	styleMessage, err := u.storage.GetStyleMessageByID(ctx, history.StyleMessageID)
+	if err != nil {
+		return nil, "err GetStyleMessageByID"
+	}
 	// // Check if role exists (optional)
-	// role, err := u.storage.GetRoleByID(ctx, int(agent.RoleFrameID))
-	// if err != nil {
-	// 	return nil, "err GetRoleByID"
-	// }
+	role, err := u.storage.GetRoleByID(ctx, int(agent.RoleFrameID))
+	if err != nil {
+		return nil, "err GetRoleByID"
+	}
 	
 	// Generate framework detail from agent.Prompt
 	// var frameworkDetail strings.Builder
