@@ -2,6 +2,7 @@ package history
 
 import (
 	"context"
+	"log"
 	// "errors"
 	// // "fmt"
 
@@ -14,11 +15,10 @@ import (
 
 	"github.com/promptlabth/ms-orch-user-service/app/__mock__/role"
 	agentdetail "github.com/promptlabth/ms-orch-user-service/app/agent_detail"
-	// generateservice "github.com/promptlabth/ms-orch-user-service/app/external_service"
+	generateservice "github.com/promptlabth/ms-orch-user-service/app/external_service"
 	"github.com/promptlabth/ms-orch-user-service/app/framework"
 	styleprompt "github.com/promptlabth/ms-orch-user-service/app/style_prompt"
 )
-
 
 type storage interface {
 	CreateHistory(ctx context.Context, history HistoryEntity) (*int, error)
@@ -48,84 +48,6 @@ func NewUsecase(s storage, d domain) *Usecase {
 		domain:  d,
 	}
 }
-
-// func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, string) {
-	// // Validate the new history
-	// if err := u.domain.ValidateNewHistory(ctx, history); err != nil {
-	// 	return nil,err
-	// }
-
-	// // Check if UserID exists
-	// if !u.domain.existsInDatabase(ctx, "users", history.UserID) {
-	// 	return nil,err
-	// }
-
-	// Get Agent by ID
-	// agent, err := u.storage.GetAgentByID(ctx, history.AgentID)
-	// if err != nil {
-	// 	return nil, "err GetAgentByID"
-	// }
-
-	// // Check if FrameworkID exists
-	// framework, err := u.storage.GetFrameworkByID(ctx, history.FrameworkID)
-	// if err != nil {
-	// 	log.Printf("Error fetching framework: %v", err)
-	// 	return nil, err
-	// }
-	// fmt.Print(framework)
-
-	// Check if StyleMessageID exists (optional)
-	// styleMessage, err := u.storage.GetStyleMessageByID(ctx, history.StyleMessageID)
-	// if err != nil {
-	// 	return nil, "err GetStyleMessageByID"
-	// }
-	// fmt.Print(styleMessage)
-
-	// // // Check if role exists (optional)
-	// role, err := u.storage.GetRoleByID(ctx, 1)
-	// if err != nil {
-	// 	return nil, "err GetRoleByID"
-	// }
-	// fmt.Print(role)
-	
-	// Generate framework detail from agent.Prompt
-	// var frameworkDetail strings.Builder
-	// for key, value := range agent.Prompt {
-	// 	frameworkDetail.WriteString(fmt.Sprintf("%s is %s ", key, value))
-	// }
-
-	// Prepare the input prompt
-	// inputPrompt := " Provide guidance in the role of {{docter}} which includes {{Safety}} needing an answer in the style of happy language th"
-	// inputPromptTemplate := " Provide guidance in the role of {{.role}} which includes {{.frameworkDetail}} needing an answer in the style of {{.styleMessage}} language {{.language}}"
-	// inputPrompt, err := formatInputPrompt(inputPromptTemplate, role, frameworkDetail.String(), styleMessage.Name, history)
-	// if err != nil {
-	// 	return nil, "err formatInputPrompt"
-	// }
-
-	// result, err :=  handleModelGeneration(inputPrompt);
-	// if err != nil {
-	// 	return nil, "err handleModelGeneration"
-	// }
-// 	var result = "result"
-	
-// 	historyEntity := HistoryEntity{
-// 		UserID:         history.UserID,
-// 		AgentID:        history.AgentID,
-// 		FrameworkID:    history.FrameworkID,
-// 		Prompt:         history.Prompt,
-// 		StyleMessageID: history.StyleMessageID,
-// 		Language:       history.Language,
-// 		Result:         result,
-// 		TimeStamp:      time.Now(),
-// 	}
-
-// 	_, err = u.storage.CreateHistory(ctx, historyEntity)
-// 	if err != nil {
-// 		return nil, "u CreateHistory"
-// 	}
-	
-// 	return &result,""
-// }
 func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, string) {
 	var result = "result"
 
@@ -133,7 +55,17 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, 
 	if err != nil {
 		return nil, "validation error: " + err.Error()
 	}
-	
+
+	generateService := generateservice.Generate{}
+
+	resultOpenAI, err := generateService.GenerateMessageOpenAI("Hi, What is OpenAI")
+	if err != nil {
+		log.Printf("Error generating message with OpenAI: %v", err)
+		return nil, "Error generating message with OpenAI: " + err.Error()
+	}
+
+	result = result+resultOpenAI
+
 	historyEntity := HistoryEntity{
 		UserID:         history.UserID,
 		AgentID:        history.AgentID,
@@ -153,13 +85,91 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, 
 	return &result, ""
 }
 
+// func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, string) {
+// // Validate the new history
+// if err := u.domain.ValidateNewHistory(ctx, history); err != nil {
+// 	return nil,err
+// }
+
+// // Check if UserID exists
+// if !u.domain.existsInDatabase(ctx, "users", history.UserID) {
+// 	return nil,err
+// }
+
+// Get Agent by ID
+// agent, err := u.storage.GetAgentByID(ctx, history.AgentID)
+// if err != nil {
+// 	return nil, "err GetAgentByID"
+// }
+
+// // Check if FrameworkID exists
+// framework, err := u.storage.GetFrameworkByID(ctx, history.FrameworkID)
+// if err != nil {
+// 	log.Printf("Error fetching framework: %v", err)
+// 	return nil, err
+// }
+// fmt.Print(framework)
+
+// Check if StyleMessageID exists (optional)
+// styleMessage, err := u.storage.GetStyleMessageByID(ctx, history.StyleMessageID)
+// if err != nil {
+// 	return nil, "err GetStyleMessageByID"
+// }
+// fmt.Print(styleMessage)
+
+// // // Check if role exists (optional)
+// role, err := u.storage.GetRoleByID(ctx, 1)
+// if err != nil {
+// 	return nil, "err GetRoleByID"
+// }
+// fmt.Print(role)
+
+// Generate framework detail from agent.Prompt
+// var frameworkDetail strings.Builder
+// for key, value := range agent.Prompt {
+// 	frameworkDetail.WriteString(fmt.Sprintf("%s is %s ", key, value))
+// }
+
+// Prepare the input prompt
+// inputPrompt := " Provide guidance in the role of {{docter}} which includes {{Safety}} needing an answer in the style of happy language th"
+// inputPromptTemplate := " Provide guidance in the role of {{.role}} which includes {{.frameworkDetail}} needing an answer in the style of {{.styleMessage}} language {{.language}}"
+// inputPrompt, err := formatInputPrompt(inputPromptTemplate, role, frameworkDetail.String(), styleMessage.Name, history)
+// if err != nil {
+// 	return nil, "err formatInputPrompt"
+// }
+
+// result, err :=  handleModelGeneration(inputPrompt);
+// if err != nil {
+// 	return nil, "err handleModelGeneration"
+// }
+// 	var result = "result"
+
+// 	historyEntity := HistoryEntity{
+// 		UserID:         history.UserID,
+// 		AgentID:        history.AgentID,
+// 		FrameworkID:    history.FrameworkID,
+// 		Prompt:         history.Prompt,
+// 		StyleMessageID: history.StyleMessageID,
+// 		Language:       history.Language,
+// 		Result:         result,
+// 		TimeStamp:      time.Now(),
+// 	}
+
+// 	_, err = u.storage.CreateHistory(ctx, historyEntity)
+// 	if err != nil {
+// 		return nil, "u CreateHistory"
+// 	}
+
+// 	return &result,""
+// }
+
 // func handleModelGeneration(imputPromtp string) (string, error) {
 // 	generateService := generateservice.Generate{}
 
-// 	modelLanguageChoices := []string{"GIMINI", "GIMINI"} 
-// 	// modelLanguageChoices := []string{"GPT", "GIMINI"} 
-// 	weights := []float64{0.6, 0.4}        
-	
+// 	modelLanguageChoices := []string{"GIMINI", "GIMINI"}
+// 	// modelLanguageChoices := []string{"GPT", "GIMINI"}
+// 	weights := []float64{0.6, 0.4}
+
 // 	// In development environment, prioritize VERTEX
 // 	// if os.Getenv("ENV") == "DEV" {
 // 	// 	modelLanguageChoices = []string{"VERTEX"}
@@ -234,4 +244,3 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, 
 // 	}
 // 	return -1
 // }
-
