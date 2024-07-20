@@ -82,7 +82,8 @@ func StylePromptRouter(router *gin.Engine, db *gorm.DB) {
 func GenerateMessageRouter(router *gin.Engine, db *gorm.DB) {
 	generateMessageValidation := history.NewAdaptor(db)
 	generateMessageCore := history.NewCore(db)
-	generateMessageUsecase := history.NewUsecase(generateMessageCore,generateMessageValidation)
+	agentdetailCore := agentdetail.NewCore(db)
+	generateMessageUsecase := history.NewUsecase(generateMessageCore,generateMessageValidation,agentdetailCore)
 	generateMessageHandler := history.NewHandler(generateMessageUsecase)
 
 	router.POST("/:lang/customer/use_agent/messages", generateMessageHandler.GenerateMessage)

@@ -15,10 +15,6 @@ import (
 // Define the usecase interface for history operations
 type usecase interface {
 	CreateHistory(ctx context.Context, history History) (*string, string)
-// 	GetHistoryByID(ctx context.Context, id int) (*History, error)
-// 	ListHistories(ctx context.Context, userID int) (*[]History, error)
-// 	UpdateHistory(ctx context.Context, history History) error
-// 	DeleteHistory(ctx context.Context, id int) error
 }
 
 // Handler handles HTTP requests for history operations

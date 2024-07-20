@@ -11,19 +11,17 @@ import (
 	// "os"
 	"time"
 
-	"github.com/promptlabth/ms-orch-user-service/app/role"
+	// "github.com/promptlabth/ms-orch-user-service/app/role"
 	agentdetail "github.com/promptlabth/ms-orch-user-service/app/agent_detail"
 	generateservice "github.com/promptlabth/ms-orch-user-service/app/external_service"
-	"github.com/promptlabth/ms-orch-user-service/app/framework"
-	styleprompt "github.com/promptlabth/ms-orch-user-service/app/style_prompt"
+	// "github.com/promptlabth/ms-orch-user-service/app/framework"
+	// styleprompt "github.com/promptlabth/ms-orch-user-service/app/style_prompt"
 )
-
+type agentStorage interface{
+	GetAgentByID(context.Context, int) (*agentdetail.AgentDetailEntity, error)
+}
 type storage interface {
 	CreateHistory(ctx context.Context, history HistoryEntity) (*int, error)
-	GetAgentByID(ctx context.Context, id int) (*agentdetail.AgentDetailEntity, error)
-	GetFrameworkByID(ctx context.Context, id int) (*framework.FrameworkEntity, error)
-	GetStyleMessageByID(ctx context.Context, id int) (*styleprompt.StylePromptEntity, error)
-	GetRoleByID(ctx context.Context, id int) (*role.RoleEntity, error)
 }
 
 type domain interface {
@@ -31,14 +29,16 @@ type domain interface {
 }
 
 type Usecase struct {
+	agentStorage agentStorage
 	storage storage
 	domain  domain
 }
 
-func NewUsecase(s storage, d domain) *Usecase {
+func NewUsecase(s storage, d domain,as agentStorage) *Usecase {
 	return &Usecase{
 		storage: s,
 		domain:  d,
+		agentStorage: as,
 	}
 }
 func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, string) {
@@ -48,13 +48,20 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, 
 		return nil, "validation error: " + err.Error()
 	}
 
+	agent, err := u.agentStorage.GetAgentByID(ctx, history.AgentID)
+    if err != nil {
+        log.Printf("Error getting agent by ID: %v", err)
+        return nil, err.Error()
+    }
+	log.Print(agent)
+
 	result, err :=handleModelGeneration(history.Prompt)
 	if err != nil {
 		return nil, "handleModelGeneration error: " + err.Error()
 	}
 
 	historyEntity := HistoryEntity{
-		FirebaseID:         history.FirebaseID,
+		FirebaseID:     history.FirebaseID,
 		AgentID:        history.AgentID,
 		FrameworkID:    history.FrameworkID,
 		Prompt:         history.Prompt,
