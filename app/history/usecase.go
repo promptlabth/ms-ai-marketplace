@@ -2,8 +2,8 @@ package history
 
 import (
 	"context"
-	"log"
 	"errors"
+	"log"
 	// "fmt"
 	"math/rand"
 	// "strings"
@@ -11,11 +11,11 @@ import (
 	// "os"
 	"time"
 
-	"github.com/promptlabth/ms-orch-user-service/app/role"
-	agentdetail "github.com/promptlabth/ms-orch-user-service/app/agent_detail"
-	generateservice "github.com/promptlabth/ms-orch-user-service/app/external_service"
-	"github.com/promptlabth/ms-orch-user-service/app/framework"
-	styleprompt "github.com/promptlabth/ms-orch-user-service/app/style_prompt"
+	agentdetail "github.com/promptlabth/ms-ai-marketplace/app/agent_detail"
+	generateservice "github.com/promptlabth/ms-ai-marketplace/app/external_service"
+	"github.com/promptlabth/ms-ai-marketplace/app/framework"
+	"github.com/promptlabth/ms-ai-marketplace/app/role"
+	styleprompt "github.com/promptlabth/ms-ai-marketplace/app/style_prompt"
 )
 
 type storage interface {
@@ -48,13 +48,13 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, 
 		return nil, "validation error: " + err.Error()
 	}
 
-	result, err :=handleModelGeneration(history.Prompt)
+	result, err := handleModelGeneration(history.Prompt)
 	if err != nil {
 		return nil, "handleModelGeneration error: " + err.Error()
 	}
 
 	historyEntity := HistoryEntity{
-		FirebaseID:         history.FirebaseID,
+		FirebaseID:     history.FirebaseID,
 		AgentID:        history.AgentID,
 		FrameworkID:    history.FrameworkID,
 		Prompt:         history.Prompt,
@@ -75,7 +75,7 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, 
 func handleModelGeneration(imputPromtp string) (string, error) {
 	generateService, err := generateservice.NewGenerateService()
 	if err != nil {
-		return "",err
+		return "", err
 	}
 	modelLanguageChoices := []string{"GIMINI", "GIMINI"}
 	// modelLanguageChoices := []string{"GPT", "GIMINI"}
@@ -93,9 +93,9 @@ func handleModelGeneration(imputPromtp string) (string, error) {
 
 		switch modelLanguage {
 		case "GIMINI":
-			result, err := generateService.GenerateMessageVertexAI(imputPromtp,"APE")
+			result, err := generateService.GenerateMessageVertexAI(imputPromtp, "APE")
 			if err != nil {
-				error_log = err.Error();
+				error_log = err.Error()
 				log.Printf("Error generating message: %v", err)
 				// Remove the failing model from the list and adjust weights
 				index := findIndex(modelLanguageChoices, modelLanguage)
@@ -107,7 +107,7 @@ func handleModelGeneration(imputPromtp string) (string, error) {
 		case "GPT":
 			result, err := generateService.GenerateMessageOpenAI(imputPromtp)
 			if err != nil {
-				error_log = err.Error();
+				error_log = err.Error()
 				log.Printf("Error generating message: %v", err)
 				// Remove the failing model from the list and adjust weights
 				index := findIndex(modelLanguageChoices, modelLanguage)
@@ -140,8 +140,9 @@ func handleModelGeneration(imputPromtp string) (string, error) {
 // 		return "", err
 // 	}
 
-// 	return sb.String(), nil
-// }
+//		return sb.String(), nil
+//	}
+//
 // Helper function to randomly select a model based on weights
 func randomChoice(choices []string, weights []float64) string {
 	sum := 0.0

@@ -7,12 +7,11 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-
-	// "github.com/promptlabth/ms-orch-user-service/app/__mock__/role"
-	// agentdetail "github.com/promptlabth/ms-orch-user-service/app/agent_detail"
-	// "github.com/promptlabth/ms-orch-user-service/app/framework"
-	// "github.com/promptlabth/ms-orch-user-service/app/role_framework"
-	// "github.com/promptlabth/ms-orch-user-service/app/user"
+	// "github.com/promptlabth/ms-ai-marketplace/app/__mock__/role"
+	// agentdetail "github.com/promptlabth/ms-ai-marketplace/app/agent_detail"
+	// "github.com/promptlabth/ms-ai-marketplace/app/framework"
+	// "github.com/promptlabth/ms-ai-marketplace/app/role_framework"
+	// "github.com/promptlabth/ms-ai-marketplace/app/user"
 )
 
 type GormConnection struct {
@@ -49,7 +48,6 @@ func NewGormDB(dsn string) *gorm.DB {
 	if err != nil {
 		log.Panic(err)
 	}
-	
 
 	return db
 }

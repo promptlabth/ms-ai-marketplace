@@ -3,14 +3,14 @@ package main
 import (
 	"cloud.google.com/go/storage"
 	"github.com/gin-gonic/gin"
-	"github.com/promptlabth/ms-orch-user-service/app/agent_detail"
-	"github.com/promptlabth/ms-orch-user-service/app/framework"
-	"github.com/promptlabth/ms-orch-user-service/app/history"
-	styleprompt "github.com/promptlabth/ms-orch-user-service/app/style_prompt"
+	"github.com/promptlabth/ms-ai-marketplace/app/agent_detail"
+	"github.com/promptlabth/ms-ai-marketplace/app/framework"
+	"github.com/promptlabth/ms-ai-marketplace/app/history"
+	styleprompt "github.com/promptlabth/ms-ai-marketplace/app/style_prompt"
 
-	"github.com/promptlabth/ms-orch-user-service/app/role"
-	"github.com/promptlabth/ms-orch-user-service/app/upload"
-	"github.com/promptlabth/ms-orch-user-service/app/user"
+	"github.com/promptlabth/ms-ai-marketplace/app/role"
+	"github.com/promptlabth/ms-ai-marketplace/app/upload"
+	"github.com/promptlabth/ms-ai-marketplace/app/user"
 	"gorm.io/gorm"
 )
 
@@ -73,7 +73,7 @@ func UploadRouter(router *gin.Engine, client *storage.Client) {
 func StylePromptRouter(router *gin.Engine, db *gorm.DB) {
 	stylePromptValidation := styleprompt.NewAdaptor(db)
 	stylePromptCore := styleprompt.NewCore(db)
-	stylePromptUsecase := styleprompt.NewUsecase(stylePromptCore,stylePromptValidation)
+	stylePromptUsecase := styleprompt.NewUsecase(stylePromptCore, stylePromptValidation)
 	stylePromptHandler := styleprompt.NewHandler(stylePromptUsecase)
 
 	router.GET("/:lang/customer/style_prompts", stylePromptHandler.ListStylePrompts)
@@ -82,10 +82,9 @@ func StylePromptRouter(router *gin.Engine, db *gorm.DB) {
 func GenerateMessageRouter(router *gin.Engine, db *gorm.DB) {
 	generateMessageValidation := history.NewAdaptor(db)
 	generateMessageCore := history.NewCore(db)
-	generateMessageUsecase := history.NewUsecase(generateMessageCore,generateMessageValidation)
+	generateMessageUsecase := history.NewUsecase(generateMessageCore, generateMessageValidation)
 	generateMessageHandler := history.NewHandler(generateMessageUsecase)
 
 	router.POST("/:lang/customer/use_agent/messages", generateMessageHandler.GenerateMessage)
 	// router.GET("/:lang/customer/style_prompt/:id", stylePromptHandler.GetStylePromptByID)
 }
-

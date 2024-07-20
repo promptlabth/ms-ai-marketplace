@@ -1,4 +1,4 @@
-module github.com/promptlabth/ms-orch-user-service
+module github.com/promptlabth/ms-ai-marketplace
 
 go 1.22.1
 

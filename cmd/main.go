@@ -12,11 +12,11 @@ import (
 
 	"cloud.google.com/go/storage"
 	"github.com/gin-gonic/gin"
-	"github.com/promptlabth/ms-orch-user-service/config"
-	"github.com/promptlabth/ms-orch-user-service/database"
-	"github.com/promptlabth/ms-orch-user-service/initializers"
+	"github.com/promptlabth/ms-ai-marketplace/config"
+	"github.com/promptlabth/ms-ai-marketplace/database"
+	"github.com/promptlabth/ms-ai-marketplace/initializers"
 
-	// "github.com/promptlabth/ms-orch-user-service/initializers"
+	// "github.com/promptlabth/ms-ai-marketplace/initializers"
 	"google.golang.org/api/option"
 )
 
