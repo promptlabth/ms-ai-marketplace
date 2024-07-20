@@ -49,14 +49,3 @@ func (a *Adaptor) ValidateNewHistory(ctx context.Context, history History) error
 	// If all validations pass, no error is returned.
 	return nil
 }
-
-// func (a *Adaptor) existsInDatabase(ctx context.Context, tableName string, id string) bool {
-// 	var exists bool
-// 	query := "SELECT EXISTS (SELECT 1 FROM " + tableName + " WHERE id = ?)"
-// 	err := a.db.Raw(query, id).Scan(&exists).Error
-// 	if err != nil {
-// 		log.Printf("Error checking existence in %s: %v", tableName, err)
-// 		return false
-// 	}
-// 	return exists
-// }

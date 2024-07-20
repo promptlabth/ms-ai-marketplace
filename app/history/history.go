@@ -7,7 +7,7 @@ import (
 
 type History struct {
 	ID             int     
-	UserID         string      
+	FirebaseID         string      
 	AgentID        int     
 	FrameworkID    int       
 	Prompt         string   
@@ -21,12 +21,10 @@ type HistoryInterface interface {
 	CreateHistory(ctx context.Context, historyDetail History) (*int, error)
 	GetHistoryByID(ctx context.Context, id int) (*History, error)
 	ListHistories(ctx context.Context, userID int) (*[]History, error)
-	// UpdateHistory(ctx context.Context, historyDetail History) error
-	// DeleteHistory(ctx context.Context, id int) error
 }
 
 type NewHistoryRequest struct {
-	UserID         string `json:"user_id"` 
+	FirebaseID         string `json:"firebase_id"` 
 	AgentID        int    `json:"agent_id"`
 	FrameworkID    int    `json:"framework_id"`
 	Prompt         string `json:"prompt"`

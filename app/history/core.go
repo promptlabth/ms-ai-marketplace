@@ -3,7 +3,7 @@ package history
 import (
 	"context"
 
-	"github.com/promptlabth/ms-orch-user-service/app/__mock__/role"
+	"github.com/promptlabth/ms-orch-user-service/app/role"
 	agentdetail "github.com/promptlabth/ms-orch-user-service/app/agent_detail"
 	"github.com/promptlabth/ms-orch-user-service/app/framework"
 	styleprompt "github.com/promptlabth/ms-orch-user-service/app/style_prompt"
