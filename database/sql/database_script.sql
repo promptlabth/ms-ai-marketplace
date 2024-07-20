@@ -99,3 +99,24 @@ CREATE TABLE style_prompts (
     name TEXT NOT NULL,
     language TEXT NOT NULL
 );
+CREATE TABLE agent_counts (
+    agent_id SERIAL PRIMARY KEY,
+    count_used INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE summarys (
+    agent_id SERIAL PRIMARY KEY,
+    count_used INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE agent_coins (
+    firebase_id TEXT PRIMARY KEY,
+    coin FLOAT,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE promptlab_balance_coins (balance_coin FLOAT);

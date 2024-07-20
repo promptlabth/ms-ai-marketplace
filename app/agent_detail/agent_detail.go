@@ -13,9 +13,10 @@ type AgentDetail struct {
 	Description string
 	ImageURL    string
 	Prompt      json.RawMessage
-	UserID      string
+	FirebaseID      string
 	FrameworkID int64
 	RoleFrameID int64
+	TotalUsed int64
 }
 
 type AgentDetailInterface interface {
@@ -32,8 +33,9 @@ type NewAgentDetailRequest struct {
 	Description string          `json:"description"`
 	ImageURL    string          `json:"image_url"`
 	Prompt      json.RawMessage `json:"prompt"`
-	UserID      string          `json:"user_id"`
+	FirebaseID      string          `json:"firebase_id"`
 	FrameworkID int64           `json:"framework_id"`
 	RoleFrameID int64           `json:"role_framework_id"`
+	TotalUsed int64           `json:"total_used"`
 	// Include other fields as necessary
 }

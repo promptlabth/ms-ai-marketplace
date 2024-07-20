@@ -8,8 +8,7 @@ import (
 	"github.com/promptlabth/ms-orch-user-service/app/history"
 	styleprompt "github.com/promptlabth/ms-orch-user-service/app/style_prompt"
 
-	// "github.com/promptlabth/ms-orch-user-service/app/role"
-	"github.com/promptlabth/ms-orch-user-service/app/__mock__/role"
+	"github.com/promptlabth/ms-orch-user-service/app/role"
 	"github.com/promptlabth/ms-orch-user-service/app/upload"
 	"github.com/promptlabth/ms-orch-user-service/app/user"
 	"gorm.io/gorm"

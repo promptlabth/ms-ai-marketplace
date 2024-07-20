@@ -36,9 +36,10 @@ func (u *Usecase) NewAgentDetail(ctx context.Context, agentDetail AgentDetail) e
 		Description:   agentDetail.Description,
 		ImageURL:      agentDetail.ImageURL,
 		Prompt:        agentDetail.Prompt,
-		UserID:        agentDetail.UserID,
+		FirebaseID:        agentDetail.FirebaseID,
 		FrameworkID:   agentDetail.FrameworkID,
 		RoleFrameID:   agentDetail.RoleFrameID,
+		TotalUsed:   agentDetail.TotalUsed,
 	}
 	log.Printf("AgentDetailEntity : %+v\n", agentDetailEntity)
 

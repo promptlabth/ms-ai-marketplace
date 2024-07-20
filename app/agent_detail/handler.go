@@ -37,9 +37,10 @@ func (h *Handler) NewAgentDetail(c *gin.Context) {
 		Description: req.Description,
 		ImageURL:    req.ImageURL,
 		Prompt:      req.Prompt,
-		UserID:      req.UserID,
+		FirebaseID:      req.FirebaseID,
 		FrameworkID: req.FrameworkID,
 		RoleFrameID: req.RoleFrameID,
+		TotalUsed: req.TotalUsed,
 	}
 
 	if err := h.usecase.NewAgentDetail(context.Background(), agentDetail); err != nil {
