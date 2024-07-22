@@ -3,6 +3,7 @@ package generateservice
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -31,9 +32,11 @@ func NewGenerateService() (*GenerateService, error) {
 
 	ctx := context.Background()
 
-	data := config.Val.GCP.GoogleAppleciationCredential
-
-	client, err := storage.NewClient(ctx, option.WithCredentialsJSON([]byte(data)))
+	cred, err := base64.StdEncoding.DecodeString(config.Val.GCP.GoogleAppleciationCredential)
+	if err != nil {
+		return nil, err
+	}
+	client, err := storage.NewClient(ctx, option.WithCredentialsJSON(cred))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create storage client: %w", err)
 	}

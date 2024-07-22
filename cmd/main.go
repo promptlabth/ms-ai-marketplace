@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 	"log"
 	"net/http"
@@ -30,7 +31,11 @@ func main() {
 	db := database.NewGormDBWithDefault()
 
 	// initial storage bucket
-	client, err := storage.NewClient(ctx, option.WithCredentialsJSON([]byte(config.Val.GCP.GoogleAppleciationCredential)))
+	cred, err := base64.StdEncoding.DecodeString(config.Val.GCP.GoogleAppleciationCredential)
+	if err != nil {
+		log.Fatal(err)
+	}
+	client, err := storage.NewClient(ctx, option.WithCredentialsJSON(cred))
 	if err != nil {
 		log.Fatal(err)
 	}
