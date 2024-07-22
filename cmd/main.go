@@ -30,7 +30,7 @@ func main() {
 	db := database.NewGormDBWithDefault()
 
 	// initial storage bucket
-	client, err := storage.NewClient(ctx, option.WithCredentialsFile("prompt-lab-383408-512938be4baf.json"))
+	client, err := storage.NewClient(ctx, option.WithCredentialsJSON([]byte(config.Val.GCP.GoogleAppleciationCredential)))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -48,17 +48,15 @@ func main() {
 	GenerateMessageRouter(r, db)
 	UploadRouter(r, client)
 
-	port := os.Getenv("PORT")
+	port := config.Val.Port
 	if port == "" {
+		fmt.Println("use a default port :8080")
 		port = "8080" // Default port if not specified
 	}
 	// log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
 
 	srv := http.Server{
-		Addr: fmt.Sprintf("0.0.0.0:%s", port),
-		// Addr: ":" + port,
-		// Addr:              ":" + config.Val.Port,
-		// Addr:              ":" + "8080",
+		Addr:              fmt.Sprintf("0.0.0.0:%s", port),
 		Handler:           r,
 		ReadHeaderTimeout: 5 * time.Second,
 	}

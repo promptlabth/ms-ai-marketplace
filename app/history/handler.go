@@ -3,6 +3,7 @@ package history
 import (
 	"context"
 	"log"
+
 	// "fmt"
 	"net/http"
 
@@ -26,11 +27,13 @@ func NewHandler(u usecase) *Handler {
 	return &Handler{usecase: u}
 }
 
-// CreateHistory creates a new history 
+// CreateHistory creates a new history
 func (h *Handler) GenerateMessage(c *gin.Context) {
 
 	var req NewHistoryRequest
-	
+
+	ctx := c.Request.Context()
+
 	if err := c.Bind(&req); err != nil {
 		c.JSON(http.StatusBadRequest, map[string]string{
 			"error": err.Error(),
@@ -40,14 +43,14 @@ func (h *Handler) GenerateMessage(c *gin.Context) {
 
 	language := c.GetString("language")
 	if language == "" {
-        c.JSON(400, map[string]string{
-            "error": "Language not set",
-        })
-        return
-    }
+		c.JSON(400, map[string]string{
+			"error": "Language not set",
+		})
+		return
+	}
 
 	history := History{
-		FirebaseID:         req.FirebaseID,
+		FirebaseID:     req.FirebaseID,
 		AgentID:        req.AgentID,
 		FrameworkID:    req.FrameworkID,
 		Prompt:         req.Prompt,
@@ -56,10 +59,10 @@ func (h *Handler) GenerateMessage(c *gin.Context) {
 		TimeStamp:      time.Now(),
 	}
 
-	result , err := h.usecase.CreateHistory(context.Background(), history); 
+	result, err := h.usecase.CreateHistory(ctx, history)
 	if err != "" {
-		log.Print("CreateHistory"+err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "CreateHistory"+err})
+		log.Print("CreateHistory" + err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "CreateHistory" + err})
 		return
 	}
 

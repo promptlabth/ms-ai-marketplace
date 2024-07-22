@@ -31,13 +31,7 @@ func NewGormDBWithDefault() *gorm.DB {
 		user:     os.Getenv("DB_USER"),
 		name:     os.Getenv("DB_NAME"),
 	}
-	// dbConfig := GormConnection{
-	// 	host:     "localhost",
-	// 	port:     "5432",
-	// 	password: "myPasswordAtPromptLabAI",
-	// 	user:     "promptlabai",
-	// 	name:     "promptlabai-db",
-	// }
+
 	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", dbConfig.host, dbConfig.port, dbConfig.user, dbConfig.password, dbConfig.name)
 
 	return NewGormDB(dsn)

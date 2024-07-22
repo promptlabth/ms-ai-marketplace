@@ -6,15 +6,15 @@ import (
 )
 
 type History struct {
-	ID             int     
-	FirebaseID         string      
-	AgentID        int     
-	FrameworkID    int       
-	Prompt         string   
-	StyleMessageID int      
-	Language       string      
-	Result         string 
-	TimeStamp      time.Time 
+	ID             int
+	FirebaseID     string
+	AgentID        int
+	FrameworkID    int
+	Prompt         string
+	StyleMessageID int
+	Language       string
+	Result         string
+	TimeStamp      time.Time
 }
 
 type HistoryInterface interface {
@@ -24,7 +24,7 @@ type HistoryInterface interface {
 }
 
 type NewHistoryRequest struct {
-	FirebaseID         string `json:"firebase_id"` 
+	FirebaseID     string `json:"firebase_id"`
 	AgentID        int    `json:"agent_id"`
 	FrameworkID    int    `json:"framework_id"`
 	Prompt         string `json:"prompt"`

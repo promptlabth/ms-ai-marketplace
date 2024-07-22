@@ -6,12 +6,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
 
 	// "golang.org/x/oauth2"
+	"github.com/promptlabth/ms-ai-marketplace/config"
 	"golang.org/x/oauth2/google"
 
 	"cloud.google.com/go/storage"
@@ -27,28 +28,18 @@ type GenerateService struct {
 }
 
 func NewGenerateService() (*GenerateService, error) {
-	
+
 	ctx := context.Background()
-	credentialsFile := "gcp_sa_key.json"
 
-	data, err := os.ReadFile(credentialsFile)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read credentials file: %v", err)
-	}
+	data := config.Val.GCP.GoogleAppleciationCredential
 
-	// credentials, err := google.CredentialsFromJSON(ctx, data, "https://www.googleapis.com/auth/cloud-platform")
-	// if err != nil {
-	// 	return nil, fmt.Errorf("failed to create credentials: %v", err)
-	// }
-
-	// client := oauth2.NewClient(ctx, credentials.TokenSource)
-	client, err := storage.NewClient(ctx, option.WithCredentialsJSON(data))
+	client, err := storage.NewClient(ctx, option.WithCredentialsJSON([]byte(data)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create storage client: %w", err)
 	}
 
 	// Initialize Vertex AI client
-	projectID := os.Getenv("GCP_PROJECT_ID")
+	projectID := config.Val.GCP.ProjectId
 	if projectID == "" {
 		log.Fatalf("GCP_PROJECT_ID environment variable not set")
 		return nil, errors.New("GCP_PROJECT_ID environment variable not set")
@@ -61,7 +52,7 @@ func NewGenerateService() (*GenerateService, error) {
 	log.Printf("Initialized Vertex AI client for project %s in location %s\n", projectID, locationID)
 
 	// Set up the Anthropic client with the API key from the environment variable
-	apiKey := os.Getenv("ANTHROPIC_API_KEY")
+	apiKey := config.Val.NLPApiKey.Anthropic
 	if apiKey == "" {
 		log.Fatalf("ANTHROPIC_API_KEY environment variable not set")
 		return nil, errors.New("ANTHROPIC_API_KEY environment variable not set")
@@ -198,7 +189,8 @@ func (s *GenerateService) GenerateMessageVertexAI(inputPrompt, featureName strin
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
+
 	if err != nil {
 		return "", fmt.Errorf("failed to read response body: %v", err)
 	}
@@ -206,44 +198,44 @@ func (s *GenerateService) GenerateMessageVertexAI(inputPrompt, featureName strin
 	return string(body), nil
 }
 
-func (g *GenerateService) GenerateMessageOpenAI(inputPrompt string) (string, error) { 
+func (g *GenerateService) GenerateMessageOpenAI(inputPrompt string) (string, error) {
 	apiKey := os.Getenv("OPENAI_KEY")
-    if apiKey == "" {
-        log.Fatal("environment variable not set")
-    }
+	if apiKey == "" {
+		log.Fatal("environment variable not set")
+	}
 
-    url := "https://api.openai.com/v1/completions"
-    
-    requestBody, err := json.Marshal(map[string]interface{}{
-        "model":            "gpt-3.5-turbo-instruct",
-        "prompt":           inputPrompt,
-        "temperature":      1,
-        "max_tokens":       1024,
-        "top_p":            1,
-        "frequency_penalty": 0,
-        "presence_penalty": 0,
-    })
-    if err != nil {
-        log.Fatal(err)
-    }
+	url := "https://api.openai.com/v1/completions"
 
-    req, err := http.NewRequest("POST", url, bytes.NewBuffer(requestBody))
-    if err != nil {
-        log.Fatal(err)
-    }
+	requestBody, err := json.Marshal(map[string]interface{}{
+		"model":             "gpt-3.5-turbo-instruct",
+		"prompt":            inputPrompt,
+		"temperature":       1,
+		"max_tokens":        1024,
+		"top_p":             1,
+		"frequency_penalty": 0,
+		"presence_penalty":  0,
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
 
-    req.Header.Set("Content-Type", "application/json")
-    req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", apiKey))
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(requestBody))
+	if err != nil {
+		log.Fatal(err)
+	}
 
-    client := &http.Client{}
-    resp, err := client.Do(req)
-    if err != nil {
-        log.Fatal(err)
-    }
-    defer resp.Body.Close()
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", apiKey))
 
-    body, err := ioutil .ReadAll(resp.Body)
-    	if err != nil {
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
 		fmt.Printf("ChatCompletion error: %v\n", err)
 		return "", errors.New("ChatCompletion error" + err.Error())
 	}
@@ -257,5 +249,5 @@ func (g *GenerateService) GenerateMessageOpenAI(inputPrompt string) (string, err
 			}
 		}
 	}
-	return string(body),nil
+	return string(body), nil
 }

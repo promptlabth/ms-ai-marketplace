@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log"
+
 	// "fmt"
 	"math/rand"
 	// "strings"
@@ -13,11 +14,9 @@ import (
 
 	agentdetail "github.com/promptlabth/ms-ai-marketplace/app/agent_detail"
 	generateservice "github.com/promptlabth/ms-ai-marketplace/app/external_service"
-	// "github.com/promptlabth/ms-ai-marketplace/app/framework"
-	// "github.com/promptlabth/ms-ai-marketplace/app/role"
-	// styleprompt "github.com/promptlabth/ms-ai-marketplace/app/style_prompt"
 )
-type agentStorage interface{
+
+type agentStorage interface {
 	GetAgentByID(context.Context, int) (*agentdetail.AgentDetailEntity, error)
 }
 type storage interface {
@@ -30,14 +29,14 @@ type domain interface {
 
 type Usecase struct {
 	agentStorage agentStorage
-	storage storage
-	domain  domain
+	storage      storage
+	domain       domain
 }
 
-func NewUsecase(s storage, d domain,as agentStorage) *Usecase {
+func NewUsecase(s storage, d domain, as agentStorage) *Usecase {
 	return &Usecase{
-		storage: s,
-		domain:  d,
+		storage:      s,
+		domain:       d,
 		agentStorage: as,
 	}
 }
@@ -49,10 +48,10 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History) (*string, 
 	}
 
 	agent, err := u.agentStorage.GetAgentByID(ctx, history.AgentID)
-    if err != nil {
-        log.Printf("Error getting agent by ID: %v", err)
-        return nil, err.Error()
-    }
+	if err != nil {
+		log.Printf("Error getting agent by ID: %v", err)
+		return nil, err.Error()
+	}
 	log.Print(agent)
 
 	result, err := handleModelGeneration(history.Prompt)
