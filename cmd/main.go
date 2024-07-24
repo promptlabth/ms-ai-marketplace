@@ -31,7 +31,7 @@ func main() {
 	logx, stop := logger.NewZap()
 	defer stop()
 
-	client, err := storage.NewClient(ctx, option.WithCredentialsJSON([]byte(config.Val.GCP.GoogleAppleciationCredential)))
+	client, err := storage.NewClient(ctx, option.WithCredentialsFile("prompt-lab-cred.json"))
 	if err != nil {
 		logx.Fatal(err.Error())
 	}

@@ -31,7 +31,7 @@ func NewGenerateService() (*GenerateService, error) {
 
 	ctx := context.Background()
 
-	client, err := storage.NewClient(ctx, option.WithCredentialsJSON([]byte(config.Val.GCP.GoogleAppleciationCredential)))
+	client, err := storage.NewClient(ctx, option.WithCredentialsFile("prompt-lab-cred.json"))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create storage client: %w", err)
 	}

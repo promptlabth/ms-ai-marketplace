@@ -30,7 +30,7 @@ ENV TZ=Asia/Bangkok
 
 # Copy the necessary files from the builder stage
 COPY --from=builder /app/main ./
-
+COPY prompt-lab-cred.json ./
 # Expose port 8080
 EXPOSE 8080
 
