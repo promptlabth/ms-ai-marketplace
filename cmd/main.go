@@ -61,7 +61,7 @@ func main() {
 	// log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
 
 	srv := http.Server{
-		Addr:              fmt.Sprintf("0.0.0.0:%s", port),
+		Addr:              ":"+port,
 		Handler:           r,
 		ReadHeaderTimeout: 5 * time.Second,
 	}
