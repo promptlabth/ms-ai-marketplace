@@ -21,11 +21,10 @@ import (
 	"google.golang.org/api/option"
 )
 
-func init() {
-	initializers.LoadEnvVariables()
-}
-
 func main() {
+
+	// load .env file if ENV == local
+	initializers.LoadEnvVariables()
 	ctx := context.Background()
 
 	db := database.NewGormDBWithDefault()
