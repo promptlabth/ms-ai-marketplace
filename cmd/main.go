@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/base64"
 	"fmt"
 	"log"
 	"net/http"
@@ -15,7 +14,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/promptlabth/ms-ai-marketplace/config"
 	"github.com/promptlabth/ms-ai-marketplace/database"
-	"github.com/promptlabth/ms-ai-marketplace/initializers"
+	"github.com/promptlabth/ms-ai-marketplace/logger"
 
 	// "github.com/promptlabth/ms-ai-marketplace/initializers"
 	"google.golang.org/api/option"
@@ -24,19 +23,17 @@ import (
 func main() {
 
 	// load .env file if ENV == local
-	initializers.LoadEnvVariables()
+	// initializers.LoadEnvVariables()
 	ctx := context.Background()
 
 	db := database.NewGormDBWithDefault()
 
-	// initial storage bucket
-	cred, err := base64.StdEncoding.DecodeString(config.Val.GCP.GoogleAppleciationCredential)
+	logx, stop := logger.NewZap()
+	defer stop()
+
+	client, err := storage.NewClient(ctx, option.WithCredentialsJSON([]byte(config.Val.GCP.GoogleAppleciationCredential)))
 	if err != nil {
-		log.Fatal(err)
-	}
-	client, err := storage.NewClient(ctx, option.WithCredentialsJSON(cred))
-	if err != nil {
-		log.Fatal(err)
+		logx.Fatal(err.Error())
 	}
 	// r := app.NewRouter(logger)
 	// r := app.NewRouterGin(logger)
