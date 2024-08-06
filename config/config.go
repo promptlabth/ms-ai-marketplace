@@ -18,6 +18,15 @@ type config struct {
 	GCP              GCP           `envPrefix:"GCP_"`
 	NLPApiKey        ApiKey        `emvPrefix:"API_KEY_"`
 	Database         Database      `envPrefix:"DB_"`
+	Adaptor          Adpator       `envPrefix:"ADAPTOR_"`
+}
+
+type Adpator struct {
+	User GrpcAdaptor `envPrefix:"USER_"`
+}
+
+type GrpcAdaptor struct {
+	Url string `env:"URL"`
 }
 
 type ApiKey struct {

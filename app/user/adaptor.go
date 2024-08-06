@@ -47,3 +47,13 @@ func isValidEmail(email string) bool {
 }
 
 // Additional domain-specific methods can be added here...
+
+type UserAdaptor struct {
+	userServiceClient UserServiceClient
+}
+
+func NewUserAdaptor(userServiceClient UserServiceClient) *UserAdaptor {
+	return &UserAdaptor{
+		userServiceClient: userServiceClient,
+	}
+}

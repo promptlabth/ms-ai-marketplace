@@ -11,9 +11,8 @@ type UserEntity struct {
 	Platform       string    `gorm:"column:access_token"`
 	StripeID       string    `gorm:"column:stripe_id"`
 	PlanID         string    `gorm:"column:plan_id"`
-	Password       string    `gorm:"column:password"`
 	LastActiveTime time.Time `gorm:"column:datetime_last_active"`
-}	
+}
 
 func (UserEntity) TableName() string {
 	return "users"

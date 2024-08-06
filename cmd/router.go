@@ -3,10 +3,13 @@ package main
 import (
 	"cloud.google.com/go/storage"
 	"github.com/gin-gonic/gin"
-	"github.com/promptlabth/ms-ai-marketplace/app/agent_detail"
+	agentdetail "github.com/promptlabth/ms-ai-marketplace/app/agent_detail"
 	"github.com/promptlabth/ms-ai-marketplace/app/framework"
 	"github.com/promptlabth/ms-ai-marketplace/app/history"
 	styleprompt "github.com/promptlabth/ms-ai-marketplace/app/style_prompt"
+	"github.com/promptlabth/ms-ai-marketplace/config"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/promptlabth/ms-ai-marketplace/app/role"
 	"github.com/promptlabth/ms-ai-marketplace/app/upload"
@@ -50,15 +53,24 @@ func RoleRouter(router *gin.Engine, db *gorm.DB) {
 	router.GET("/creator/role/:id", roleHandler.GetRoleByID)
 }
 
-func UserRouter(router *gin.Engine, db *gorm.DB) {
+func UserRouter(router *gin.Engine, db *gorm.DB) error {
 
+	creds := insecure.NewCredentials()
+	cc, err := grpc.NewClient(config.Val.Adaptor.User.Url, grpc.WithTransportCredentials(creds))
+	if err != nil {
+		return err
+	}
+	userClient := user.NewUserServiceClient(cc)
 	userValidation := user.NewAdaptor(db)
 	userCore := user.NewCore(db)
-	userUsecase := user.NewUsecase(userCore, userValidation)
+
+	userAdaptor := user.NewUserAdaptor(userClient)
+	userUsecase := user.NewUsecase(userCore, userValidation, userAdaptor)
 	userHandler := user.NewHandler(userUsecase)
 
 	router.POST("/user", userHandler.NewUser)
 	router.GET("/user/:id", userHandler.GetUser)
+	return nil
 }
 
 func UploadRouter(router *gin.Engine, client *storage.Client) {
@@ -83,7 +95,7 @@ func GenerateMessageRouter(router *gin.Engine, db *gorm.DB) {
 	generateMessageValidation := history.NewAdaptor(db)
 	generateMessageCore := history.NewCore(db)
 	agentdetailCore := agentdetail.NewCore(db)
-	generateMessageUsecase := history.NewUsecase(generateMessageCore,generateMessageValidation,agentdetailCore)
+	generateMessageUsecase := history.NewUsecase(generateMessageCore, generateMessageValidation, agentdetailCore)
 	generateMessageHandler := history.NewHandler(generateMessageUsecase)
 
 	router.POST("/:lang/customer/use_agent/messages", generateMessageHandler.GenerateMessage)
