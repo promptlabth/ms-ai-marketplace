@@ -52,7 +52,7 @@ jobs:
         --set-env-vars ENV=DEV \
         --set-env-vars GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }} \
         --set-env-vars API_KEY_ANTHROPIC=${{ secrets.API_KEY }},API_KEY_OPENAI_KEY=${{ secrets.OPENAI_KEY }} \
-        --set-env-vars ADAPTOR_USER_URL=${{ secrets.ADAPTOR_USER_URL }}
+        --set-env-vars ADAPTOR_USER_URL=${{ secrets.ADAPTOR_USER_URL }} \
         --max-instances=10 \
         --memory=2Gi \
         --concurrency=80 \
