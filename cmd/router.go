@@ -1,6 +1,9 @@
 package main
 
 import (
+	"crypto/tls"
+	"crypto/x509"
+
 	"cloud.google.com/go/storage"
 	"github.com/gin-gonic/gin"
 	agentdetail "github.com/promptlabth/ms-ai-marketplace/app/agent_detail"
@@ -9,7 +12,7 @@ import (
 	styleprompt "github.com/promptlabth/ms-ai-marketplace/app/style_prompt"
 	"github.com/promptlabth/ms-ai-marketplace/config"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/credentials"
 
 	"github.com/promptlabth/ms-ai-marketplace/app/role"
 	"github.com/promptlabth/ms-ai-marketplace/app/upload"
@@ -54,9 +57,17 @@ func RoleRouter(router *gin.Engine, db *gorm.DB) {
 }
 
 func UserRouter(router *gin.Engine, db *gorm.DB) error {
+	var opts []grpc.DialOption
 
-	creds := insecure.NewCredentials()
-	cc, err := grpc.NewClient(config.Val.Adaptor.User.Url, grpc.WithTransportCredentials(creds))
+	systemRoots, err := x509.SystemCertPool()
+	if err != nil {
+		return err
+	}
+	cred := credentials.NewTLS(&tls.Config{
+		RootCAs: systemRoots,
+	})
+	opts = append(opts, grpc.WithTransportCredentials(cred))
+	cc, err := grpc.NewClient(config.Val.Adaptor.User.Url, opts...)
 	if err != nil {
 		return err
 	}

@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -52,6 +53,7 @@ func (h *Handler) GetUser(c *gin.Context) {
 	firebaseID := c.Param("id")
 	userByID, err := h.userUsecase.GetUser(c.Request.Context(), firebaseID)
 	if err != nil {
+		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get user"})
 		return
 	}
