@@ -11,9 +11,9 @@ import (
 type usecase interface {
 	NewRole(ctx context.Context, role Role) error
 	ListRoles(ctx context.Context,language string) (*[]RoleEntity, error)
-	GetRoleByID(ctx context.Context, id uint) (*RoleEntity, error)
+	GetRoleByID(ctx context.Context, id int) (*RoleEntity, error)
 	UpdateRole(ctx context.Context, role RoleEntity) error
-	DeleteRole(ctx context.Context, id uint) error
+	DeleteRole(ctx context.Context, id int) error
 }
 
 type Handler struct {
@@ -46,7 +46,7 @@ func (h *Handler) NewRole(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "Role created successfully"})
 }
 
-// ListRoles gets a list of roles
+
 func (h *Handler) ListRoles(c *gin.Context) {
 
 	language := c.GetString("language")
@@ -65,7 +65,6 @@ func (h *Handler) ListRoles(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"roles": roles})
 }
 
-// GetRoleByID gets a role by its ID
 func (h *Handler) GetRoleByID(c *gin.Context) {
 	id := c.Param("id")
 	roleID, err := strconv.Atoi(id)
@@ -75,7 +74,7 @@ func (h *Handler) GetRoleByID(c *gin.Context) {
 		})
 		return
 	}
-	role_id := uint(roleID)
+	role_id := roleID
 
 	role, err := h.usecase.GetRoleByID(context.Background(), role_id)
 	if err != nil {
@@ -86,7 +85,6 @@ func (h *Handler) GetRoleByID(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"role": role})
 }
 
-// DeleteRole removes a role by its ID
 func (h *Handler) DeleteRole(c *gin.Context) {
 	id := c.Param("id")
 	roleID, err := strconv.Atoi(id)
@@ -96,7 +94,7 @@ func (h *Handler) DeleteRole(c *gin.Context) {
 		})
 		return
 	}
-	role_id := uint(roleID)
+	role_id := roleID
 	if err := h.usecase.DeleteRole(context.Background(), role_id); err != nil {
 		c.AbortWithStatus(500)
 		return

@@ -15,10 +15,12 @@ import (
 	"github.com/promptlabth/ms-ai-marketplace/config"
 	"github.com/promptlabth/ms-ai-marketplace/database"
 	"github.com/promptlabth/ms-ai-marketplace/logger"
+	"go.uber.org/mock/gomock"
 
 	// "github.com/promptlabth/ms-ai-marketplace/initializers"
 	"google.golang.org/api/option"
 )
+
 
 func main() {
 
@@ -35,6 +37,9 @@ func main() {
 	if err != nil {
 		logx.Fatal(err.Error())
 	}
+
+	ctrl := gomock.NewController(nil)
+	defer ctrl.Finish()
 	// r := app.NewRouter(logger)
 	// r := app.NewRouterGin(logger)
 	r := gin.Default()
@@ -48,8 +53,9 @@ func main() {
 		logx.Fatal(err.Error())
 	}
 	StylePromptRouter(r, db)
-	GenerateMessageRouter(r, db)
 	UploadRouter(r, client)
+	GenerateMessageRouter(r, db, ctrl)
+	
 
 	port := config.Val.Port
 	if port == "" {

@@ -1,7 +1,7 @@
 package styleprompt
 
 type StylePromptEntity struct {
-    ID   uint   `gorm:"autoIncrement;column:id"`
+    ID   int   `gorm:"autoIncrement;column:id"`
     Name string `gorm:"column:name"`
     Language  string  `gorm:"column:language"`
 }

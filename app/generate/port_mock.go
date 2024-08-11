@@ -14,7 +14,10 @@ import (
 	reflect "reflect"
 
 	agentdetail "github.com/promptlabth/ms-ai-marketplace/app/agent_detail"
+	"github.com/promptlabth/ms-ai-marketplace/app/framework"
 	history "github.com/promptlabth/ms-ai-marketplace/app/history"
+	"github.com/promptlabth/ms-ai-marketplace/app/role"
+	styleprompt "github.com/promptlabth/ms-ai-marketplace/app/style_prompt"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -89,9 +92,60 @@ func (m *MockagentStorage) GetAgentByID(arg0 context.Context, arg1 int) (*agentd
 }
 
 // GetAgentByID indicates an expected call of GetAgentByID.
-func (mr *MockagentStorageMockRecorder) GetAgentByID(arg0, arg1 any) *gomock.Call {
+func (mr *MockagentStorageMockRecorder) GetAgentByID(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAgentByID", reflect.TypeOf((*MockagentStorage)(nil).GetAgentByID), arg0, arg1)
+}
+
+// UpdateAgentDetail mocks base method.
+func (m *MockagentStorage) UpdateAgentDetail(arg0 context.Context, arg1 agentdetail.AgentDetailEntity) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateAgentDetail", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateAgentDetail indicates an expected call of UpdateAgentDetail.
+func (mr *MockagentStorageMockRecorder) UpdateAgentDetail(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateAgentDetail", reflect.TypeOf((*MockagentStorage)(nil).UpdateAgentDetail), arg0, arg1)
+}
+
+type MockstylepromptStorage struct {
+	ctrl     *gomock.Controller
+	recorder *MockstylepromptStorageMockRecorder
+}
+
+// MockstylepromptStorageMockRecorder is the mock recorder for MockstylepromptStorage.
+type MockstylepromptStorageMockRecorder struct {
+	mock *MockstylepromptStorage
+}
+
+// NewMockstylepromptStorage creates a new mock instance.
+func NewMockstylepromptStorage(ctrl *gomock.Controller) *MockstylepromptStorage {
+	mock := &MockstylepromptStorage{ctrl: ctrl}
+	mock.recorder = &MockstylepromptStorageMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockstylepromptStorage) EXPECT() *MockstylepromptStorageMockRecorder {
+	return m.recorder
+}
+
+// GetStylePromptByID mocks base method.
+func (m *MockstylepromptStorage) GetStylePromptByID(arg0 context.Context, arg1 int) (*styleprompt.StylePromptEntity, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetStylePromptByID", arg0, arg1)
+	ret0, _ := ret[0].(*styleprompt.StylePromptEntity)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetStylePromptByID indicates an expected call of GetStylePromptByID.
+func (mr *MockstylepromptStorageMockRecorder) GetStylePromptByID(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStylePromptByID", reflect.TypeOf((*MockstylepromptStorage)(nil).GetStylePromptByID), arg0, arg1)
 }
 
 // MockhistoryStorage is a mock of historyStorage interface.
@@ -130,4 +184,117 @@ func (m *MockhistoryStorage) CreateHistory(ctx context.Context, history history.
 func (mr *MockhistoryStorageMockRecorder) CreateHistory(ctx, history any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateHistory", reflect.TypeOf((*MockhistoryStorage)(nil).CreateHistory), ctx, history)
+}
+
+// MockStorage is a mock of the storage interface
+type MockStorage struct {
+	ctrl     *gomock.Controller
+	recorder *MockStorageMockRecorder
+}
+
+// MockStorageMockRecorder is the mock recorder for MockStorage
+type MockStorageMockRecorder struct {
+	mock *MockStorage
+}
+
+// NewMockStorage creates a new mock instance
+func NewMockStorage(ctrl *gomock.Controller) *MockStorage {
+	mock := &MockStorage{ctrl: ctrl}
+	mock.recorder = &MockStorageMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockStorage) EXPECT() *MockStorageMockRecorder {
+	return m.recorder
+}
+
+// Generate mocks the base method
+func (m *MockStorage) Generate(ctx context.Context, prompt string, model string) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Generate", ctx, prompt, model)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Generate indicates an expected call of Generate
+func (mr *MockStorageMockRecorder) Generate(ctx, prompt, model interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Generate", reflect.TypeOf((*MockStorage)(nil).Generate), ctx, prompt, model)
+}
+
+type MockframeworkStorage struct {
+	ctrl     *gomock.Controller
+	recorder *MockframeworkStorageMockRecorder
+}
+
+// MockframeworkStorageMockRecorder is the mock recorder for MockframeworkStorage
+type MockframeworkStorageMockRecorder struct {
+	mock *MockframeworkStorage
+}
+
+// NewMockframeworkStorage creates a new mock instance
+func NewMockframeworkStorage(ctrl *gomock.Controller) *MockframeworkStorage {
+	mock := &MockframeworkStorage{ctrl: ctrl}
+	mock.recorder = &MockframeworkStorageMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockframeworkStorage) EXPECT() *MockframeworkStorageMockRecorder {
+	return m.recorder
+}
+
+// GetframeworkyID mocks the base method
+func (m *MockframeworkStorage) GetFrameworkByID(ctx context.Context, id int) (*framework.FrameworkEntity, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetFrameworkByID", ctx, id)
+	ret0, _ := ret[0].(*framework.FrameworkEntity)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetframeworkyID indicates an expected call of GetframeworkyID
+func (mr *MockframeworkStorageMockRecorder) GetFrameworkByID(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFrameworkByID", reflect.TypeOf((*MockframeworkStorage)(nil).GetFrameworkByID), ctx, id)
+}
+
+// MockroleStorage is a mock of roleStorage
+type MockroleStorage struct {
+	ctrl     *gomock.Controller
+	recorder *MockroleStorageMockRecorder
+}
+
+// MockroleStorageMockRecorder is the mock recorder for MockroleStorage
+type MockroleStorageMockRecorder struct {
+	mock *MockroleStorage
+}
+
+// NewMockroleStorage creates a new mock instance
+func NewMockroleStorage(ctrl *gomock.Controller) *MockroleStorage {
+	mock := &MockroleStorage{ctrl: ctrl}
+	mock.recorder = &MockroleStorageMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockroleStorage) EXPECT() *MockroleStorageMockRecorder {
+	return m.recorder
+}
+
+// GetRoleByID mocks the base method
+func (m *MockroleStorage) GetRoleByID(ctx context.Context, id int) (*role.RoleEntity, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetRoleByID", ctx, id)
+	ret0, _ := ret[0].(*role.RoleEntity)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetRoleByID indicates an expected call of GetRoleByID
+func (mr *MockroleStorageMockRecorder) GetRoleByID(ctx, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRoleByID", reflect.TypeOf((*MockroleStorage)(nil).GetRoleByID), ctx, id)
 }

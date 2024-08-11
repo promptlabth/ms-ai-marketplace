@@ -8,10 +8,11 @@ import (
 )
 
 type storage interface {
-	CreateAgentDetail(context.Context, AgentDetailEntity) (*int64, error)
+	CreateAgentDetail(context.Context, AgentDetailEntity) (*int, error)
 	GetAgentDetailsByUserID(context.Context, string) (*[]AgentDetailEntity, error) 
 	ListAgentDetails(context.Context) (*[]AgentDetailEntity, error)
 	GetAgentByID(context.Context, int) (*AgentDetailEntity, error)
+	UpdateAgentDetail(context.Context,  AgentDetailEntity) error
 }
 
 type domain interface {
@@ -71,4 +72,21 @@ func (u *Usecase) ListAgentDetails(ctx context.Context) (*[]AgentDetailEntity, e
 		return nil, err
 	}
 	return agents, nil
+}
+
+func (u *Usecase) UpdateAgentDetail(ctx context.Context, agentDetail AgentDetail) error {
+	agentDetailEntity := AgentDetailEntity{
+		ID : agentDetail.ID,
+		Name:          agentDetail.Name,
+		Description:   agentDetail.Description,
+		ImageURL:      agentDetail.ImageURL,
+		Prompt:        agentDetail.Prompt,
+		FirebaseID:        agentDetail.FirebaseID,
+		FrameworkID:   agentDetail.FrameworkID,
+		RoleFrameID:   agentDetail.RoleFrameID,
+		TotalUsed:   agentDetail.TotalUsed,
+	}
+
+	err := u.storage.UpdateAgentDetail(ctx, agentDetailEntity)
+	return err
 }

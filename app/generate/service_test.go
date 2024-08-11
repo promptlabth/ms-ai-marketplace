@@ -14,7 +14,11 @@ type TestGenerateServiceSuite struct {
 	ctrl                *gomock.Controller
 	mockGenerateAdaptor *MockgenerateAdaptor
 	agentStorage        *MockagentStorage
+	stylepromptStorage  *MockstylepromptStorage
+	frameworkStorage    *MockframeworkStorage
+	roleStorage         *MockroleStorage
 	historyStorage      *MockhistoryStorage
+	storage             *MockStorage
 
 	svc *GenerateService
 }
@@ -27,11 +31,15 @@ func (t *TestGenerateServiceSuite) SetupTest() {
 	// Setup before each test
 	t.ctrl = gomock.NewController(t.T())
 	t.agentStorage = NewMockagentStorage(t.ctrl)
+	t.stylepromptStorage = NewMockstylepromptStorage(t.ctrl)
+	t.frameworkStorage = NewMockframeworkStorage(t.ctrl)
 	t.historyStorage = NewMockhistoryStorage(t.ctrl)
+	t.roleStorage = NewMockroleStorage(t.ctrl)
 	t.mockGenerateAdaptor = NewMockgenerateAdaptor(t.ctrl)
+	t.storage = NewMockStorage(t.ctrl)
 
 	t.svc = NewService(
-		t.mockGenerateAdaptor, t.agentStorage, t.historyStorage,
+		t.mockGenerateAdaptor, t.agentStorage, t.stylepromptStorage, t.frameworkStorage, t.roleStorage, t.historyStorage, t.storage,
 	)
 }
 
@@ -50,7 +58,7 @@ func (t *TestGenerateServiceSuite) TestGenerateGetAgentDetailFailed_ReturnErr() 
 	msg := GenerateRequest{}
 
 	// act
-	err := t.svc.Generate(context.Background(), msg)
+	_, err := t.svc.Generate(context.Background(), msg,"th")
 
 	// assert
 	t.Error(err)

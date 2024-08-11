@@ -16,7 +16,7 @@ func NewCore(db *gorm.DB) *Core {
 	return &Core{db: db}
 }
 
-func (c *Core) CreateAgentDetail(ctx context.Context, agentDetail AgentDetailEntity) (*int64, error) {
+func (c *Core) CreateAgentDetail(ctx context.Context, agentDetail AgentDetailEntity) (*int, error) {
 
 	if err := c.db.Create(&agentDetail); err.Error != nil {
 		return nil, err.Error
@@ -47,4 +47,15 @@ func (c *Core) ListAgentDetails(ctx context.Context) (*[]AgentDetailEntity, erro
 		return nil, err
 	}
 	return &agents, nil
+}
+
+func (c *Core) UpdateAgentDetail(ctx context.Context, agentDetail AgentDetailEntity) ( error) {
+	var existingAgent AgentDetailEntity
+	if err := c.db.First(&existingAgent, agentDetail.ID).Error; err != nil {
+		return err
+	}
+	if err := c.db.Model(&existingAgent).Updates(agentDetail).Error; err != nil {
+		return err
+	}
+	return nil
 }

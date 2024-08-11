@@ -13,6 +13,7 @@ type usecase interface {
 	GetAgentDetails(c context.Context, firebaseId string) (*[]AgentDetailEntity, error)
 	ListAgentDetails(c context.Context) (*[]AgentDetailEntity, error)
 	GetAgentByID(c context.Context, id int) (*AgentDetailEntity, error)
+	UpdateAgentDetail(c context.Context, agentDetail AgentDetail) error
 }
 
 type Handler struct {
@@ -98,4 +99,40 @@ func (h *Handler) ListAgentDetails(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"agents": agents})
+}
+
+func (h *Handler) UpdateAgentDetail(c *gin.Context) {
+	var req UpdateAgentDetailRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	agentDetail := AgentDetail{
+		ID:          req.ID,
+		Name:        req.Name,
+		Description: req.Description,
+		ImageURL:    req.ImageURL,
+		Prompt:      req.Prompt,
+		FirebaseID:  req.FirebaseID,
+		FrameworkID: req.FrameworkID,
+		RoleFrameID: req.RoleFrameID,
+		TotalUsed:   req.TotalUsed,
+	}
+
+	if err := h.usecase.UpdateAgentDetail(c, agentDetail); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to update agent details",
+		})
+		return
+	}
+
+	// Respond with success
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"message": "Update successful",
+	})
 }

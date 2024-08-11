@@ -9,11 +9,11 @@ import (
 )
 
 type stylePromptUsecase interface {
-	CreateStylePrompt(ctx context.Context, stylePrompt StylePrompt) (uint, error)
+	CreateStylePrompt(ctx context.Context, stylePrompt StylePrompt) (int, error)
 	ListStylePrompts(ctx context.Context, language string) (*[]StylePromptEntity, error)
-	GetStylePromptByID(ctx context.Context, id uint,language string) (*StylePromptEntity, error)
+	GetStylePromptByID(ctx context.Context, id int) (*StylePromptEntity, error)
 	// UpdateStylePrompt(ctx context.Context, stylePrompt StylePrompt) error
-	// DeleteStylePrompt(ctx context.Context, id uint) error
+	// DeleteStylePrompt(ctx context.Context, id int) error
 }
 
 type Handler struct {
@@ -54,7 +54,6 @@ func (h *Handler) CreateStylePrompt(c *gin.Context) {
 }
 
 
-// ListStylePrompts gets a list of stylePrompts.
 func (h *Handler) ListStylePrompts(c *gin.Context) {
 
 	language := c.GetString("language")
@@ -73,7 +72,6 @@ func (h *Handler) ListStylePrompts(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": data})
 }
 
-// GetStylePromptByID gets a stylePrompt by its ID
 func (h *Handler) GetStylePromptByID(c *gin.Context) {
 	id := c.Param("id")
 	stylePromptID, err := strconv.Atoi(id)
@@ -83,17 +81,9 @@ func (h *Handler) GetStylePromptByID(c *gin.Context) {
 		})
 		return
 	}
-	stylePrompt_id := uint(stylePromptID)
+	stylePrompt_id :=stylePromptID
 
-	language := c.GetString("language")
-	if language == "" {
-        c.JSON(400, map[string]string{
-            "error": "Language not set",
-        })
-        return
-    }
-
-	data, err := h.usecase.GetStylePromptByID(context.Background(), stylePrompt_id,language)
+	data, err := h.usecase.GetStylePromptByID(context.Background(), stylePrompt_id)
 	if err != nil {
 		c.AbortWithStatus(500)
 		return

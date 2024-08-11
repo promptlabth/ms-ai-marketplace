@@ -8,9 +8,11 @@ import (
 	"github.com/gin-gonic/gin"
 	agentdetail "github.com/promptlabth/ms-ai-marketplace/app/agent_detail"
 	"github.com/promptlabth/ms-ai-marketplace/app/framework"
+	"github.com/promptlabth/ms-ai-marketplace/app/generate"
 	"github.com/promptlabth/ms-ai-marketplace/app/history"
 	styleprompt "github.com/promptlabth/ms-ai-marketplace/app/style_prompt"
 	"github.com/promptlabth/ms-ai-marketplace/config"
+	"go.uber.org/mock/gomock"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
@@ -100,15 +102,42 @@ func StylePromptRouter(router *gin.Engine, db *gorm.DB) {
 	stylePromptHandler := styleprompt.NewHandler(stylePromptUsecase)
 
 	router.GET("/:lang/customer/style_prompts", stylePromptHandler.ListStylePrompts)
-	router.GET("/:lang/customer/style_prompt/:id", stylePromptHandler.GetStylePromptByID)
+	router.GET("/customer/style_prompt/:id", stylePromptHandler.GetStylePromptByID)
 }
-func GenerateMessageRouter(router *gin.Engine, db *gorm.DB) {
-	generateMessageValidation := history.NewAdaptor(db)
-	generateMessageCore := history.NewCore(db)
-	agentdetailCore := agentdetail.NewCore(db)
-	generateMessageUsecase := history.NewUsecase(generateMessageCore, generateMessageValidation, agentdetailCore)
-	generateMessageHandler := history.NewHandler(generateMessageUsecase)
+// func GenerateMessageRouter(router *gin.Engine, db *gorm.DB) {
+// 	generateMessageValidation := history.NewAdaptor(db)
+// 	generateMessageCore := history.NewCore(db)
+// 	agentdetailCore := agentdetail.NewCore(db)
+// 	generateMessageUsecase := history.NewUsecase(generateMessageCore, generateMessageValidation, agentdetailCore)
+// 	generateMessageHandler := history.NewHandler(generateMessageUsecase)
 
-	router.POST("/:lang/customer/use_agent/messages", generateMessageHandler.GenerateMessage)
-	// router.GET("/:lang/customer/style_prompt/:id", stylePromptHandler.GetStylePromptByID)
+// 	router.POST("/:lang/customer/use_agent/messages", generateMessageHandler.GenerateMessage)
+// 	// router.GET("/:lang/customer/style_prompt/:id", stylePromptHandler.GetStylePromptByID)
+// }
+func GenerateMessageRouter(router *gin.Engine, db *gorm.DB, ctrl *gomock.Controller) {
+	// Initialize mocks
+	generateAdaptor := generate.NewMockgenerateAdaptor(ctrl)
+	agentDetailCore := agentdetail.NewCore(db)
+	stylePromptCore := styleprompt.NewCore(db)
+	frameworkCore := framework.NewCore(db)
+	roleCore := role.NewCore(db)
+	historyCore := history.NewCore(db)
+	generateCore := generate.NewCore(db)
+
+	// Initialize the service with actual implementations and mock
+	generateService := generate.NewService(
+		generateAdaptor,
+		agentDetailCore,
+		stylePromptCore,
+		frameworkCore,
+		roleCore,
+		historyCore,
+		generateCore,
+	)
+
+	// Initialize the handler
+	generateHandler := generate.NewHandler(generateService)
+
+	// Define routes and handlers
+	router.POST("/:lang/customer/use_agent/messages", generateHandler.Generate)
 }

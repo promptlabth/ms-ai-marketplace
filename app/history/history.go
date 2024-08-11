@@ -29,4 +29,5 @@ type NewHistoryRequest struct {
 	FrameworkID    int    `json:"framework_id"`
 	Prompt         string `json:"prompt"`
 	StyleMessageID int    `json:"style_message_id"`
+	Result         string `json:"result"`
 }

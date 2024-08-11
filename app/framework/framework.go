@@ -14,7 +14,7 @@ type Framework struct {
 
 type FrameworkInterface interface {
 	CreateFramework(ctx context.Context, agent_Detail Framework) (*string, error) 
-	GetFrameworkByID(ctx context.Context, id string) (*Framework, error)     
+	GetFrameworkByID(ctx context.Context, id int) (*Framework, error)     
 	ListFrameworks(ctx context.Context, language string) (*[]Framework, error)     
 	UpdateFramework(ctx context.Context, agent_Detail Framework) error      
 	DeleteFramework(ctx context.Context, id string) error                         
