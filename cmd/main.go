@@ -21,12 +21,22 @@ import (
 	"google.golang.org/api/option"
 )
 
-
 func main() {
 
 	// load .env file if ENV == local
 	// initializers.LoadEnvVariables()
 	ctx := context.Background()
+
+	// init trace for otel
+	tp, err := config.InitTrace()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer func() {
+		if err := tp.Shutdown(context.Background()); err != nil {
+			log.Printf("Error shutting down tracer provider: %v", err)
+		}
+	}()
 
 	db := database.NewGormDBWithDefault()
 
@@ -55,7 +65,6 @@ func main() {
 	StylePromptRouter(r, db)
 	UploadRouter(r, client)
 	GenerateMessageRouter(r, db, ctrl)
-	
 
 	port := config.Val.Port
 	if port == "" {

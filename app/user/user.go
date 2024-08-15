@@ -38,3 +38,8 @@ type NewUserRequest struct {
 	// none LastActiveTime time.Time `json:"datetime_last_active"` because of is now().time
 	// Include other fields as necessary
 }
+
+type LoginUser struct {
+	AccessToken string `json:"accessToken"`
+	Platform    string `json:"platform"`
+}
