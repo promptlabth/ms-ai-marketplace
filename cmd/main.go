@@ -26,6 +26,7 @@ func main() {
 	// load .env file if ENV == local
 	// initializers.LoadEnvVariables()
 	ctx := context.Background()
+	logger.InitLogger()
 
 	// init trace for otel
 	tp, err := config.InitTrace()
@@ -40,12 +41,9 @@ func main() {
 
 	db := database.NewGormDBWithDefault()
 
-	logx, stop := logger.NewZap()
-	defer stop()
-
 	client, err := storage.NewClient(ctx, option.WithCredentialsFile("prompt-lab-cred.json"))
 	if err != nil {
-		logx.Fatal(err.Error())
+		logger.Fatal(ctx, err.Error())
 	}
 
 	ctrl := gomock.NewController(nil)
@@ -60,7 +58,7 @@ func main() {
 	FrameworkRouter(r, db)
 	RoleRouter(r, db)
 	if err := UserRouter(r, db); err != nil {
-		logx.Fatal(err.Error())
+		logger.Fatal(ctx, err.Error())
 	}
 	StylePromptRouter(r, db)
 	UploadRouter(r, client)

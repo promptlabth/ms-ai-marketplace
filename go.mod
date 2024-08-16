@@ -35,6 +35,7 @@ require (
 	cloud.google.com/go/longrunning v0.5.11 // indirect
 	firebase.google.com/go/v4 v4.14.1 // indirect
 	github.com/MicahParks/keyfunc v1.9.0 // indirect
+	github.com/blendle/zapdriver v1.3.1 // indirect
 	github.com/bytedance/sonic v1.12.1 // indirect
 	github.com/bytedance/sonic/loader v0.2.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
