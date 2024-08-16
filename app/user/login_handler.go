@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/promptlabth/ms-ai-marketplace/app"
 	"github.com/promptlabth/ms-ai-marketplace/logger"
+	"go.uber.org/zap"
 )
 
 func (u *Handler) LoginHandler(c *gin.Context) {
@@ -15,7 +16,6 @@ func (u *Handler) LoginHandler(c *gin.Context) {
 
 	authorizationToken := c.Request.Header.Get("authorization")
 	req.AccessToken = strings.Split(authorizationToken, " ")[1]
-	logger.Info(ctx, req.AccessToken)
 
 	if err := c.Bind(&req); err != nil {
 		c.JSON(200, app.Response[any]{
@@ -35,6 +35,7 @@ func (u *Handler) LoginHandler(c *gin.Context) {
 		})
 	}
 
+	logger.Info(ctx, "log response value", zap.Any("data", res))
 	c.JSON(200, app.Response[LoginResponseDomain]{
 		Code: 2000,
 		Data: &LoginResponseDomain{
