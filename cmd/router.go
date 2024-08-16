@@ -83,6 +83,7 @@ func UserRouter(router *gin.Engine, db *gorm.DB) error {
 	userUsecase := user.NewUsecase(userCore, userAdaptor)
 	userHandler := user.NewHandler(userUsecase)
 
+	router.POST("/user/login", userHandler.LoginHandler)
 	router.GET("/user/:id", userHandler.GetUser)
 	return nil
 }
