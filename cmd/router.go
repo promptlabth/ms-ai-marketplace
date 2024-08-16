@@ -20,6 +20,7 @@ import (
 	"github.com/promptlabth/ms-ai-marketplace/app/role"
 	"github.com/promptlabth/ms-ai-marketplace/app/upload"
 	"github.com/promptlabth/ms-ai-marketplace/app/user"
+	userProto "github.com/promptlabth/proto-lib/user"
 	"gorm.io/gorm"
 )
 
@@ -74,15 +75,14 @@ func UserRouter(router *gin.Engine, db *gorm.DB) error {
 	if err != nil {
 		return err
 	}
-	userClient := user.NewUserServiceClient(cc)
-	userValidation := user.NewAdaptor(db)
+	userClient := userProto.NewUserServiceClient(cc)
+
 	userCore := user.NewCore(db)
 
 	userAdaptor := user.NewUserAdaptor(userClient)
-	userUsecase := user.NewUsecase(userCore, userValidation, userAdaptor)
+	userUsecase := user.NewUsecase(userCore, userAdaptor)
 	userHandler := user.NewHandler(userUsecase)
 
-	router.POST("/user", userHandler.NewUser)
 	router.GET("/user/:id", userHandler.GetUser)
 	return nil
 }
