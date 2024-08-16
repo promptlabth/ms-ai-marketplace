@@ -1,6 +1,8 @@
 package user
 
 import (
+	"strings"
+
 	"github.com/gin-gonic/gin"
 	"github.com/promptlabth/ms-ai-marketplace/app"
 )
@@ -10,14 +12,8 @@ func (u *Handler) LoginHandler(c *gin.Context) {
 
 	var req LoginRequestDomain
 
-	if err := c.BindHeader(&req); err != nil {
-		c.JSON(200, app.Response[any]{
-			Code:    4003,
-			Error:   err.Error(),
-			Message: "Error For Binding request header",
-		})
-		return
-	}
+	authorizationToken := c.Request.Header.Get("authorization")
+	req.AccessToken = strings.Split(authorizationToken, " ")[1]
 
 	if err := c.Bind(&req); err != nil {
 		c.JSON(200, app.Response[any]{
