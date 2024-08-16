@@ -1,7 +1,7 @@
 package user
 
 type LoginRequestDomain struct {
-	Authorization string `header:"authorization" binding:"required"`
+	Authorization string `header:"authorization"`
 	AccessToken   string `json:"accessToken" binding:"required"`
 	Platform      string `json:"platform" binding:"required"`
 }
