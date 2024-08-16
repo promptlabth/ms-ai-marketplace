@@ -12,8 +12,11 @@ type UserAdaptor struct {
 	firebase          *firebase.App
 }
 
-func NewUserAdaptor(userServiceClient userProto.UserServiceClient) *UserAdaptor {
+func NewUserAdaptor(
+	userServiceClient userProto.UserServiceClient,
+	firebase *firebase.App) *UserAdaptor {
 	return &UserAdaptor{
 		userServiceClient: userServiceClient,
+		firebase:          firebase,
 	}
 }

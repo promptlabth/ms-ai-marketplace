@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"crypto/tls"
 	"crypto/x509"
 
@@ -11,6 +12,7 @@ import (
 	"github.com/promptlabth/ms-ai-marketplace/app/generate"
 	"github.com/promptlabth/ms-ai-marketplace/app/history"
 	styleprompt "github.com/promptlabth/ms-ai-marketplace/app/style_prompt"
+	"github.com/promptlabth/ms-ai-marketplace/auth"
 	"github.com/promptlabth/ms-ai-marketplace/config"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.uber.org/mock/gomock"
@@ -60,7 +62,7 @@ func RoleRouter(router *gin.Engine, db *gorm.DB) {
 	router.GET("/creator/role/:id", roleHandler.GetRoleByID)
 }
 
-func UserRouter(router *gin.Engine, db *gorm.DB) error {
+func UserRouter(ctx context.Context, router *gin.Engine, db *gorm.DB) error {
 	var opts []grpc.DialOption
 
 	systemRoots, err := x509.SystemCertPool()
@@ -79,7 +81,11 @@ func UserRouter(router *gin.Engine, db *gorm.DB) error {
 
 	userCore := user.NewCore(db)
 
-	userAdaptor := user.NewUserAdaptor(userClient)
+	app, err := auth.Init(ctx)
+	if err != nil {
+		return err
+	}
+	userAdaptor := user.NewUserAdaptor(userClient, app)
 	userUsecase := user.NewUsecase(userCore, userAdaptor)
 	userHandler := user.NewHandler(userUsecase)
 

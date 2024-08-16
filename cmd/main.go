@@ -57,7 +57,7 @@ func main() {
 	AgentDetailRouter(r, db)
 	FrameworkRouter(r, db)
 	RoleRouter(r, db)
-	if err := UserRouter(r, db); err != nil {
+	if err := UserRouter(ctx, r, db); err != nil {
 		logger.Fatal(ctx, err.Error())
 	}
 	StylePromptRouter(r, db)
