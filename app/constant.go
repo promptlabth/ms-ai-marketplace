@@ -6,3 +6,7 @@ func PtrToType[T any](val *T) T {
 	}
 	return *val
 }
+
+func TypeToPtr[T any](val T) *T {
+	return &val
+}
