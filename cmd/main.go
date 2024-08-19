@@ -21,21 +21,29 @@ import (
 	"google.golang.org/api/option"
 )
 
-
 func main() {
 
 	// load .env file if ENV == local
 	// initializers.LoadEnvVariables()
 	ctx := context.Background()
+	logger.InitLogger()
+
+	// init trace for otel
+	tp, err := config.InitTrace()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer func() {
+		if err := tp.Shutdown(context.Background()); err != nil {
+			log.Printf("Error shutting down tracer provider: %v", err)
+		}
+	}()
 
 	db := database.NewGormDBWithDefault()
 
-	logx, stop := logger.NewZap()
-	defer stop()
-
 	client, err := storage.NewClient(ctx, option.WithCredentialsFile("prompt-lab-cred.json"))
 	if err != nil {
-		logx.Fatal(err.Error())
+		logger.Fatal(ctx, err.Error())
 	}
 
 	ctrl := gomock.NewController(nil)
@@ -49,13 +57,12 @@ func main() {
 	AgentDetailRouter(r, db)
 	FrameworkRouter(r, db)
 	RoleRouter(r, db)
-	if err := UserRouter(r, db); err != nil {
-		logx.Fatal(err.Error())
+	if err := UserRouter(ctx, r, db); err != nil {
+		logger.Fatal(ctx, err.Error())
 	}
 	StylePromptRouter(r, db)
 	UploadRouter(r, client)
 	GenerateMessageRouter(r, db, ctrl)
-	
 
 	port := config.Val.Port
 	if port == "" {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"crypto/tls"
 	"crypto/x509"
 
@@ -11,7 +12,9 @@ import (
 	"github.com/promptlabth/ms-ai-marketplace/app/generate"
 	"github.com/promptlabth/ms-ai-marketplace/app/history"
 	styleprompt "github.com/promptlabth/ms-ai-marketplace/app/style_prompt"
+	"github.com/promptlabth/ms-ai-marketplace/auth"
 	"github.com/promptlabth/ms-ai-marketplace/config"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.uber.org/mock/gomock"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -19,6 +22,7 @@ import (
 	"github.com/promptlabth/ms-ai-marketplace/app/role"
 	"github.com/promptlabth/ms-ai-marketplace/app/upload"
 	"github.com/promptlabth/ms-ai-marketplace/app/user"
+	userProto "github.com/promptlabth/proto-lib/user"
 	"gorm.io/gorm"
 )
 
@@ -58,7 +62,7 @@ func RoleRouter(router *gin.Engine, db *gorm.DB) {
 	router.GET("/creator/role/:id", roleHandler.GetRoleByID)
 }
 
-func UserRouter(router *gin.Engine, db *gorm.DB) error {
+func UserRouter(ctx context.Context, router *gin.Engine, db *gorm.DB) error {
 	var opts []grpc.DialOption
 
 	systemRoots, err := x509.SystemCertPool()
@@ -68,20 +72,24 @@ func UserRouter(router *gin.Engine, db *gorm.DB) error {
 	cred := credentials.NewTLS(&tls.Config{
 		RootCAs: systemRoots,
 	})
-	opts = append(opts, grpc.WithTransportCredentials(cred))
+	opts = append(opts, grpc.WithTransportCredentials(cred), grpc.WithStatsHandler(otelgrpc.NewClientHandler()))
 	cc, err := grpc.NewClient(config.Val.Adaptor.User.Url, opts...)
 	if err != nil {
 		return err
 	}
-	userClient := user.NewUserServiceClient(cc)
-	userValidation := user.NewAdaptor(db)
+	userClient := userProto.NewUserServiceClient(cc)
+
 	userCore := user.NewCore(db)
 
-	userAdaptor := user.NewUserAdaptor(userClient)
-	userUsecase := user.NewUsecase(userCore, userValidation, userAdaptor)
+	app, err := auth.Init()
+	if err != nil {
+		return err
+	}
+	userAdaptor := user.NewUserAdaptor(userClient, app)
+	userUsecase := user.NewUsecase(userCore, userAdaptor)
 	userHandler := user.NewHandler(userUsecase)
 
-	router.POST("/user", userHandler.NewUser)
+	router.POST("/user/login", userHandler.LoginHandler)
 	router.GET("/user/:id", userHandler.GetUser)
 	return nil
 }
@@ -104,6 +112,7 @@ func StylePromptRouter(router *gin.Engine, db *gorm.DB) {
 	router.GET("/:lang/customer/style_prompts", stylePromptHandler.ListStylePrompts)
 	router.GET("/customer/style_prompt/:id", stylePromptHandler.GetStylePromptByID)
 }
+
 // func GenerateMessageRouter(router *gin.Engine, db *gorm.DB) {
 // 	generateMessageValidation := history.NewAdaptor(db)
 // 	generateMessageCore := history.NewCore(db)
@@ -111,9 +120,9 @@ func StylePromptRouter(router *gin.Engine, db *gorm.DB) {
 // 	generateMessageUsecase := history.NewUsecase(generateMessageCore, generateMessageValidation, agentdetailCore)
 // 	generateMessageHandler := history.NewHandler(generateMessageUsecase)
 
-// 	router.POST("/:lang/customer/use_agent/messages", generateMessageHandler.GenerateMessage)
-// 	// router.GET("/:lang/customer/style_prompt/:id", stylePromptHandler.GetStylePromptByID)
-// }
+//		router.POST("/:lang/customer/use_agent/messages", generateMessageHandler.GenerateMessage)
+//		// router.GET("/:lang/customer/style_prompt/:id", stylePromptHandler.GetStylePromptByID)
+//	}
 func GenerateMessageRouter(router *gin.Engine, db *gorm.DB, ctrl *gomock.Controller) {
 	// Initialize mocks
 	generateAdaptor := generate.NewMockgenerateAdaptor(ctrl)

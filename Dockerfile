@@ -1,5 +1,5 @@
 # Use a base image that includes the Go compiler and other build tools
-FROM golang:1.22 as builder
+FROM golang:1.23 as builder
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -31,6 +31,7 @@ ENV TZ=Asia/Bangkok
 # Copy the necessary files from the builder stage
 COPY --from=builder /app/main ./
 COPY prompt-lab-cred.json ./
+COPY firebase-credential.json ./
 # Expose port 8080
 EXPOSE 8080
 
