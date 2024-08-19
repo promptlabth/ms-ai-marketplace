@@ -14,10 +14,20 @@ func (u *UserUsecase) LoginService(ctx context.Context, req LoginRequestDomain) 
 	}
 
 	usr, err := u.userAdaptor.UpsertUser(ctx, &user.UpsertUserReq{
-		FirebaseId:  token.UID,
-		Name:        token.Claims["name"].(string),
-		Email:       TypeToPtr(token.Claims["email"].(string)),
-		ProfilePic:  TypeToPtr(token.Claims["picture"].(string)),
+		FirebaseId: token.UID,
+		Name:       token.Claims["name"].(string),
+		Email: func() *string {
+			if val, ok := token.Claims["email"].(string); ok {
+				return &val
+			}
+			return nil
+		}(),
+		ProfilePic: func() *string {
+			if val, ok := token.Claims["email"].(string); ok {
+				return &val
+			}
+			return nil
+		}(),
 		Platform:    &req.Platform,
 		AccessToken: &req.AccessToken,
 	})
