@@ -42,6 +42,7 @@ func (u *UserUsecase) LoginService(ctx context.Context, req LoginRequestDomain) 
 			ProfilePic:     usr.UserDetail.ProfilePic,
 			Platform:       usr.UserDetail.Platform,
 			AccessToken:    usr.UserDetail.AccessToken,
+			StripeId:       usr.UserDetail.StripeId,
 			BalanceMessage: usr.UserDetail.BalanceMessage,
 		},
 		Plan: LoginPlanDetailDomain{
