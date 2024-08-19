@@ -23,7 +23,7 @@ func (u *UserUsecase) LoginService(ctx context.Context, req LoginRequestDomain) 
 			return nil
 		}(),
 		ProfilePic: func() *string {
-			if val, ok := token.Claims["email"].(string); ok {
+			if val, ok := token.Claims["profile"].(string); ok {
 				return &val
 			}
 			return nil
