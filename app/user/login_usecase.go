@@ -20,7 +20,6 @@ func (u *UserUsecase) LoginService(ctx context.Context, req LoginRequestDomain) 
 		ProfilePic:  TypeToPtr(token.Claims["picture"].(string)),
 		Platform:    &req.Platform,
 		AccessToken: &req.AccessToken,
-		StripeId:    nil,
 	})
 	if err != nil {
 		return nil, err
