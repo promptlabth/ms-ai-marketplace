@@ -37,6 +37,7 @@ func (u *Usecase) NewFramework(ctx context.Context, framework Framework) error {
 		Detail:    framework.Detail,
 		Component: framework.Component,
 		Language: framework.Language, 
+		Prompt: framework.Prompt, 
 	}
 	log.Printf("FrameworkEntity: %+v\n", frameworkEntity)
 

@@ -33,5 +33,5 @@ type historyStorage interface {
 
 //secondary port
 type storage interface {
-	Generate(ctx context.Context, prompt string,model string) (string, error)
+	Generate(ctx context.Context, prompt string,model string) (string,int,int, error)
 }

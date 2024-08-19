@@ -6,7 +6,7 @@ import (
 )
 
 type storage interface {
-	CreateHistory(ctx context.Context, history HistoryEntity) (*int,error)
+	CreateHistory(ctx context.Context, history HistoryEntity) (*int, error)
 }
 
 type domain interface {
@@ -14,17 +14,17 @@ type domain interface {
 }
 
 type Usecase struct {
-	storage      storage
-	domain       domain
+	storage storage
+	domain  domain
 }
 
-func NewUsecase(s storage, d domain, ) *Usecase {
+func NewUsecase(s storage, d domain) *Usecase {
 	return &Usecase{
-		storage:      s,
-		domain:       d,
+		storage: s,
+		domain:  d,
 	}
 }
-func (u *Usecase) CreateHistory(ctx context.Context, history History)  error {
+func (u *Usecase) CreateHistory(ctx context.Context, history History) error {
 
 	err := u.domain.ValidateNewHistory(ctx, history)
 	if err != nil {
@@ -32,14 +32,17 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History)  error {
 	}
 
 	historyEntity := HistoryEntity{
-		FirebaseID:     history.FirebaseID,
-		AgentID:        history.AgentID,
-		FrameworkID:    history.FrameworkID,
-		Prompt:         history.Prompt,
-		StyleMessageID: history.StyleMessageID,
-		Language:       history.Language,
-		Result:         history.Result,
-		TimeStamp:      time.Now(),
+		FirebaseID:        history.FirebaseID,
+		AgentID:           history.AgentID,
+		FrameworkID:       history.FrameworkID,
+		Prompt:            history.Prompt,
+		StyleMessageID:    history.StyleMessageID,
+		Result:            history.Result,
+		Model:             history.Model,
+		Completion_tokens: history.Completion_tokens,
+		Prompt_tokens:     history.Prompt_tokens,
+		Language:          history.Language,
+		TimeStamp:         time.Now(),
 	}
 
 	_, err = u.storage.CreateHistory(ctx, historyEntity)

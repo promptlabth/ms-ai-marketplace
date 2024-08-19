@@ -10,6 +10,7 @@ type Framework struct {
 	Detail string 
 	Component json.RawMessage
 	Language  string 
+	Prompt  string       
 }
 
 type FrameworkInterface interface {
@@ -25,4 +26,5 @@ type NewFrameworkRequest struct {
 	Detail string `json:"detail"`
 	Component json.RawMessage `json:"component"`
 	Language  string  `json:"language"`
+	Prompt  string  `json:"prompt"`     
 }

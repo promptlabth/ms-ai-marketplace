@@ -37,6 +37,7 @@ func (h *Handler) NewFramework(c *gin.Context) {
 		Detail:    req.Detail,
 		Component: req.Component,
 		Language:  req.Language ,
+		Prompt:  req.Prompt ,
 	}
 
 	if err := h.usecase.NewFramework(context.Background(), framework); err != nil {

@@ -3,10 +3,12 @@ package history
 import (
 	"context"
 	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
+
 type usecase interface {
-	CreateHistory(ctx context.Context, history History) (error)
+	CreateHistory(ctx context.Context, history History) error
 }
 type Handler struct {
 	usecase usecase
@@ -42,10 +44,13 @@ func (h *Handler) GenerateMessage(c *gin.Context) {
 		FrameworkID:    req.FrameworkID,
 		Prompt:         req.Prompt,
 		StyleMessageID: req.StyleMessageID,
-		Language:       language,
+		Language:          language,
+		Model:             req.Model,
+		Completion_tokens: req.Completion_tokens,
+		Prompt_tokens:     req.Prompt_tokens,
 	}
 
-	if err := h.usecase.CreateHistory(ctx, history);  err != nil {
+	if err := h.usecase.CreateHistory(ctx, history); err != nil {
 		c.AbortWithStatus(500)
 		return
 	}

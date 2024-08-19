@@ -210,12 +210,14 @@ func (m *MockStorage) EXPECT() *MockStorageMockRecorder {
 }
 
 // Generate mocks the base method
-func (m *MockStorage) Generate(ctx context.Context, prompt string, model string) (string, error) {
+func (m *MockStorage) Generate(ctx context.Context, prompt string, model string) (string, int, int, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Generate", ctx, prompt, model)
 	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret1, _ := ret[1].(int)
+	ret2, _ := ret[2].(int)
+	ret3, _ := ret[3].(error)
+	return ret0, ret1, ret2, ret3
 }
 
 // Generate indicates an expected call of Generate
