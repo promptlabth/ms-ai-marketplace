@@ -81,7 +81,7 @@ func UserRouter(ctx context.Context, router *gin.Engine, db *gorm.DB) error {
 
 	userCore := user.NewCore(db)
 
-	app, err := auth.Init(ctx)
+	app, err := auth.Init()
 	if err != nil {
 		return err
 	}

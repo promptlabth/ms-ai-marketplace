@@ -15,7 +15,13 @@ func (u *Handler) LoginHandler(c *gin.Context) {
 	var req LoginRequestDomain
 
 	authorizationToken := c.Request.Header.Get("authorization")
-	req.AccessToken = strings.Split(authorizationToken, " ")[1]
+	logger.Info(ctx, authorizationToken)
+	tokenSplite := strings.Fields(authorizationToken)
+	if len(tokenSplite) > 1 && tokenSplite[0] == "Bearer" {
+		req.Authorization = tokenSplite[1]
+	} else {
+		req.Authorization = tokenSplite[0]
+	}
 
 	if err := c.Bind(&req); err != nil {
 		c.JSON(200, app.Response[any]{
@@ -33,6 +39,7 @@ func (u *Handler) LoginHandler(c *gin.Context) {
 			Error:   err.Error(),
 			Message: "Login Service Error",
 		})
+		return
 	}
 
 	logger.Info(ctx, "log response value", zap.Any("data", res))
@@ -43,5 +50,4 @@ func (u *Handler) LoginHandler(c *gin.Context) {
 			Plan: res.Plan,
 		},
 	})
-
 }

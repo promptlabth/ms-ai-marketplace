@@ -7,10 +7,10 @@ import (
 	"google.golang.org/api/option"
 )
 
-func Init(ctx context.Context) (*firebase.App, error) {
+func Init() (*firebase.App, error) {
 	opt := option.WithCredentialsFile("firebase-credential.json")
 	config := &firebase.Config{ProjectID: "prompt-lab-383408"}
-	app, err := firebase.NewApp(ctx, config, opt)
+	app, err := firebase.NewApp(context.Background(), config, opt)
 	if err != nil {
 		return nil, err
 	}

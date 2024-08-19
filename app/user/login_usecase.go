@@ -8,7 +8,7 @@ import (
 
 func (u *UserUsecase) LoginService(ctx context.Context, req LoginRequestDomain) (*LoginResponseDomain, error) {
 
-	token, err := u.userAdaptor.ValidateToken(ctx, req.AccessToken)
+	token, err := u.userAdaptor.ValidateToken(ctx, req.Authorization)
 	if err != nil {
 		return nil, err
 	}
