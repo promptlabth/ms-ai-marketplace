@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/promptlabth/ms-ai-marketplace/app"
 )
 
 type userUsecaser interface {
@@ -26,9 +27,15 @@ func (h *Handler) GetUser(c *gin.Context) {
 	userByID, err := h.userUsecase.GetUser(c.Request.Context(), firebaseID)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get user"})
+		c.JSON(http.StatusOK, app.Response[any]{
+			Code:  5000,
+			Error: err.Error(),
+		})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": userByID})
+	c.JSON(http.StatusOK, app.Response[UserEntity]{
+		Code: 1000,
+		Data: userByID,
+	})
 }
