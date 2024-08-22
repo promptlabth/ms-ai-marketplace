@@ -15,6 +15,7 @@ import (
 	"github.com/promptlabth/ms-ai-marketplace/auth"
 	"github.com/promptlabth/ms-ai-marketplace/config"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	"go.opentelemetry.io/otel/propagation"
 	"go.uber.org/mock/gomock"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -23,6 +24,7 @@ import (
 	"github.com/promptlabth/ms-ai-marketplace/app/upload"
 	"github.com/promptlabth/ms-ai-marketplace/app/user"
 	userProto "github.com/promptlabth/proto-lib/user"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 	"gorm.io/gorm"
 )
 
@@ -89,8 +91,18 @@ func UserRouter(ctx context.Context, router *gin.Engine, db *gorm.DB) error {
 	userUsecase := user.NewUsecase(userCore, userAdaptor)
 	userHandler := user.NewHandler(userUsecase)
 
-	router.POST("/user/login", userHandler.LoginHandler)
-	router.GET("/user/:id", userHandler.GetUser)
+	user := router.Group("/user")
+	otelopts := otelgin.WithPropagators(
+		propagation.NewCompositeTextMapPropagator(
+			propagation.TraceContext{},
+			propagation.Baggage{},
+		),
+	)
+	user.Use(
+		otelgin.Middleware("ms-ai-marketplace", otelopts),
+	)
+	user.POST("/login", userHandler.LoginHandler)
+	user.GET("/:id", userHandler.GetUser)
 	return nil
 }
 

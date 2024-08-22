@@ -24,6 +24,7 @@ func (u *Handler) LoginHandler(c *gin.Context) {
 	}
 
 	if err := c.Bind(&req); err != nil {
+		logger.Error(ctx, err.Error())
 		c.JSON(200, app.Response[any]{
 			Code:    4004,
 			Error:   err.Error(),
@@ -34,6 +35,7 @@ func (u *Handler) LoginHandler(c *gin.Context) {
 
 	res, err := u.userUsecase.LoginService(ctx, req)
 	if err != nil {
+		logger.Error(ctx, err.Error())
 		c.JSON(200, app.Response[any]{
 			Code:    4000,
 			Error:   err.Error(),

@@ -27,6 +27,7 @@ func main() {
 	// initializers.LoadEnvVariables()
 	ctx := context.Background()
 	logger.InitLogger()
+	defer logger.Sync()
 
 	// init trace for otel
 	tp, err := config.InitTrace()

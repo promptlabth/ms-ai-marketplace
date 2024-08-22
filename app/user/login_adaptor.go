@@ -8,6 +8,7 @@ import (
 )
 
 func (a *UserAdaptor) ValidateToken(ctx context.Context, tokenId string) (*auth.Token, error) {
+	logger.Info(ctx, "Request to auth for firebase")
 	client, err := a.firebase.Auth(ctx)
 	if err != nil {
 		return nil, err
