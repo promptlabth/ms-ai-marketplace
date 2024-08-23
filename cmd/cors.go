@@ -50,6 +50,7 @@ func LoggingWithDumbBody() gin.HandlerFunc {
 		}
 
 		// reqBody
+
 		var reqBody []byte
 		var mapReqBody = make(map[string]interface{})
 
@@ -69,9 +70,9 @@ func LoggingWithDumbBody() gin.HandlerFunc {
 			c.Request.Body = io.NopCloser(bytes.NewBuffer(reqBody)) // Reset
 		}
 
-		// resBody
-		resBody := new(bytes.Buffer)
-		res.Write(resBody)
+		// resWriter
+		respWriter := &bodyLogWriter{body: bytes.NewBufferString(""), ResponseWriter: c.Writer}
+		c.Writer = respWriter
 
 		logMsg := fmt.Sprintf("Received API request: method=%s, path=%s", req.Method, c.Request.URL.Path)
 		logger.Info(req.Context(), logMsg, zap.Any("request_body", mapReqBody), zap.Any("request_header", req.Header), zapdriver.HTTP(httpPayload))
@@ -82,7 +83,7 @@ func LoggingWithDumbBody() gin.HandlerFunc {
 
 		stop := time.Now()
 		httpPayload.Status = res.StatusCode
-		httpPayload.ResponseSize = strconv.FormatInt(res.ContentLength, 10)
+		httpPayload.ResponseSize = strconv.FormatInt(int64(respWriter.Size()), 10)
 
 		l := stop.Sub(start)
 		httpPayload.Latency = l.String()
@@ -90,8 +91,8 @@ func LoggingWithDumbBody() gin.HandlerFunc {
 		var mapResBody = make(map[string]interface{})
 		contentType = res.Header.Get("Content-Type")
 		if strings.Contains(contentType, "application/json") {
-			if resBody.Len() != 0 {
-				err := json.Unmarshal(resBody.Bytes(), &mapResBody)
+			if respWriter.Size() != 0 {
+				err := json.Unmarshal(respWriter.body.Bytes(), &mapResBody)
 				if err != nil {
 					logger.Error(req.Context(), err.Error())
 				}
@@ -101,4 +102,14 @@ func LoggingWithDumbBody() gin.HandlerFunc {
 		logMsg = fmt.Sprintf("API response: method=%s, path=%s", req.Method, c.Request.URL.Path)
 		logger.Info(req.Context(), logMsg, zap.Any("request_body", mapReqBody), zap.Any("response_header", res.Header), zapdriver.HTTP(httpPayload))
 	}
+}
+
+type bodyLogWriter struct {
+	gin.ResponseWriter
+	body *bytes.Buffer
+}
+
+func (w bodyLogWriter) Write(b []byte) (int, error) {
+	w.body.Write(b)
+	return w.ResponseWriter.Write(b)
 }
