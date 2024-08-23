@@ -100,6 +100,5 @@ func LoggingWithDumbBody() gin.HandlerFunc {
 
 		logMsg = fmt.Sprintf("API response: method=%s, path=%s", req.Method, c.Request.URL.Path)
 		logger.Info(req.Context(), logMsg, zap.Any("request_body", mapReqBody), zap.Any("response_header", res.Header), zapdriver.HTTP(httpPayload))
-		return
 	}
 }
