@@ -51,7 +51,8 @@ func main() {
 	defer ctrl.Finish()
 	// r := app.NewRouter(logger)
 	// r := app.NewRouterGin(logger)
-	r := gin.Default()
+	r := gin.New()
+	r.Use(gin.Recovery())
 	// r.Use(gin.WrapF(cors.New(opts).HandlerFunc))
 
 	r.Use(CORSMiddleware())
