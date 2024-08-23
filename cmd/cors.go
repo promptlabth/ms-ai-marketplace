@@ -35,7 +35,6 @@ func CORSMiddleware() gin.HandlerFunc {
 func LoggingWithDumbBody() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		req := c.Request
-		res := c.Request.Response
 
 		httpPayload := &zapdriver.HTTPPayload{
 			RequestMethod: req.Method,
@@ -82,14 +81,14 @@ func LoggingWithDumbBody() gin.HandlerFunc {
 		c.Next()
 
 		stop := time.Now()
-		httpPayload.Status = res.StatusCode
+		httpPayload.Status = respWriter.Status()
 		httpPayload.ResponseSize = strconv.FormatInt(int64(respWriter.Size()), 10)
 
 		l := stop.Sub(start)
 		httpPayload.Latency = l.String()
 
 		var mapResBody = make(map[string]interface{})
-		contentType = res.Header.Get("Content-Type")
+		contentType = respWriter.Header().Get("Content-Type")
 		if strings.Contains(contentType, "application/json") {
 			if respWriter.Size() != 0 {
 				err := json.Unmarshal(respWriter.body.Bytes(), &mapResBody)
@@ -100,7 +99,7 @@ func LoggingWithDumbBody() gin.HandlerFunc {
 		}
 
 		logMsg = fmt.Sprintf("API response: method=%s, path=%s", req.Method, c.Request.URL.Path)
-		logger.Info(req.Context(), logMsg, zap.Any("request_body", mapReqBody), zap.Any("response_header", res.Header), zapdriver.HTTP(httpPayload))
+		logger.Info(req.Context(), logMsg, zap.Any("request_body", mapReqBody), zap.Any("response_header", respWriter.Header()), zapdriver.HTTP(httpPayload))
 	}
 }
 
