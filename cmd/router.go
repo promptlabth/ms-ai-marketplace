@@ -100,6 +100,7 @@ func UserRouter(ctx context.Context, router *gin.Engine, db *gorm.DB) error {
 	)
 	user.Use(
 		otelgin.Middleware("ms-ai-marketplace", otelopts),
+		LoggingWithDumbBody(),
 	)
 	user.POST("/login", userHandler.LoginHandler)
 	user.GET("/:id", userHandler.GetUser)
