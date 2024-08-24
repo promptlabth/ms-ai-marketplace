@@ -11,5 +11,6 @@ type userAdaptor interface {
 	GetDetailUser(ctx context.Context, firebaseId string) (*userProto.GetUserByIdRes, error)
 	UpsertUser(ctx context.Context, req *userProto.UpsertUserReq) (*userProto.UpsertUserRes, error)
 
+	FirebaseRetrieveUserData(ctx context.Context, firebaseId string) (*UserDetailDomain, error)
 	ValidateToken(ctx context.Context, tokenId string) (*auth.Token, error)
 }

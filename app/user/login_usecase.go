@@ -8,23 +8,30 @@ import (
 
 func (u *UserUsecase) LoginService(ctx context.Context, req LoginRequestDomain) (*LoginResponseDomain, error) {
 
+	// get token from firebase
 	token, err := u.userAdaptor.ValidateToken(ctx, req.Authorization)
+	if err != nil {
+		return nil, err
+	}
+
+	// get user detail from firebase
+	userDetail, err := u.userAdaptor.FirebaseRetrieveUserData(ctx, token.UID)
 	if err != nil {
 		return nil, err
 	}
 
 	usr, err := u.userAdaptor.UpsertUser(ctx, &user.UpsertUserReq{
 		FirebaseId: token.UID,
-		Name:       token.Claims["name"].(string),
+		Name:       userDetail.Name,
 		Email: func() *string {
-			if val, ok := token.Claims["email"].(string); ok {
-				return &val
+			if userDetail.Email != "" {
+				return &userDetail.Email
 			}
 			return nil
 		}(),
 		ProfilePic: func() *string {
-			if val, ok := token.Claims["picture"].(string); ok {
-				return &val
+			if userDetail.ProfilePicUrl != "" {
+				return &userDetail.ProfilePicUrl
 			}
 			return nil
 		}(),

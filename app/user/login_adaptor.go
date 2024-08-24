@@ -21,3 +21,22 @@ func (a *UserAdaptor) ValidateToken(ctx context.Context, tokenId string) (*auth.
 	}
 	return token, err
 }
+
+func (a *UserAdaptor) FirebaseRetrieveUserData(ctx context.Context, firebaseId string) (*UserDetailDomain, error) {
+	client, err := a.firebase.Auth(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	usr, err := client.GetUser(ctx, firebaseId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &UserDetailDomain{
+		FirebaseId:    firebaseId,
+		Name:          usr.DisplayName,
+		ProfilePicUrl: usr.PhotoURL,
+		Email:         usr.Email,
+	}, nil
+}

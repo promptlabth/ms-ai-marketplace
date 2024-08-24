@@ -26,3 +26,10 @@ type LoginPlanDetailDomain struct {
 	PlanType    string `json:"planType"`
 	MaxMessages int64  `json:"maxMessages"`
 }
+
+type UserDetailDomain struct {
+	FirebaseId    string
+	Name          string
+	ProfilePicUrl string
+	Email         string
+}
