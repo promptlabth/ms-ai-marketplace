@@ -2,8 +2,6 @@ package main
 
 import (
 	"context"
-	"crypto/tls"
-	"crypto/x509"
 
 	"cloud.google.com/go/storage"
 	"github.com/gin-gonic/gin"
@@ -14,11 +12,8 @@ import (
 	styleprompt "github.com/promptlabth/ms-ai-marketplace/app/style_prompt"
 	"github.com/promptlabth/ms-ai-marketplace/auth"
 	"github.com/promptlabth/ms-ai-marketplace/config"
-	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.opentelemetry.io/otel/propagation"
 	"go.uber.org/mock/gomock"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 
 	"github.com/promptlabth/ms-ai-marketplace/app/role"
 	"github.com/promptlabth/ms-ai-marketplace/app/upload"
@@ -65,17 +60,8 @@ func RoleRouter(router *gin.Engine, db *gorm.DB) {
 }
 
 func UserRouter(ctx context.Context, router *gin.Engine, db *gorm.DB) error {
-	var opts []grpc.DialOption
 
-	systemRoots, err := x509.SystemCertPool()
-	if err != nil {
-		return err
-	}
-	cred := credentials.NewTLS(&tls.Config{
-		RootCAs: systemRoots,
-	})
-	opts = append(opts, grpc.WithTransportCredentials(cred), grpc.WithStatsHandler(otelgrpc.NewClientHandler()))
-	cc, err := grpc.NewClient(config.Val.Adaptor.User.Url, opts...)
+	cc, err := InitialGRpc(config.Val.Adaptor.User.Url)
 	if err != nil {
 		return err
 	}
