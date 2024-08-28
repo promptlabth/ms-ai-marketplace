@@ -9,7 +9,17 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-func (a *UserAdaptor) GetDetailUser(ctx context.Context, firebaseId string) (*userProto.GetUserByIdRes, error) {
+type UserServer struct {
+	userServiceClient userProto.UserServiceClient
+}
+
+func NewGrpcServer(userServiceClient userProto.UserServiceClient) *UserServer {
+	return &UserServer{
+		userServiceClient: userServiceClient,
+	}
+}
+
+func (a *UserServer) GetDetailUser(ctx context.Context, firebaseId string) (*userProto.GetUserByIdRes, error) {
 	res, err := a.userServiceClient.GetDetailUser(ctx, &userProto.GetUserByIdReq{
 		FirebaseId: firebaseId,
 	})
@@ -19,7 +29,7 @@ func (a *UserAdaptor) GetDetailUser(ctx context.Context, firebaseId string) (*us
 	return res, nil
 }
 
-func (a *UserAdaptor) UpsertUser(ctx context.Context, req *userProto.UpsertUserReq) (*userProto.UpsertUserRes, error) {
+func (a *UserServer) UpsertUser(ctx context.Context, req *userProto.UpsertUserReq) (*userProto.UpsertUserRes, error) {
 	logger.Info(ctx, "Request to Upsert User")
 	md := metadata.Pairs(
 		"timestamp", time.Now().Format(time.StampNano),

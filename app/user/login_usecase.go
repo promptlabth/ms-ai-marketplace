@@ -20,7 +20,7 @@ func (u *UserUsecase) LoginService(ctx context.Context, req LoginRequestDomain) 
 		return nil, err
 	}
 
-	usr, err := u.userAdaptor.UpsertUser(ctx, &user.UpsertUserReq{
+	usr, err := u.grpcUserServer.UpsertUser(ctx, &user.UpsertUserReq{
 		FirebaseId: token.UID,
 		Name:       userDetail.Name,
 		Email: func() *string {

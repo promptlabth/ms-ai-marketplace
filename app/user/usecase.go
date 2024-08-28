@@ -21,20 +21,22 @@ type userRepository interface {
 
 // UserUsecase struct that combines storage and domain to execute user-related business logic.
 type UserUsecase struct {
-	storage     userRepository
-	userAdaptor userAdaptor
+	storage        userRepository
+	userAdaptor    userAdaptor
+	grpcUserServer grpcUserServer
 }
 
 // NewUsecase creates a new Usecase instance with the provided storage and domain logic implementations.
-func NewUsecase(s userRepository, userAdaptor userAdaptor) *UserUsecase {
+func NewUsecase(s userRepository, userAdaptor userAdaptor, userServer grpcUserServer) *UserUsecase {
 	return &UserUsecase{
-		storage:     s,
-		userAdaptor: userAdaptor,
+		storage:        s,
+		userAdaptor:    userAdaptor,
+		grpcUserServer: userServer,
 	}
 }
 
 func (u *UserUsecase) GetUser(ctx context.Context, firebaseID string) (*UserEntity, error) {
-	user, err := u.userAdaptor.GetDetailUser(ctx, firebaseID)
+	user, err := u.grpcUserServer.GetDetailUser(ctx, firebaseID)
 	if err != nil {
 		return nil, err
 	}
