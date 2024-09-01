@@ -46,7 +46,7 @@ func (u *Handler) LoginHandler(c *gin.Context) {
 
 	logger.Info(ctx, "log response value", zap.Any("data", res))
 	c.JSON(200, app.Response[LoginResponseDomain]{
-		Code: 2000,
+		Code: 1000,
 		Data: &LoginResponseDomain{
 			User: res.User,
 			Plan: res.Plan,
