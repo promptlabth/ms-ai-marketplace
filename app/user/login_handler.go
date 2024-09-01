@@ -27,8 +27,8 @@ func (u *Handler) LoginHandler(c *gin.Context) {
 		logger.Error(ctx, err.Error())
 		c.JSON(200, app.Response[any]{
 			Code:    4004,
-			Error:   err.Error(),
-			Message: "Error For Binding request body",
+			Error:   TypeToPtr(err.Error()),
+			Message: TypeToPtr("Error For Binding request body"),
 		})
 		return
 	}
@@ -38,8 +38,8 @@ func (u *Handler) LoginHandler(c *gin.Context) {
 		logger.Error(ctx, err.Error())
 		c.JSON(200, app.Response[any]{
 			Code:    4000,
-			Error:   err.Error(),
-			Message: "Login Service Error",
+			Error:   TypeToPtr(err.Error()),
+			Message: TypeToPtr("Login Service Error"),
 		})
 		return
 	}

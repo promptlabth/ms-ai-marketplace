@@ -30,7 +30,7 @@ func (h *Handler) GetUser(c *gin.Context) {
 		logger.Error(ctx, err.Error())
 		c.JSON(http.StatusOK, app.Response[any]{
 			Code:  5000,
-			Error: err.Error(),
+			Error: TypeToPtr(err.Error()),
 		})
 		return
 	}
