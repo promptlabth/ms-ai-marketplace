@@ -73,31 +73,30 @@ func (s *GenerateService) Generate(ctx context.Context, generateRequest Generate
 		return "", err
 	}
 
-	promptMessage, err := getPromptMessage(promptData, role.Name, generateRequest.Prompt, stylePrompt.Name, language,framework.Prompt)
+	promptMessage, err := getPromptMessage(promptData, role.Name, generateRequest.Prompt, stylePrompt.Name, language, framework.Prompt)
 	if err != nil {
 		return "", err
 	}
-	fmt.Print("promptMessage: %s", promptMessage)
 
 	model := "SeaLLM-7B-v2.5"
 	// promptMessage = "Your view as [Doctor] and your task is [talk with ผู้ป่วย]. I will expect you to [ผู้ป่วย halp full] that article should feel like [funny] in th language."
-	message,completion_tokens,prompt_tokens, err := s.storage.Generate(ctx, promptMessage, model)
+	message, completion_tokens, prompt_tokens, err := s.storage.Generate(ctx, promptMessage, model)
 	if err != nil {
 		return "", err
 	}
 
 	history := history.HistoryEntity{
-		FirebaseID:     generateRequest.FirebaseID,
-		AgentID:        agent.ID,
-		FrameworkID:    framework.ID,
-		Prompt:         generateRequest.Prompt,
-		StyleMessageID: stylePrompt.ID,
-		Result:         message,
+		FirebaseID:        generateRequest.FirebaseID,
+		AgentID:           agent.ID,
+		FrameworkID:       framework.ID,
+		Prompt:            generateRequest.Prompt,
+		StyleMessageID:    stylePrompt.ID,
+		Result:            message,
 		Model:             model,
 		Completion_tokens: completion_tokens,
 		Prompt_tokens:     prompt_tokens,
-		Language:       language,
-		TimeStamp:      time.Now(),
+		Language:          language,
+		TimeStamp:         time.Now(),
 	}
 
 	id, err := s.historyStorage.CreateHistory(ctx, history)
@@ -106,7 +105,7 @@ func (s *GenerateService) Generate(ctx context.Context, generateRequest Generate
 	}
 
 	fmt.Sprintf("History created with ID: %d", *id)
-// ("name","description","image_url","prompt","firebase_id","framework_id","role_framework_id","total_used")
+	// ("name","description","image_url","prompt","firebase_id","framework_id","role_framework_id","total_used")
 	agentDetailEntity := agentdetail.AgentDetailEntity{
 		ID:          agent.ID,
 		Name:        agent.Name,
@@ -165,9 +164,9 @@ func getPromptdata(promptJSON json.RawMessage, nameFramework string) (interface{
 	return promptData, nil
 }
 
-func getPromptMessage(promptData interface{}, role, propmt_input, styleName, language string,promptFormat string) (string, error) {
+func getPromptMessage(promptData interface{}, role, propmt_input, styleName, language string, promptFormat string) (string, error) {
 	var message string
-	
+
 	switch data := promptData.(type) {
 	case PromptRICEE:
 		message = fmt.Sprintf(
