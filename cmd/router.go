@@ -74,7 +74,7 @@ func UserRouter(ctx context.Context, router *gin.Engine, db *gorm.DB) error {
 		return err
 	}
 
-	grpcUserServer := user.NewGrpcServer(userClient)
+	grpcUserServer := user.NewGrpcRequestor(userClient)
 	userAdaptor := user.NewUserAdaptor(app)
 	userUsecase := user.NewUsecase(userCore, userAdaptor, grpcUserServer)
 	userHandler := user.NewHandler(userUsecase)

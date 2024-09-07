@@ -10,7 +10,7 @@ type UserServer struct {
 	userServiceClient userProto.UserServiceClient
 }
 
-func NewGrpcServer(userServiceClient userProto.UserServiceClient) *UserServer {
+func NewGrpcRequestor(userServiceClient userProto.UserServiceClient) *UserServer {
 	return &UserServer{
 		userServiceClient: userServiceClient,
 	}
