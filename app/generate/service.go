@@ -79,7 +79,6 @@ func (s *GenerateService) Generate(ctx context.Context, generateRequest Generate
 	}
 
 	model := "SeaLLM-7B-v2.5"
-	// promptMessage = "Your view as [Doctor] and your task is [talk with ผู้ป่วย]. I will expect you to [ผู้ป่วย halp full] that article should feel like [funny] in th language."
 	message, completion_tokens, prompt_tokens, err := s.storage.Generate(ctx, promptMessage, model)
 	if err != nil {
 		return "", err

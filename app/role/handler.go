@@ -49,7 +49,7 @@ func (h *Handler) NewRole(c *gin.Context) {
 
 func (h *Handler) ListRoles(c *gin.Context) {
 
-	language := c.GetString("language")
+	language := c.Param("language")
 	if language == "" {
         c.JSON(400, map[string]string{
             "error": "Language not set",

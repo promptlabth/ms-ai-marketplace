@@ -70,7 +70,9 @@ func (h *Handler) GetFrameworkByID(c *gin.Context) {
 }
 
 func (h *Handler) ListFrameworks(c *gin.Context) {
-	language := c.GetString("language")
+
+	language := c.Param("language")
+
 	if language == "" {
         c.JSON(400, map[string]string{
             "error": "Language not set",

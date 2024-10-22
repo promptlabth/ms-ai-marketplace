@@ -56,7 +56,7 @@ func (h *Handler) CreateStylePrompt(c *gin.Context) {
 
 func (h *Handler) ListStylePrompts(c *gin.Context) {
 
-	language := c.GetString("language")
+	language := c.Param("language")
 	if language == "" {
         c.JSON(400, map[string]string{
             "error": "Language not set",

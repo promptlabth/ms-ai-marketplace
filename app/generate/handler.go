@@ -23,7 +23,7 @@ func (h *GenerateHandler) Generate(c *gin.Context) {
 		return
 	}
 
-	language := c.GetString("language")
+	language := c.Param("language")
 	if language == "" {
         c.JSON(400, map[string]string{
             "error": "Language not set",

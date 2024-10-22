@@ -8,7 +8,7 @@ type FrameworkEntity struct {
 	Detail    string          `gorm:"column:detail"`
 	Component json.RawMessage `gorm:"column:component"`
 	Language  string          `gorm:"column:language"`
-	Prompt  string          `gorm:"column:prompt"`
+	Prompt  string            `gorm:"column:prompt"`
 }
 
 func (FrameworkEntity) TableName() string {

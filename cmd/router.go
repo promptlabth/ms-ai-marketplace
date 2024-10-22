@@ -43,7 +43,7 @@ func FrameworkRouter(router *gin.Engine, db *gorm.DB) {
 	frameworkHandler := framework.NewHandler(frameworkUsecase)
 
 	router.POST("/creator/framework", frameworkHandler.NewFramework)
-	router.GET("/:lang/creator/frameworks", frameworkHandler.ListFrameworks)
+	router.GET("/creator/frameworks/:language", frameworkHandler.ListFrameworks)
 	router.GET("creator/framework/:id", frameworkHandler.GetFrameworkByID)
 }
 
@@ -55,7 +55,7 @@ func RoleRouter(router *gin.Engine, db *gorm.DB) {
 	roleHandler := role.NewHandler(roleUsecase)
 
 	router.POST("/creator/role", roleHandler.NewRole)
-	router.GET("/:lang/creator/roles", roleHandler.ListRoles)
+	router.GET("/creator/roles/:language", roleHandler.ListRoles)
 	router.GET("/creator/role/:id", roleHandler.GetRoleByID)
 }
 
@@ -110,20 +110,10 @@ func StylePromptRouter(router *gin.Engine, db *gorm.DB) {
 	stylePromptUsecase := styleprompt.NewUsecase(stylePromptCore, stylePromptValidation)
 	stylePromptHandler := styleprompt.NewHandler(stylePromptUsecase)
 
-	router.GET("/:lang/customer/style_prompts", stylePromptHandler.ListStylePrompts)
+	router.GET("/customer/style_prompts/:language", stylePromptHandler.ListStylePrompts)
 	router.GET("/customer/style_prompt/:id", stylePromptHandler.GetStylePromptByID)
 }
 
-// func GenerateMessageRouter(router *gin.Engine, db *gorm.DB) {
-// 	generateMessageValidation := history.NewAdaptor(db)
-// 	generateMessageCore := history.NewCore(db)
-// 	agentdetailCore := agentdetail.NewCore(db)
-// 	generateMessageUsecase := history.NewUsecase(generateMessageCore, generateMessageValidation, agentdetailCore)
-// 	generateMessageHandler := history.NewHandler(generateMessageUsecase)
-
-//		router.POST("/:lang/customer/use_agent/messages", generateMessageHandler.GenerateMessage)
-//		// router.GET("/:lang/customer/style_prompt/:id", stylePromptHandler.GetStylePromptByID)
-//	}
 func GenerateMessageRouter(router *gin.Engine, db *gorm.DB, ctrl *gomock.Controller) {
 	// Initialize mocks
 	generateAdaptor := generate.NewMockgenerateAdaptor(ctrl)
@@ -149,5 +139,5 @@ func GenerateMessageRouter(router *gin.Engine, db *gorm.DB, ctrl *gomock.Control
 	generateHandler := generate.NewHandler(generateService)
 
 	// Define routes and handlers
-	router.POST("/:lang/customer/use_agent/messages", generateHandler.Generate)
+	router.POST("/customer/use_agent/messages/:language", generateHandler.Generate)
 }
