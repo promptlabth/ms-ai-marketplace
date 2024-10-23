@@ -78,7 +78,7 @@ func (s *GenerateService) Generate(ctx context.Context, generateRequest Generate
 		return "", err
 	}
 
-	model := "SeaLLM-7B-v2.5"
+	model := "gpt-3.5-turbo" // gpt-3.5-turbo //SeaLLM-7B-v2.5
 	message, completion_tokens, prompt_tokens, err := s.storage.Generate(ctx, promptMessage, model)
 	if err != nil {
 		return "", err
