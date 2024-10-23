@@ -26,7 +26,7 @@ func (c *Core) Generate(ctx context.Context, prompt string, model string) (strin
 		return "",0,0, fmt.Errorf("FLOAT16_KEY environment variable not set")
 	}
 
-	url := "https://api.float16.cloud/v1/chat/completions"
+	url := "https://api.openai.com/v1/chat/completions" // https://api.openai.com/v1/chat/completions // https://api.float16.cloud/v1/chat/completions
 	requestBody := map[string]interface{}{
 		"model": model,
 		"messages": []map[string]string{
