@@ -33,6 +33,7 @@ func (c *Core) Generate(ctx context.Context, prompt string, model string) (strin
 			{"role": "system", "content": "You are a helpful assistant."},
 			{"role": "user", "content": prompt},
 		},
+		request_timeout=60,
 	}
 
 	body, err := json.Marshal(requestBody)
