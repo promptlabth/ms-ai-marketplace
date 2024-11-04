@@ -17,17 +17,17 @@ import (
 	"github.com/promptlabth/ms-ai-marketplace/logger"
 	"go.uber.org/mock/gomock"
 
-	"github.com/joho/godotenv" //use as local
+	// "github.com/joho/godotenv" //use as local
 	// "github.com/promptlabth/ms-ai-marketplace/initializers"
 	"google.golang.org/api/option"
 )
 
 //use as local
-func init() { 
-	if err := godotenv.Load(); err != nil {
-		fmt.Println("Error loading .env file")
-	}
-}
+// func init() { 
+// 	if err := godotenv.Load(); err != nil {
+// 		fmt.Println("Error loading .env file")
+// 	}
+// }
 
 func main() {
 
