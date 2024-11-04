@@ -10,6 +10,9 @@ import (
 	"github.com/promptlabth/ms-ai-marketplace/app/generate"
 	"github.com/promptlabth/ms-ai-marketplace/app/history"
 	styleprompt "github.com/promptlabth/ms-ai-marketplace/app/style_prompt"
+	"github.com/promptlabth/ms-ai-marketplace/app/user/handler"
+	"github.com/promptlabth/ms-ai-marketplace/app/user/repository"
+	"github.com/promptlabth/ms-ai-marketplace/app/user/service"
 	"github.com/promptlabth/ms-ai-marketplace/auth"
 	"github.com/promptlabth/ms-ai-marketplace/config"
 	"go.opentelemetry.io/otel/propagation"
@@ -45,6 +48,16 @@ func FrameworkRouter(router *gin.Engine, db *gorm.DB) {
 	router.POST("/creator/framework", frameworkHandler.NewFramework)
 	router.GET("/creator/frameworks/:language", frameworkHandler.ListFrameworks)
 	router.GET("creator/framework/:id", frameworkHandler.GetFrameworkByID)
+}
+
+func UsersRouter(router *gin.Engine, db *gorm.DB) {
+	userRepositoryDB := repository.NewUserRepository(db)
+	userService := service.NewUserService(userRepositoryDB)
+	userHandler := handler.NewUserHandler(userService)
+
+	router.POST("/users/login", func(c *gin.Context) {
+		userHandler.NewUser(c.Writer, c.Request)
+	})
 }
 
 func RoleRouter(router *gin.Engine, db *gorm.DB) {

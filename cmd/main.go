@@ -64,6 +64,7 @@ func main() {
 	// r.Use(gin.WrapF(cors.New(opts).HandlerFunc))
 
 	r.Use(CORSMiddleware())
+	UsersRouter(r,db)
 	AgentDetailRouter(r, db)
 	FrameworkRouter(r, db)
 	RoleRouter(r, db)
