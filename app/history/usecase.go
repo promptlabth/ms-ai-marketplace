@@ -7,6 +7,7 @@ import (
 
 type storage interface {
 	CreateHistory(ctx context.Context, history HistoryEntity) (*int, error)
+	GetHistoryByFirebaseID(ctx context.Context, firebaseID string) ([]HistoryEntity, error)
 }
 
 type domain interface {
@@ -47,4 +48,26 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History) error {
 
 	_, err = u.storage.CreateHistory(ctx, historyEntity)
 	return err
+}
+
+func (u *Usecase) GetHistoryByFirebaseID(ctx context.Context, firebaseID string) ([]History, error) {
+	histories, err := u.storage.GetHistoryByFirebaseID(ctx, firebaseID)
+	if err != nil {
+		return nil, err
+	}
+
+	var result []History
+	for _, h := range histories {
+		result = append(result, History{
+			ID:                h.ID,
+			FirebaseID:        h.FirebaseID,
+			AgentID:           h.AgentID,
+			FrameworkID:       h.FrameworkID,
+			StyleMessageID:    h.StyleMessageID,
+			Language:          h.Language,
+			TimeStamp:         h.TimeStamp,
+		})
+	}
+
+	return result, nil
 }

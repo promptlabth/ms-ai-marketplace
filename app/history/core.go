@@ -19,3 +19,17 @@ func (c *Core) CreateHistory(ctx context.Context, history HistoryEntity) (*int, 
 	}
 	return &history.ID, nil
 }
+
+
+func (c *Core) GetHistoryByFirebaseID(ctx context.Context, firebaseID string) ([]HistoryEntity, error) {
+    var histories []HistoryEntity
+    subQuery := c.db.Table("histories").
+        Select("MAX(time_stamp)").
+        Where("firebase_id = ?", firebaseID).
+        Group("agent_id")
+
+    if err := c.db.Where("time_stamp IN (?)", subQuery).Order("time_stamp DESC").Find(&histories).Error; err != nil {
+        return nil, err
+    }
+    return histories, nil
+}

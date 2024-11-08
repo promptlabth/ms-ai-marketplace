@@ -154,3 +154,13 @@ func GenerateMessageRouter(router *gin.Engine, db *gorm.DB, ctrl *gomock.Control
 	// Define routes and handlers
 	router.POST("/customer/use_agent/messages/:language", generateHandler.Generate)
 }
+
+func CustomerGetListsAgentUsage(router *gin.Engine, db *gorm.DB) {
+	agentHistoryUsageValidation := history.NewAdaptor(db)
+	agentHistoryUsageCore := history.NewCore(db)
+	agentHistoryUsageUsecase := history.NewUsecase(agentHistoryUsageCore, agentHistoryUsageValidation)
+	agentHistoryUsageHandler := history.NewHandler(agentHistoryUsageUsecase)
+
+	router.GET("/customer/agent_usage/:firebase_id", agentHistoryUsageHandler.GetHistoryByFirebaseID)
+	
+}

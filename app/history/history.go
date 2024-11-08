@@ -24,6 +24,7 @@ type HistoryInterface interface {
 	CreateHistory(ctx context.Context, historyDetail History) (*int, error)
 	GetHistoryByID(ctx context.Context, id int) (*History, error)
 	ListHistories(ctx context.Context, userID int) (*[]History, error)
+	GetHistoryByFirebaseID(ctx context.Context, firebaseID string) (*[]History, error)
 }
 
 type NewHistoryRequest struct {

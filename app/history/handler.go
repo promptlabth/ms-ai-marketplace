@@ -9,7 +9,9 @@ import (
 
 type usecase interface {
 	CreateHistory(ctx context.Context, history History) error
+	GetHistoryByFirebaseID(ctx context.Context, firebaseID string) ([]History, error)
 }
+
 type Handler struct {
 	usecase usecase
 }
@@ -17,6 +19,7 @@ type Handler struct {
 func NewHandler(u usecase) *Handler {
 	return &Handler{usecase: u}
 }
+
 func (h *Handler) GenerateMessage(c *gin.Context) {
 
 	var req NewHistoryRequest
@@ -56,4 +59,18 @@ func (h *Handler) GenerateMessage(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"message": "CreateHistory successfully"})
+}
+
+func (h *Handler) GetHistoryByFirebaseID(c *gin.Context) {
+    firebaseID := c.Param("firebase_id")
+
+    histories, err := h.usecase.GetHistoryByFirebaseID(c.Request.Context(), firebaseID)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, map[string]string{
+            "error": err.Error(),
+        })
+        return
+    }
+
+    c.JSON(http.StatusOK, histories)
 }

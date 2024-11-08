@@ -74,6 +74,7 @@ func main() {
 	StylePromptRouter(r, db)
 	UploadRouter(r, client)
 	GenerateMessageRouter(r, db, ctrl)
+	CustomerGetListsAgentUsage(r,db)
 
 	port := config.Val.Port
 	if port == "" {
