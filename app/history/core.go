@@ -21,14 +21,19 @@ func (c *Core) CreateHistory(ctx context.Context, history HistoryEntity) (*int, 
 }
 
 
-func (c *Core) GetHistoryByFirebaseID(ctx context.Context, firebaseID string) ([]HistoryEntity, error) {
-    var histories []HistoryEntity
+func (c *Core) GetHistoryByFirebaseID(ctx context.Context, firebaseID string) ([]HistoryWithAgentDetail, error) {
+    var histories []HistoryWithAgentDetail
     subQuery := c.db.Table("histories").
         Select("MAX(time_stamp)").
         Where("firebase_id = ?", firebaseID).
         Group("agent_id")
 
-    if err := c.db.Where("time_stamp IN (?)", subQuery).Order("time_stamp DESC").Find(&histories).Error; err != nil {
+    if err := c.db.Table("histories").
+        Select("histories.*, agent_details.name, agent_details.description, agent_details.image_url, agent_details.prompt, agent_details.framework_id, agent_details.role_framework_id, agent_details.total_used").
+        Joins("left join agent_details on agent_details.id = histories.agent_id").
+        Where("histories.time_stamp IN (?)", subQuery).
+        Order("histories.time_stamp DESC").
+        Scan(&histories).Error; err != nil {
         return nil, err
     }
     return histories, nil

@@ -7,7 +7,7 @@ import (
 
 type storage interface {
 	CreateHistory(ctx context.Context, history HistoryEntity) (*int, error)
-	GetHistoryByFirebaseID(ctx context.Context, firebaseID string) ([]HistoryEntity, error)
+	GetHistoryByFirebaseID(ctx context.Context, firebaseID string) ([]HistoryWithAgentDetail, error)
 }
 
 type domain interface {
@@ -50,24 +50,32 @@ func (u *Usecase) CreateHistory(ctx context.Context, history History) error {
 	return err
 }
 
-func (u *Usecase) GetHistoryByFirebaseID(ctx context.Context, firebaseID string) ([]History, error) {
-	histories, err := u.storage.GetHistoryByFirebaseID(ctx, firebaseID)
-	if err != nil {
-		return nil, err
-	}
+func (u *Usecase) GetHistoryByFirebaseID(ctx context.Context, firebaseID string) ([]HistoryWithAgentDetail, error) {
+    histories, err := u.storage.GetHistoryByFirebaseID(ctx, firebaseID)
+    if err != nil {
+        return nil, err
+    }
 
-	var result []History
-	for _, h := range histories {
-		result = append(result, History{
-			ID:                h.ID,
-			FirebaseID:        h.FirebaseID,
-			AgentID:           h.AgentID,
-			FrameworkID:       h.FrameworkID,
-			StyleMessageID:    h.StyleMessageID,
-			Language:          h.Language,
-			TimeStamp:         h.TimeStamp,
-		})
-	}
+    var result []HistoryWithAgentDetail
+    for _, h := range histories {
+        result = append(result, HistoryWithAgentDetail{
+            ID:                h.ID,
+            AgentID:           h.AgentID,
+            FrameworkID:       h.FrameworkID,
+            Prompt:            h.Prompt,
+            StyleMessageID:    h.StyleMessageID,
+            Language:          h.Language,
+            Result:            h.Result,
+            Model:             h.Model,
+            TimeStamp:         h.TimeStamp,
+            Name:              h.Name,
+            Description:       h.Description,
+            ImageURL:          h.ImageURL,
+            AgentFrameworkID:  h.AgentFrameworkID,
+            RoleFrameID:       h.RoleFrameID,
+            TotalUsed:         h.TotalUsed,
+        })
+    }
 
-	return result, nil
+    return result, nil
 }

@@ -8,8 +8,8 @@ import (
 )
 
 type usecase interface {
-	CreateHistory(ctx context.Context, history History) error
-	GetHistoryByFirebaseID(ctx context.Context, firebaseID string) ([]History, error)
+    CreateHistory(ctx context.Context, history History) error
+    GetHistoryByFirebaseID(ctx context.Context, firebaseID string) ([]HistoryWithAgentDetail, error)
 }
 
 type Handler struct {
@@ -42,11 +42,11 @@ func (h *Handler) GenerateMessage(c *gin.Context) {
 	}
 
 	history := History{
-		FirebaseID:     req.FirebaseID,
-		AgentID:        req.AgentID,
-		FrameworkID:    req.FrameworkID,
-		Prompt:         req.Prompt,
-		StyleMessageID: req.StyleMessageID,
+		FirebaseID:        req.FirebaseID,
+		AgentID:           req.AgentID,
+		FrameworkID:       req.FrameworkID,
+		Prompt:            req.Prompt,
+		StyleMessageID:    req.StyleMessageID,
 		Language:          language,
 		Model:             req.Model,
 		Completion_tokens: req.Completion_tokens,
