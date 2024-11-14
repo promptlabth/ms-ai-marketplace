@@ -2,6 +2,7 @@ package realtimegen
 
 import (
 	"context"
+	// "fmt"
 	"net/http"
 	"strconv"
 
@@ -21,21 +22,22 @@ func NewHandler(u usecase) *Handler {
 }
 
 func (h *Handler) GetFullPromptByAgentID(c *gin.Context) {
-	agentID, err := strconv.Atoi(c.Param("agent_id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, map[string]string{
-			"error": err.Error(),
-		})
-		return
-	}
+    agentID, err := strconv.Atoi(c.Param("agent_id"))
+    if err != nil {
+        c.JSON(http.StatusBadRequest, map[string]string{
+            "error": err.Error(),
+        })
+        return
+    }
 
-	prompt, err := h.usecase.GetFullPromptByAgentID(c.Request.Context(), agentID)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, map[string]string{
-			"error": err.Error(),
-		})
-		return
-	}
+    prompt, err := h.usecase.GetFullPromptByAgentID(c.Request.Context(), agentID)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, map[string]string{
+            "error": err.Error(),
+        })
+        return
+    }
+	// fmt.Println("At Handler : ",prompt) //for debugging
 
-	c.JSON(http.StatusOK, prompt)
+    c.JSON(http.StatusOK, prompt)
 }

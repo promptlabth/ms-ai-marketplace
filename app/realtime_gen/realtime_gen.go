@@ -3,7 +3,7 @@ package realtimegen
 import "context"
 
 type RealTimeGenPrompt struct {
-	FullPrompt string
+	FullPrompt string `json:"FullPrompt"`
 }
 
 type RealTimeGenPromptInterface interface {

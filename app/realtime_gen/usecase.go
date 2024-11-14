@@ -37,7 +37,7 @@ func (u *Usecase) GetFullPromptByAgentID(ctx context.Context, id int) (*RealTime
 
         // Format the prompt string
         result.FullPrompt = fmt.Sprintf(
-            "%s\nYour view as [%s] and your task is [%s]. I will expect you to [%s] about [%s]. That article should feel like [%s] in [%s] language.",
+            // "%s\nYour view as [%s] and your task is [%s]. I will expect you to [%s] about [%s]. That article should feel like [%s] in [%s] language.",
             fullPrompt.FrameworkPrompt,
             fullPrompt.RoleName,
             agentPrompt["propose"],
@@ -62,6 +62,7 @@ func (u *Usecase) GetFullPromptByAgentID(ctx context.Context, id int) (*RealTime
         // Perform default actions
         result.FullPrompt = fmt.Sprintf("Default: %s - %s", fullPrompt.AgentName, fullPrompt.FrameworkName)
     }
+    // fmt.Println("At Usecase : ",result) //for debugging
 
     return &result, nil
 }
