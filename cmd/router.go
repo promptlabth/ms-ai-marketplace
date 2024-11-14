@@ -9,6 +9,7 @@ import (
 	"github.com/promptlabth/ms-ai-marketplace/app/framework"
 	"github.com/promptlabth/ms-ai-marketplace/app/generate"
 	"github.com/promptlabth/ms-ai-marketplace/app/history"
+	"github.com/promptlabth/ms-ai-marketplace/app/realtime_gen"
 	styleprompt "github.com/promptlabth/ms-ai-marketplace/app/style_prompt"
 	"github.com/promptlabth/ms-ai-marketplace/app/user/handler"
 	"github.com/promptlabth/ms-ai-marketplace/app/user/repository"
@@ -172,4 +173,12 @@ func RealtimeGenCreateHistory(router *gin.Engine, db *gorm.DB) {
 	agentHistoryUsageHandler := history.NewHandler(agentHistoryUsageUsecase)
 
 	router.POST("/customer/create_history/:language/:firebase_id", agentHistoryUsageHandler.CreateHistoryByFirebaseID)
+}
+
+func RealtimeGenGetFullPromptByAgentID(router *gin.Engine, db *gorm.DB) {
+    realtimeGenCore := realtimegen.NewCore(db)
+    realtimeGenUsecase := realtimegen.NewUsecase(realtimeGenCore)
+    realtimeGenHandler := realtimegen.NewHandler(realtimeGenUsecase)
+
+    router.GET("/customer/get_full_prompt/:agent_id", realtimeGenHandler.GetFullPromptByAgentID)
 }
