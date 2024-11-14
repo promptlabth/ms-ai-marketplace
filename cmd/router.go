@@ -164,3 +164,12 @@ func CustomerGetListsAgentUsage(router *gin.Engine, db *gorm.DB) {
 	router.GET("/customer/agent_usage/:firebase_id", agentHistoryUsageHandler.GetHistoryByFirebaseID)
 	
 }
+
+func RealtimeGenCreateHistory(router *gin.Engine, db *gorm.DB) {
+	agentHistoryUsageValidation := history.NewAdaptor(db)
+	agentHistoryUsageCore := history.NewCore(db)
+	agentHistoryUsageUsecase := history.NewUsecase(agentHistoryUsageCore, agentHistoryUsageValidation)
+	agentHistoryUsageHandler := history.NewHandler(agentHistoryUsageUsecase)
+
+	router.POST("/customer/create_history/:language/:firebase_id", agentHistoryUsageHandler.CreateHistoryByFirebaseID)
+}

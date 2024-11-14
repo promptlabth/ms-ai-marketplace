@@ -75,6 +75,7 @@ func main() {
 	UploadRouter(r, client)
 	GenerateMessageRouter(r, db, ctrl)
 	CustomerGetListsAgentUsage(r,db)
+	RealtimeGenCreateHistory(r,db)
 
 	port := config.Val.Port
 	if port == "" {

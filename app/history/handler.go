@@ -5,11 +5,12 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	// "golang.org/x/text/internal/language"
 )
 
 type usecase interface {
-    CreateHistory(ctx context.Context, history History) error
-    GetHistoryByFirebaseID(ctx context.Context, firebaseID string) ([]HistoryWithAgentDetail, error)
+	CreateHistory(ctx context.Context, history History) error
+	GetHistoryByFirebaseID(ctx context.Context, firebaseID string) ([]HistoryWithAgentDetail, error)
 }
 
 type Handler struct {
@@ -62,15 +63,50 @@ func (h *Handler) GenerateMessage(c *gin.Context) {
 }
 
 func (h *Handler) GetHistoryByFirebaseID(c *gin.Context) {
-    firebaseID := c.Param("firebase_id")
+	firebaseID := c.Param("firebase_id")
 
-    histories, err := h.usecase.GetHistoryByFirebaseID(c.Request.Context(), firebaseID)
-    if err != nil {
-        c.JSON(http.StatusInternalServerError, map[string]string{
-            "error": err.Error(),
-        })
-        return
-    }
+	histories, err := h.usecase.GetHistoryByFirebaseID(c.Request.Context(), firebaseID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
 
-    c.JSON(http.StatusOK, histories)
+	c.JSON(http.StatusOK, histories)
+}
+
+func (h *Handler) CreateHistoryByFirebaseID(c *gin.Context) {
+	firebaseID := c.Param("firebase_id")
+	language := c.Param("language")
+	var req NewHistoryRequest
+
+	ctx := c.Request.Context()
+
+	if err := c.Bind(&req); err != nil {
+		c.JSON(http.StatusBadRequest, map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	history := History{
+		FirebaseID:        firebaseID,
+		Language:          language,
+		AgentID:           req.AgentID,
+		FrameworkID:       req.FrameworkID,
+		Prompt:            req.Prompt,
+		StyleMessageID:    req.StyleMessageID,
+		Result:            req.Result,
+		Model:             req.Model,
+		Completion_tokens: req.Completion_tokens,
+		Prompt_tokens:     req.Prompt_tokens,
+	}
+	if err := h.usecase.CreateHistory(ctx, history); err != nil {
+		c.AbortWithStatus(500)
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"message": "CreateHistory successfully"})
+
 }

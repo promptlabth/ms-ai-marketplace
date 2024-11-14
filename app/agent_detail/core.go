@@ -26,7 +26,7 @@ func (c *Core) CreateAgentDetail(ctx context.Context, agentDetail AgentDetailEnt
 
 func (c *Core) GetAgentDetailsByUserID(ctx context.Context, firebaseId string) (*[]AgentDetailEntity, error) {
 	var agentDetail []AgentDetailEntity
-	if err := c.db.Where("user_id = ?", firebaseId).Find(&agentDetail).Error; err != nil {
+	if err := c.db.Where("firebase_id = ?", firebaseId).Find(&agentDetail).Error; err != nil {
 		return nil, err
 	}
 
