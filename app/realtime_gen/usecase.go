@@ -26,6 +26,13 @@ func (u *Usecase) GetFullPromptByAgentID(ctx context.Context, id int) (*RealTime
 		return nil, err
 	}
 
+	roleLanguage := fullPrompt.RoleLanguage
+	if roleLanguage == "th" {
+		roleLanguage = "Thai"
+	} else if roleLanguage == "en" {
+		roleLanguage = "english"
+	}
+
 	var result RealTimeGenPrompt
 
 	if fullPrompt.FrameworkID == 1 || fullPrompt.FrameworkID == 6 { //Framework APE
@@ -41,9 +48,9 @@ func (u *Usecase) GetFullPromptByAgentID(ctx context.Context, id int) (*RealTime
 			fullPrompt.RoleName,
 			agentPrompt["propose"],
 			agentPrompt["expectation"],
-			"user_input", // Placeholder for user frontend input
+			"user_input",   // Placeholder for user frontend input
 			"style_prompt", // Placeholder for user frontend input
-			fullPrompt.RoleLanguage,
+			roleLanguage,
 		)
 	} else if fullPrompt.FrameworkID == 2 || fullPrompt.FrameworkID == 7 {
 		// Extract JSON fields from AgentPrompt
@@ -62,7 +69,7 @@ func (u *Usecase) GetFullPromptByAgentID(ctx context.Context, id int) (*RealTime
 			agentPrompt["example"],
 			agentPrompt["execute"],
 			"style_prompt", // Placeholder for user frontend input
-			fullPrompt.RoleLanguage,
+			roleLanguage,
 		)
 	} else if fullPrompt.FrameworkID == 3 || fullPrompt.FrameworkID == 8 {
 		// Perform specific actions for FrameworkID 3
