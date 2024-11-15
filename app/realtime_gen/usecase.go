@@ -28,9 +28,9 @@ func (u *Usecase) GetFullPromptByAgentID(ctx context.Context, id int) (*RealTime
 
 	roleLanguage := fullPrompt.RoleLanguage
 	if roleLanguage == "th" {
-		roleLanguage = "Thai"
+		roleLanguage = "ตอบภาษาไทยเท่านั้น"
 	} else if roleLanguage == "en" {
-		roleLanguage = "english"
+		roleLanguage = "answer in english only"
 	}
 
 	var result RealTimeGenPrompt
@@ -61,7 +61,7 @@ func (u *Usecase) GetFullPromptByAgentID(ctx context.Context, id int) (*RealTime
 
 		// Format the prompt string for FrameworkID 2 and 7
 		result.FullPrompt = fmt.Sprintf(
-			"Your view as [%s] and your task is [%s]. I will expect you to [%s] about [%s]. Example is [%s]. Execute on [%s]. The article should feel like [%s] in [%s] language.",
+			fullPrompt.FrameworkPrompt,
 			fullPrompt.RoleName,
 			agentPrompt["context"],
 			agentPrompt["instruction"],
@@ -72,14 +72,55 @@ func (u *Usecase) GetFullPromptByAgentID(ctx context.Context, id int) (*RealTime
 			roleLanguage,
 		)
 	} else if fullPrompt.FrameworkID == 3 || fullPrompt.FrameworkID == 8 {
-		// Perform specific actions for FrameworkID 3
-		result.FullPrompt = fmt.Sprintf("Framework 3: %s - %s", fullPrompt.AgentName, fullPrompt.FrameworkName)
+		// Extract JSON fields from AgentPrompt
+		var agentPrompt map[string]string
+		if err := json.Unmarshal(fullPrompt.AgentPrompt, &agentPrompt); err != nil {
+			return nil, err
+		}
+
+        result.FullPrompt = fmt.Sprintf(
+			fullPrompt.FrameworkPrompt,
+			fullPrompt.RoleName,
+			agentPrompt["task"],
+			agentPrompt["goal"],
+			"user_input", // Placeholder for user frontend input
+			"style_prompt", // Placeholder for user frontend input
+			roleLanguage,
+		)
 	} else if fullPrompt.FrameworkID == 4 || fullPrompt.FrameworkID == 9 {
-		// Perform specific actions for FrameworkID 4
-		result.FullPrompt = fmt.Sprintf("Framework 4: %s - %s", fullPrompt.AgentName, fullPrompt.FrameworkName)
+		// Extract JSON fields from AgentPrompt
+		var agentPrompt map[string]string
+		if err := json.Unmarshal(fullPrompt.AgentPrompt, &agentPrompt); err != nil {
+			return nil, err
+		}
+
+        result.FullPrompt = fmt.Sprintf(
+			fullPrompt.FrameworkPrompt,
+			fullPrompt.RoleName,
+			agentPrompt["action"],
+			agentPrompt["expectation"],
+			"user_input", // Placeholder for user frontend input
+			"style_prompt", // Placeholder for user frontend input
+			roleLanguage,
+		)
 	} else if fullPrompt.FrameworkID == 5 || fullPrompt.FrameworkID == 10 {
-		// Perform specific actions for FrameworkID 5
-		result.FullPrompt = fmt.Sprintf("Framework 5: %s - %s", fullPrompt.AgentName, fullPrompt.FrameworkName)
+		// Extract JSON fields from AgentPrompt
+		var agentPrompt map[string]string
+		if err := json.Unmarshal(fullPrompt.AgentPrompt, &agentPrompt); err != nil {
+			return nil, err
+		}
+
+        result.FullPrompt = fmt.Sprintf(
+			fullPrompt.FrameworkPrompt,
+			fullPrompt.RoleName,
+			agentPrompt["problem"],
+			agentPrompt["promise"],
+            agentPrompt["prove"],
+			"user_input", // Placeholder for user frontend input
+            agentPrompt["proposal"],
+			"style_prompt", // Placeholder for user frontend input
+			roleLanguage,
+		)
 	} else {
 		// Perform default actions
 		result.FullPrompt = fmt.Sprintf("Default: %s - %s", fullPrompt.AgentName, fullPrompt.FrameworkName)
