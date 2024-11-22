@@ -78,6 +78,7 @@ func main() {
 	RealtimeGenCreateHistory(r,db)
 	RealtimeGenGetFullPromptByAgentID (r,db)
 
+
 	port := config.Val.Port
 	if port == "" {
 		fmt.Println("use a default port :8080")

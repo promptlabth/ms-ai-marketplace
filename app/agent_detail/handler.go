@@ -14,6 +14,7 @@ type usecase interface {
 	ListAgentDetails(c context.Context) (*[]AgentDetailEntity, error)
 	GetAgentByID(c context.Context, id int) (*AgentDetailEntity, error)
 	UpdateAgentDetail(c context.Context, agentDetail AgentDetail) error
+	IncrementTotalUsed(c context.Context, agentID int) error
 }
 
 type Handler struct {
@@ -135,4 +136,23 @@ func (h *Handler) UpdateAgentDetail(c *gin.Context) {
 		"status":  "success",
 		"message": "Update successful",
 	})
+}
+
+func (h *Handler) IncrementTotalUsed(c *gin.Context) {
+    agentID, err := strconv.Atoi(c.Param("agent_id"))
+    if err != nil {
+        c.JSON(http.StatusBadRequest, map[string]string{
+            "error": "Invalid agent ID",
+        })
+        return
+    }
+
+    if err := h.usecase.IncrementTotalUsed(c.Request.Context(), agentID); err != nil {
+        c.JSON(http.StatusInternalServerError, map[string]string{
+            "error": err.Error(),
+        })
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{"message": "Total used incremented successfully"})
 }

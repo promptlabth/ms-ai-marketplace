@@ -59,3 +59,7 @@ func (c *Core) UpdateAgentDetail(ctx context.Context, agentDetail AgentDetailEnt
 	}
 	return nil
 }
+
+func (c *Core) IncrementTotalUsed(ctx context.Context, agentID int) error {
+    return c.db.Model(&AgentDetailEntity{}).Where("id = ?", agentID).Update("total_used", gorm.Expr("total_used + ?", 1)).Error
+}
