@@ -21,6 +21,7 @@ type UserResponse struct {
 	PlanID         string `json:"plan_id"`
 	ProfilePicture string `json:"profile_pic"`
 	AccessToken    string `json:"access_token"`
+	Role           string `json:"role"`
 }
 
 type UserService interface {

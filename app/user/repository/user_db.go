@@ -1,6 +1,9 @@
 package repository
 
-import "gorm.io/gorm"
+import (
+    "errors"
+    "gorm.io/gorm"
+)
 
 type userRepositoryDB struct {
     db *gorm.DB
@@ -18,6 +21,10 @@ func (r *userRepositoryDB) Create(user User) (*User, error) {
 }
 
 func (r *userRepositoryDB) GetUserByFirebaseID(firebaseID string) (*User, error) {
+    if firebaseID == "" {
+        return nil, errors.New("firebaseID cannot be empty")
+    }
+
     var user User
     if err := r.db.First(&user, "firebase_id = ?", firebaseID).Error; err != nil {
         return nil, err

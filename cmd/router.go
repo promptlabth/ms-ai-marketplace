@@ -60,6 +60,8 @@ func UsersRouter(router *gin.Engine, db *gorm.DB) {
 	router.POST("/users/login", func(c *gin.Context) {
 		userHandler.NewUser(c.Writer, c.Request)
 	})
+	router.GET("/users/:firebase_id", userHandler.GetUser)
+
 }
 
 func RoleRouter(router *gin.Engine, db *gorm.DB) {

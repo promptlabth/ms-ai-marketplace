@@ -18,7 +18,7 @@ func NewUserService(userRepository repository.UserRepository) UserService {
 func (s userService) NewUser(request NewUserRequest) (*UserResponse, error) {
 	// Check if the user already exists
 	existingUser, err := s.userRepository.GetUserByFirebaseID(request.FirebaseID)
-	if err == nil && existingUser != nil {
+	if (err == nil && existingUser != nil) {
 		// User exists, update DatetimeLastActive
 		existingUser.DatetimeLastActive = time.Now().Format(time.RFC3339)
 		updatedUser, err := s.userRepository.Update(*existingUser)
@@ -75,9 +75,10 @@ func (s userService) NewUser(request NewUserRequest) (*UserResponse, error) {
 }
 
 func (s userService) GetUser(firebaseID string) (UserResponse, error) {
+	log.Printf("Fetching user with firebaseID: %s", firebaseID)
 	user, err := s.userRepository.GetUserByFirebaseID(firebaseID)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err) // Use log.Println instead of log.Fatal
 		return UserResponse{}, err
 	}
 
@@ -90,6 +91,7 @@ func (s userService) GetUser(firebaseID string) (UserResponse, error) {
 		PlanID:         user.PlanID,
 		ProfilePicture: user.ProfilePicture,
 		AccessToken:    user.AccessToken,
+		Role:           user.Role,
 	}
 
 	return response, nil
