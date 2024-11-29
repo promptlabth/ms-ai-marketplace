@@ -15,7 +15,8 @@ type usecase interface {
 	ListAgentDetailsThatApprove(c context.Context) (*[]AgentDetailEntity, error)
 	GetAgentByID(c context.Context, id int) (*AgentDetailEntity, error)
 	UpdateAgentDetail(c context.Context, agentDetail AgentDetail) error
-	IncrementTotalUsed(c context.Context, agentID int) error 
+	IncrementTotalUsed(c context.Context, agentID int) error
+	UpdateAgentStatus(c context.Context, agentID int, status string) error
 }
 
 type Handler struct {
@@ -40,11 +41,11 @@ func (h *Handler) NewAgentDetail(c *gin.Context) {
 		Description: req.Description,
 		ImageURL:    req.ImageURL,
 		Prompt:      req.Prompt,
-		FirebaseID:      req.FirebaseID,
+		FirebaseID:  req.FirebaseID,
 		FrameworkID: req.FrameworkID,
 		RoleFrameID: req.RoleFrameID,
-		TotalUsed: req.TotalUsed,
-		Status: "pending",
+		TotalUsed:   req.TotalUsed,
+		Status:      "pending",
 	}
 
 	if err := h.usecase.NewAgentDetail(context.Background(), agentDetail); err != nil {
@@ -52,9 +53,9 @@ func (h *Handler) NewAgentDetail(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusCreated, gin.H{
-		"status":  "success",
-		"message": "creation sussess",
-		"agent_status" : "pending",
+		"status":      "success",
+		"message":     "creation success",
+		"agent_status": "pending",
 	})
 }
 
@@ -73,27 +74,24 @@ func (h *Handler) GetAgentDetails(c *gin.Context) {
 	})
 }
 
-
 func (h *Handler) GetAgentByID(c *gin.Context) {
-    id := c.Param("id")
-    roleID, err := strconv.Atoi(id)
-    if err != nil {
-        c.JSON(http.StatusBadRequest, map[string]string{
-            "error": "Invalid role ID",
-        })
-        return
-    }
-	// role_id := uint(roleID) 
+	id := c.Param("id")
+	roleID, err := strconv.Atoi(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "Invalid role ID",
+		})
+		return
+	}
 
-    agent, err := h.usecase.GetAgentByID(context.Background(), roleID)
-    if err != nil {
-        c.AbortWithStatus(500)
-        return
-    }
+	agent, err := h.usecase.GetAgentByID(context.Background(), roleID)
+	if err != nil {
+		c.AbortWithStatus(500)
+		return
+	}
 
-    c.JSON(http.StatusOK, gin.H{"agent": agent})
+	c.JSON(http.StatusOK, gin.H{"agent": agent})
 }
-
 
 func (h *Handler) ListAgentDetails(c *gin.Context) {
 	agents, err := h.usecase.ListAgentDetails(context.Background())
@@ -152,20 +150,55 @@ func (h *Handler) UpdateAgentDetail(c *gin.Context) {
 }
 
 func (h *Handler) IncrementTotalUsed(c *gin.Context) {
-    agentID, err := strconv.Atoi(c.Param("agent_id"))
-    if err != nil {
-        c.JSON(http.StatusBadRequest, map[string]string{
-            "error": "Invalid agent ID",
-        })
-        return
-    }
+	agentID, err := strconv.Atoi(c.Param("agent_id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "Invalid agent ID",
+		})
+		return
+	}
 
-    if err := h.usecase.IncrementTotalUsed(c.Request.Context(), agentID); err != nil {
-        c.JSON(http.StatusInternalServerError, map[string]string{
-            "error": err.Error(),
-        })
-        return
-    }
+	if err := h.usecase.IncrementTotalUsed(c.Request.Context(), agentID); err != nil {
+		c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
 
-    c.JSON(http.StatusOK, gin.H{"message": "Total used incremented successfully"})
+	c.JSON(http.StatusOK, gin.H{"message": "Total used incremented successfully"})
+}
+
+func (h *Handler) UpdateAgentStatus(c *gin.Context) {
+	agentID, err := strconv.Atoi(c.Param("agent_id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "Invalid agent ID",
+		})
+		return
+	}
+
+	status := c.Param("status")
+	var statusText string
+	switch status {
+	case "1":
+		statusText = "approve"
+	case "2":
+		statusText = "pending"
+	case "3":
+		statusText = "reject"
+	default:
+		c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "Invalid status",
+		})
+		return
+	}
+
+	if err := h.usecase.UpdateAgentStatus(c.Request.Context(), agentID, statusText); err != nil {
+		c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Agent status updated successfully"})
 }

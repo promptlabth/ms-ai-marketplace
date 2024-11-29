@@ -15,6 +15,7 @@ type storage interface {
 	GetAgentByID(context.Context, int) (*AgentDetailEntity, error)
 	UpdateAgentDetail(context.Context, AgentDetailEntity) error
 	IncrementTotalUsed(context.Context, int) error
+	UpdateAgentStatus(context.Context, int, string) error
 }
 
 type domain interface {
@@ -103,4 +104,8 @@ func (u *Usecase) UpdateAgentDetail(ctx context.Context, agentDetail AgentDetail
 
 func (u *Usecase) IncrementTotalUsed(ctx context.Context, agentID int) error {
 	return u.storage.IncrementTotalUsed(ctx, agentID)
+}
+
+func (u *Usecase) UpdateAgentStatus(ctx context.Context, agentID int, status string) error {
+	return u.storage.UpdateAgentStatus(ctx, agentID, status)
 }
