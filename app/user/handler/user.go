@@ -50,7 +50,6 @@ func (h userHandler) GetUser(c *gin.Context) {
         return
     }
 
-    log.Printf("Fetching user with firebaseID: %s", firebaseID)
     response, err := h.userService.GetUser(firebaseID)
     if err != nil {
         log.Println(err) // Log the error

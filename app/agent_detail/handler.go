@@ -44,6 +44,7 @@ func (h *Handler) NewAgentDetail(c *gin.Context) {
 		FrameworkID: req.FrameworkID,
 		RoleFrameID: req.RoleFrameID,
 		TotalUsed: req.TotalUsed,
+		Status: "pending",
 	}
 
 	if err := h.usecase.NewAgentDetail(context.Background(), agentDetail); err != nil {
@@ -53,6 +54,7 @@ func (h *Handler) NewAgentDetail(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{
 		"status":  "success",
 		"message": "creation sussess",
+		"agent_status" : "pending",
 	})
 }
 

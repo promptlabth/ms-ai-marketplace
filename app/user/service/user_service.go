@@ -75,7 +75,6 @@ func (s userService) NewUser(request NewUserRequest) (*UserResponse, error) {
 }
 
 func (s userService) GetUser(firebaseID string) (UserResponse, error) {
-	log.Printf("Fetching user with firebaseID: %s", firebaseID)
 	user, err := s.userRepository.GetUserByFirebaseID(firebaseID)
 	if err != nil {
 		log.Println(err) // Use log.Println instead of log.Fatal
