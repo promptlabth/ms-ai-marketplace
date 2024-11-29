@@ -12,9 +12,10 @@ type usecase interface {
 	NewAgentDetail(c context.Context, agentDetail AgentDetail) error
 	GetAgentDetails(c context.Context, firebaseId string) (*[]AgentDetailEntity, error)
 	ListAgentDetails(c context.Context) (*[]AgentDetailEntity, error)
+	ListAgentDetailsThatApprove(c context.Context) (*[]AgentDetailEntity, error)
 	GetAgentByID(c context.Context, id int) (*AgentDetailEntity, error)
 	UpdateAgentDetail(c context.Context, agentDetail AgentDetail) error
-	IncrementTotalUsed(c context.Context, agentID int) error
+	IncrementTotalUsed(c context.Context, agentID int) error 
 }
 
 type Handler struct {
@@ -94,6 +95,16 @@ func (h *Handler) GetAgentByID(c *gin.Context) {
 
 func (h *Handler) ListAgentDetails(c *gin.Context) {
 	agents, err := h.usecase.ListAgentDetails(context.Background())
+	if err != nil {
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"agents": agents})
+}
+
+func (h *Handler) ListAgentDetailsThatApprove(c *gin.Context) {
+	agents, err := h.usecase.ListAgentDetailsThatApprove(context.Background())
 	if err != nil {
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return

@@ -26,6 +26,7 @@ type AgentDetailInterface interface {
 	UpdateAgentDetail(ctx context.Context, agent_Detail AgentDetail) error          // Updates an existing user
 	// DeleteAgentDetail(ctx context.Context, id string) error           // Deletes a user by their ID
 	ListAgentDetails(ctx context.Context) (*[]AgentDetail, error)
+	ListAgentDetailsThatApprove(ctx context.Context) (*[]AgentDetail, error)
 }
 
 type NewAgentDetailRequest struct {

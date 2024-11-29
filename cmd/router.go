@@ -35,7 +35,8 @@ func AgentDetailRouter(router *gin.Engine, db *gorm.DB) {
 
 	router.POST("/creator/agent_detail", agentDetailHandler.NewAgentDetail)
 	router.GET("/creator/agent/user_id/:id", agentDetailHandler.GetAgentDetails)
-	router.GET("/creator/agents", agentDetailHandler.ListAgentDetails)
+	router.GET("/creator/agents", agentDetailHandler.ListAgentDetails) 
+	router.GET("/creator/agents/approve", agentDetailHandler.ListAgentDetailsThatApprove)
 	router.GET("/creator/agent/:id", agentDetailHandler.GetAgentByID)
 	router.GET("/customer/:id", agentDetailHandler.GetAgentByID)
 	router.POST("/customer/increase_used/:agent_id", agentDetailHandler.IncrementTotalUsed)

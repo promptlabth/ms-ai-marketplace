@@ -11,9 +11,11 @@ type storage interface {
 	CreateAgentDetail(context.Context, AgentDetailEntity) (*int, error)
 	GetAgentDetailsByUserID(context.Context, string) (*[]AgentDetailEntity, error) 
 	ListAgentDetails(context.Context) (*[]AgentDetailEntity, error)
+	ListAgentDetailsThatApprove(context.Context) (*[]AgentDetailEntity, error)
 	GetAgentByID(context.Context, int) (*AgentDetailEntity, error)
 	UpdateAgentDetail(context.Context,  AgentDetailEntity) error
 	IncrementTotalUsed(context.Context, int) error
+	
 }
 
 type domain interface {
@@ -57,6 +59,7 @@ func (u *Usecase) GetAgentDetails(ctx context.Context, firebaseId string) (*[]Ag
     return agentDetail, nil
 }
 
+
 func (u *Usecase)  GetAgentByID(ctx context.Context, id int) (*AgentDetailEntity, error) {
     agent, err := u.storage.GetAgentByID(ctx, id)
     if err != nil {
@@ -69,6 +72,14 @@ func (u *Usecase)  GetAgentByID(ctx context.Context, id int) (*AgentDetailEntity
 
 func (u *Usecase) ListAgentDetails(ctx context.Context) (*[]AgentDetailEntity, error){
 	agents, err := u.storage.ListAgentDetails(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return agents, nil
+}
+
+func (u *Usecase) ListAgentDetailsThatApprove (ctx context.Context) (*[]AgentDetailEntity, error){
+	agents, err := u.storage.ListAgentDetailsThatApprove(ctx)
 	if err != nil {
 		return nil, err
 	}

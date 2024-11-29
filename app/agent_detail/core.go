@@ -49,6 +49,14 @@ func (c *Core) ListAgentDetails(ctx context.Context) (*[]AgentDetailEntity, erro
 	return &agents, nil
 }
 
+func (c *Core) ListAgentDetailsThatApprove(ctx context.Context) (*[]AgentDetailEntity, error) {
+    var agents []AgentDetailEntity
+    if err := c.db.Where("status = ?", "approve").Find(&agents).Error; err != nil {
+        return nil, err
+    }
+    return &agents, nil
+}
+
 func (c *Core) UpdateAgentDetail(ctx context.Context, agentDetail AgentDetailEntity) ( error) {
 	var existingAgent AgentDetailEntity
 	if err := c.db.First(&existingAgent, agentDetail.ID).Error; err != nil {
