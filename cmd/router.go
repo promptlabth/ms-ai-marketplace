@@ -9,6 +9,7 @@ import (
 	"github.com/promptlabth/ms-ai-marketplace/app/framework"
 	"github.com/promptlabth/ms-ai-marketplace/app/generate"
 	"github.com/promptlabth/ms-ai-marketplace/app/history"
+	"github.com/promptlabth/ms-ai-marketplace/app/review"
 	"github.com/promptlabth/ms-ai-marketplace/app/realtime_gen"
 	styleprompt "github.com/promptlabth/ms-ai-marketplace/app/style_prompt"
 	"github.com/promptlabth/ms-ai-marketplace/app/user/handler"
@@ -186,4 +187,13 @@ func RealtimeGenGetFullPromptByAgentID(router *gin.Engine, db *gorm.DB) {
     realtimeGenHandler := realtimegen.NewHandler(realtimeGenUsecase)
 
     router.GET("/customer/get_full_prompt/:agent_id", realtimeGenHandler.GetFullPromptByAgentID)
+}
+
+func ReviewRouter(router *gin.Engine, db *gorm.DB) {
+    reviewCore := review.NewCore(db)
+    agentDetailCore := agentdetail.NewCore(db)
+    reviewUsecase := review.NewUsecase(reviewCore, agentDetailCore)
+    reviewHandler := review.NewHandler(reviewUsecase)
+
+    router.POST("/review", reviewHandler.NewReview)
 }
