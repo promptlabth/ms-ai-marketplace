@@ -21,3 +21,11 @@ func (c *Core) CreateReview(ctx context.Context, review ReviewEntity) (*int, err
 	}
 	return &review.ID, nil
 }
+
+func (c *Core) GetLatestReviewByAgentID(ctx context.Context, agentID int) (*ReviewEntity, error) {
+	var review ReviewEntity
+	if err := c.db.Where("agent_id = ?", agentID).Order("date_time desc").First(&review).Error; err != nil {
+		return nil, err
+	}
+	return &review, nil
+}

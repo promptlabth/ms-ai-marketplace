@@ -35,6 +35,7 @@ func AgentDetailRouter(router *gin.Engine, db *gorm.DB) {
 	agentDetailHandler := agentdetail.NewHandler(agentDetailUsecase)
 
 	router.POST("/creator/agent_detail", agentDetailHandler.NewAgentDetail)
+	router.PATCH("/creator/update_agent/:id", agentDetailHandler.UpdateAgentDetail)
 	router.GET("/creator/agent/user_id/:id", agentDetailHandler.GetAgentDetails)
 	router.GET("/creator/agents", agentDetailHandler.ListAgentDetails) 
 	router.GET("/creator/agents/approve", agentDetailHandler.ListAgentDetailsThatApprove)
@@ -196,4 +197,5 @@ func ReviewRouter(router *gin.Engine, db *gorm.DB) {
     reviewHandler := review.NewHandler(reviewUsecase)
 
     router.POST("/review", reviewHandler.NewReview)
+	router.GET("/review/latest/:agent_id", reviewHandler.GetLatestReviewByAgentID)
 }

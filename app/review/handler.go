@@ -3,12 +3,15 @@ package review
 import (
 	"context"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
 type usecase interface {
 	NewReview(ctx context.Context, review ReviewEntity) error
+	GetLatestReviewByAgentID(ctx context.Context, agentID int) (*ReviewEntity, error)
 }
 
 type Handler struct {
@@ -33,7 +36,7 @@ func (h *Handler) NewReview(c *gin.Context) {
 		AdminID:  req.AdminID,
 		AgentID:  req.AgentID,
 		Reason:   req.Reason,
-		DateTime: req.DateTime,
+		DateTime: time.Now(),
 	}
 
 	if err := h.usecase.NewReview(context.Background(), review); err != nil {
@@ -45,4 +48,20 @@ func (h *Handler) NewReview(c *gin.Context) {
 		"status":  "success",
 		"message": "creation success",
 	})
+}
+
+func (h *Handler) GetLatestReviewByAgentID(c *gin.Context) {
+	agentID, err := strconv.Atoi(c.Param("agent_id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid agent ID"})
+		return
+	}
+
+	review, err := h.usecase.GetLatestReviewByAgentID(context.Background(), agentID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get latest review"})
+		return
+	}
+
+	c.JSON(http.StatusOK, review)
 }

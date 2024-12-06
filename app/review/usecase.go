@@ -8,6 +8,7 @@ import (
 
 type storage interface {
 	CreateReview(context.Context, ReviewEntity) (*int, error)
+	GetLatestReviewByAgentID(ctx context.Context, agentID int) (*ReviewEntity, error)
 }
 
 type agentDetailStorage interface {
@@ -28,7 +29,7 @@ func NewUsecase(s storage, ads agentDetailStorage) *Usecase {
 
 func (u *Usecase) NewReview(ctx context.Context, review ReviewEntity) error {
     agentDetail, err := u.agentDetailStorage.GetAgentByID(ctx, review.AgentID)
-    if err != nil {
+    if (err != nil) {
         return err
     }
 
@@ -36,4 +37,8 @@ func (u *Usecase) NewReview(ctx context.Context, review ReviewEntity) error {
 
     _, err = u.storage.CreateReview(ctx, review)
     return err
+}
+
+func (u *Usecase) GetLatestReviewByAgentID(ctx context.Context, agentID int) (*ReviewEntity, error) {
+    return u.storage.GetLatestReviewByAgentID(ctx, agentID)
 }

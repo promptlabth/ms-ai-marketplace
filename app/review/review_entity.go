@@ -15,7 +15,6 @@ type ReviewRequest struct {
 	AdminID  string    `json:"admin_id"`
 	AgentID  int       `json:"agent_id"`
 	Reason   string    `json:"reason"`
-	DateTime time.Time `json:"date_time"`
 }
 
 func (ReviewEntity) TableName() string {

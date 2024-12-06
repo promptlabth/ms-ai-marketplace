@@ -96,6 +96,7 @@ func (u *Usecase) UpdateAgentDetail(ctx context.Context, agentDetail AgentDetail
 		FrameworkID: agentDetail.FrameworkID,
 		RoleFrameID: agentDetail.RoleFrameID,
 		TotalUsed:   agentDetail.TotalUsed,
+		Status:      "pending",
 	}
 
 	err := u.storage.UpdateAgentDetail(ctx, agentDetailEntity)
