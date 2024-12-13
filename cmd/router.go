@@ -39,7 +39,7 @@ func AgentDetailRouter(router *gin.Engine, db *gorm.DB) {
 	protected.Use(middleware.JWTMiddleware())
 	protected.POST("/agent_detail", agentDetailHandler.NewAgentDetail)
 	protected.PATCH("/update_agent/:id", agentDetailHandler.UpdateAgentDetail)
-	protected.GET("/agent/user_id/:id", agentDetailHandler.GetAgentDetails)
+	protected.GET("/agent/user_id", agentDetailHandler.GetAgentDetails)
 	protected.GET("/agents", agentDetailHandler.ListAgentDetails)
 	router.GET("/creator/agents/approve", agentDetailHandler.ListAgentDetailsThatApprove)
 	protected.GET("/agent/:id", agentDetailHandler.GetAgentByID)

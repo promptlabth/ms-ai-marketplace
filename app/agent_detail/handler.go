@@ -60,9 +60,13 @@ func (h *Handler) NewAgentDetail(c *gin.Context) {
 }
 
 func (h *Handler) GetAgentDetails(c *gin.Context) {
-	firebaseID := c.Param("id")
+	firebaseID, exists := c.Get("firebase_id")
+    if !exists {
+        c.JSON(http.StatusUnauthorized, gin.H{"error": "Firebase ID not found in token"})
+        return
+    }
 
-	agentDetails, err := h.usecase.GetAgentDetails(c.Request.Context(), firebaseID)
+	agentDetails, err := h.usecase.GetAgentDetails(c.Request.Context(), firebaseID.(string))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get user"})
 		return
