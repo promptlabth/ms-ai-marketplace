@@ -191,7 +191,7 @@ func RealtimeGenCreateHistory(router *gin.Engine, db *gorm.DB) {
 
 	protected := router.Group("/customer")
 	protected.Use(middleware.JWTMiddleware())
-	protected.POST("/create_history/:language/:firebase_id", agentHistoryUsageHandler.CreateHistoryByFirebaseID)
+	protected.POST("/create_history/:language", agentHistoryUsageHandler.CreateHistoryByFirebaseID)
 }
 
 func RealtimeGenGetFullPromptByAgentID(router *gin.Engine, db *gorm.DB) {

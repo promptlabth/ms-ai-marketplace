@@ -88,7 +88,12 @@ func (h *Handler) GetHistoryByFirebaseID(c *gin.Context) {
 }
 
 func (h *Handler) CreateHistoryByFirebaseID(c *gin.Context) {
-	firebaseID := c.Param("firebase_id")
+	firebaseID, exists := c.Get("firebase_id")
+	if !exists {
+        c.JSON(http.StatusUnauthorized, gin.H{"error": "Firebase ID not found in token"})
+        return
+    }
+	
 	language := c.Param("language")
 	var req NewHistoryRequest
 
@@ -102,7 +107,7 @@ func (h *Handler) CreateHistoryByFirebaseID(c *gin.Context) {
 	}
 
 	history := History{
-		FirebaseID:        firebaseID,
+		FirebaseID:        firebaseID.(string),
 		Language:          language,
 		AgentID:           req.AgentID,
 		FrameworkID:       req.FrameworkID,
