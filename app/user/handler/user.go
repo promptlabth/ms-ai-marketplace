@@ -60,3 +60,45 @@ func (h userHandler) GetUser(c *gin.Context) {
     c.JSON(http.StatusOK, response)
 }
 
+func (h userHandler) LoginHandler(c *gin.Context) {
+    var request service.NewUserRequest
+    if err := c.BindJSON(&request); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+        return
+    }
+
+    response, err := h.userService.NewUser(request)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+
+    // Generate JWT token
+    token, err := service.GenerateJWT(response.FirbaseID)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
+        return
+    }
+
+    // Send JWT token in response body
+    c.JSON(http.StatusCreated, gin.H{
+        "token":    token,
+        "user":     response,
+    })
+}
+
+func (h userHandler) GetUserByFirebaseID(c *gin.Context) {
+    firebaseID, exists := c.Get("firebase_id")
+    if !exists {
+        c.JSON(http.StatusUnauthorized, gin.H{"error": "Firebase ID not found in token"})
+        return
+    }
+
+    response, err := h.userService.GetUser(firebaseID.(string))
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+
+    c.JSON(http.StatusOK, response)
+}

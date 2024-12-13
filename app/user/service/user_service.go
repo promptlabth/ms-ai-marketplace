@@ -2,10 +2,14 @@ package service
 
 import (
 	"log"
+	// "os"
 	"time"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/promptlabth/ms-ai-marketplace/app/user/repository"
 )
+
+var jwtSecret = []byte("your-secret-key")
 
 type userService struct {
 	userRepository repository.UserRepository
@@ -94,4 +98,13 @@ func (s userService) GetUser(firebaseID string) (UserResponse, error) {
 	}
 
 	return response, nil
+}
+
+func GenerateJWT(firebaseID string) (string, error) {
+    claims := jwt.MapClaims{
+        "firebase_id": firebaseID,
+        "exp":         time.Now().Add(time.Hour * 72).Unix(), // Token expires in 72 hours
+    }
+    token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+    return token.SignedString(jwtSecret)
 }

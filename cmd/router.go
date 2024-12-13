@@ -17,6 +17,7 @@ import (
 	"github.com/promptlabth/ms-ai-marketplace/app/user/service"
 	"github.com/promptlabth/ms-ai-marketplace/auth"
 	"github.com/promptlabth/ms-ai-marketplace/config"
+	"github.com/promptlabth/ms-ai-marketplace/middleware"
 	"go.opentelemetry.io/otel/propagation"
 	"go.uber.org/mock/gomock"
 
@@ -34,12 +35,15 @@ func AgentDetailRouter(router *gin.Engine, db *gorm.DB) {
 	agentDetailUsecase := agentdetail.NewUsecase(agentDetailCore, agentDetailValidation)
 	agentDetailHandler := agentdetail.NewHandler(agentDetailUsecase)
 
-	router.POST("/creator/agent_detail", agentDetailHandler.NewAgentDetail)
-	router.PATCH("/creator/update_agent/:id", agentDetailHandler.UpdateAgentDetail)
-	router.GET("/creator/agent/user_id/:id", agentDetailHandler.GetAgentDetails)
-	router.GET("/creator/agents", agentDetailHandler.ListAgentDetails) 
+	protected := router.Group("/creator")
+	protected.Use(middleware.JWTMiddleware())
+	protected.POST("/agent_detail", agentDetailHandler.NewAgentDetail)
+	protected.PATCH("/update_agent/:id", agentDetailHandler.UpdateAgentDetail)
+	protected.GET("/agent/user_id/:id", agentDetailHandler.GetAgentDetails)
+	protected.GET("/agents", agentDetailHandler.ListAgentDetails)
 	router.GET("/creator/agents/approve", agentDetailHandler.ListAgentDetailsThatApprove)
-	router.GET("/creator/agent/:id", agentDetailHandler.GetAgentByID)
+	protected.GET("/agent/:id", agentDetailHandler.GetAgentByID)
+
 	router.GET("/customer/:id", agentDetailHandler.GetAgentByID)
 	router.POST("/customer/increase_used/:agent_id", agentDetailHandler.IncrementTotalUsed)
 	router.POST("/admin/:agent_id/:status", agentDetailHandler.UpdateAgentStatus)
@@ -51,9 +55,11 @@ func FrameworkRouter(router *gin.Engine, db *gorm.DB) {
 	frameworkUsecase := framework.NewUsecase(frameworkCore, frameworkValidation)
 	frameworkHandler := framework.NewHandler(frameworkUsecase)
 
-	router.POST("/creator/framework", frameworkHandler.NewFramework)
-	router.GET("/creator/frameworks/:language", frameworkHandler.ListFrameworks)
-	router.GET("creator/framework/:id", frameworkHandler.GetFrameworkByID)
+	protected := router.Group("/creator")
+	protected.Use(middleware.JWTMiddleware())
+	protected.POST("/framework", frameworkHandler.NewFramework)
+	protected.GET("/frameworks/:language", frameworkHandler.ListFrameworks)
+	protected.GET("/framework/:id", frameworkHandler.GetFrameworkByID)
 }
 
 func UsersRouter(router *gin.Engine, db *gorm.DB) {
@@ -61,27 +67,27 @@ func UsersRouter(router *gin.Engine, db *gorm.DB) {
 	userService := service.NewUserService(userRepositoryDB)
 	userHandler := handler.NewUserHandler(userService)
 
-	router.POST("/users/login", func(c *gin.Context) {
-		userHandler.NewUser(c.Writer, c.Request)
-	})
-	router.GET("/users/:firebase_id", userHandler.GetUser)
+	router.POST("/users/login", userHandler.LoginHandler)
 
+	protected := router.Group("/users")
+	protected.Use(middleware.JWTMiddleware())
+	protected.GET("/me", userHandler.GetUserByFirebaseID)
 }
 
 func RoleRouter(router *gin.Engine, db *gorm.DB) {
-
 	roleValidation := role.NewAdaptor(db)
 	roleCore := role.NewCore(db)
 	roleUsecase := role.NewUsecase(roleCore, roleValidation)
 	roleHandler := role.NewHandler(roleUsecase)
 
-	router.POST("/creator/role", roleHandler.NewRole)
-	router.GET("/creator/roles/:language", roleHandler.ListRoles)
+	protected := router.Group("/creator")
+	protected.Use(middleware.JWTMiddleware())
+	protected.POST("/role", roleHandler.NewRole)
+	protected.GET("/roles/:language", roleHandler.ListRoles)
 	router.GET("/creator/role/:id", roleHandler.GetRoleByID)
 }
 
 func UserRouter(ctx context.Context, router *gin.Engine, db *gorm.DB) error {
-
 	cc, err := InitialGRpc(config.Val.Adaptor.User.Url)
 	if err != nil {
 		return err
@@ -117,11 +123,12 @@ func UserRouter(ctx context.Context, router *gin.Engine, db *gorm.DB) error {
 }
 
 func UploadRouter(router *gin.Engine, client *storage.Client) {
-
 	uploadCore := upload.NewCore(client)
 	uploadUsecase := upload.NewUsecase(uploadCore)
 	uploadHandler := upload.NewHandler(uploadUsecase)
 
+	protected := router.Group("/creator")
+	protected.Use(middleware.JWTMiddleware())
 	router.POST("/creator/upload", uploadHandler.Uploadfile)
 }
 
@@ -160,7 +167,9 @@ func GenerateMessageRouter(router *gin.Engine, db *gorm.DB, ctrl *gomock.Control
 	generateHandler := generate.NewHandler(generateService)
 
 	// Define routes and handlers
-	router.POST("/customer/use_agent/messages/:language", generateHandler.Generate)
+	protected := router.Group("/customer")
+	protected.Use(middleware.JWTMiddleware())
+	protected.POST("/use_agent/messages/:language", generateHandler.Generate)
 }
 
 func CustomerGetListsAgentUsage(router *gin.Engine, db *gorm.DB) {
@@ -169,8 +178,9 @@ func CustomerGetListsAgentUsage(router *gin.Engine, db *gorm.DB) {
 	agentHistoryUsageUsecase := history.NewUsecase(agentHistoryUsageCore, agentHistoryUsageValidation)
 	agentHistoryUsageHandler := history.NewHandler(agentHistoryUsageUsecase)
 
-	router.GET("/customer/agent_usage/:firebase_id", agentHistoryUsageHandler.GetHistoryByFirebaseID)
-	
+	protected := router.Group("/customer")
+	protected.Use(middleware.JWTMiddleware())
+	protected.GET("/agent_usage", agentHistoryUsageHandler.GetHistoryByFirebaseID)
 }
 
 func RealtimeGenCreateHistory(router *gin.Engine, db *gorm.DB) {
@@ -179,23 +189,27 @@ func RealtimeGenCreateHistory(router *gin.Engine, db *gorm.DB) {
 	agentHistoryUsageUsecase := history.NewUsecase(agentHistoryUsageCore, agentHistoryUsageValidation)
 	agentHistoryUsageHandler := history.NewHandler(agentHistoryUsageUsecase)
 
-	router.POST("/customer/create_history/:language/:firebase_id", agentHistoryUsageHandler.CreateHistoryByFirebaseID)
+	protected := router.Group("/customer")
+	protected.Use(middleware.JWTMiddleware())
+	protected.POST("/create_history/:language/:firebase_id", agentHistoryUsageHandler.CreateHistoryByFirebaseID)
 }
 
 func RealtimeGenGetFullPromptByAgentID(router *gin.Engine, db *gorm.DB) {
-    realtimeGenCore := realtimegen.NewCore(db)
-    realtimeGenUsecase := realtimegen.NewUsecase(realtimeGenCore)
-    realtimeGenHandler := realtimegen.NewHandler(realtimeGenUsecase)
+	realtimeGenCore := realtimegen.NewCore(db)
+	realtimeGenUsecase := realtimegen.NewUsecase(realtimeGenCore)
+	realtimeGenHandler := realtimegen.NewHandler(realtimeGenUsecase)
 
-    router.GET("/customer/get_full_prompt/:agent_id", realtimeGenHandler.GetFullPromptByAgentID)
+	router.GET("/customer/get_full_prompt/:agent_id", realtimeGenHandler.GetFullPromptByAgentID)
 }
 
 func ReviewRouter(router *gin.Engine, db *gorm.DB) {
-    reviewCore := review.NewCore(db)
-    agentDetailCore := agentdetail.NewCore(db)
-    reviewUsecase := review.NewUsecase(reviewCore, agentDetailCore)
-    reviewHandler := review.NewHandler(reviewUsecase)
+	reviewCore := review.NewCore(db)
+	agentDetailCore := agentdetail.NewCore(db)
+	reviewUsecase := review.NewUsecase(reviewCore, agentDetailCore)
+	reviewHandler := review.NewHandler(reviewUsecase)
 
-    router.POST("/review", reviewHandler.NewReview)
-	router.GET("/review/latest/:agent_id", reviewHandler.GetLatestReviewByAgentID)
+	protected := router.Group("/review")
+	protected.Use(middleware.JWTMiddleware())
+	protected.POST("/", reviewHandler.NewReview)
+	protected.GET("/latest/:agent_id", reviewHandler.GetLatestReviewByAgentID)
 }
