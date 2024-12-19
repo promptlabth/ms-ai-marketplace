@@ -5,6 +5,7 @@ package agentdetail
 import (
 	"context"
 	"log"
+	"github.com/promptlabth/ms-ai-marketplace/app/payment/coins"
 )
 
 type storage interface {
@@ -23,14 +24,16 @@ type domain interface {
 }
 
 type Usecase struct {
-	storage storage
-	domain  domain
+	storage      storage
+	domain       domain
+	coinsUsecase coins.Usecase
 }
 
-func NewUsecase(s storage, d domain) *Usecase {
+func NewUsecase(s storage, d domain, cu coins.Usecase) *Usecase {
 	return &Usecase{
-		storage: s,
-		domain:  d,
+		storage:      s,
+		domain:       d,
+		coinsUsecase: cu,
 	}
 }
 
@@ -48,8 +51,24 @@ func (u *Usecase) NewAgentDetail(ctx context.Context, agentDetail AgentDetail) e
 	}
 	log.Printf("AgentDetailEntity : %+v\n", agentDetailEntity)
 
-	_, err := u.storage.CreateAgentDetail(ctx, agentDetailEntity)
-	return err
+	// Create the agent detail
+	agentID, err := u.storage.CreateAgentDetail(ctx, agentDetailEntity)
+	if err != nil {
+		return err
+	}
+
+	// Create coins for the agent detail
+	coinsEntity := coins.CoinsEntity{
+		FirebaseID: agentDetail.FirebaseID,
+		AgentID:    *agentID, // Set the AgentID to the newly created agent's ID
+		Coins:      0, // Set default coins to zero
+	}
+	_, err = u.coinsUsecase.CreateCoins(ctx, coinsEntity)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (u *Usecase) GetAgentDetails(ctx context.Context, firebaseId string) (*[]AgentDetailEntity, error) {

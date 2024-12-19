@@ -16,10 +16,8 @@ import (
 	"github.com/promptlabth/ms-ai-marketplace/database"
 	"github.com/promptlabth/ms-ai-marketplace/logger"
 	"go.uber.org/mock/gomock"
-
-	// "github.com/joho/godotenv" //use as local
-	// "github.com/promptlabth/ms-ai-marketplace/initializers"
 	"google.golang.org/api/option"
+	// "github.com/joho/godotenv" //use as local
 )
 
 // //use as local
@@ -64,7 +62,9 @@ func main() {
 	// r.Use(gin.WrapF(cors.New(opts).HandlerFunc))
 
 	r.Use(CORSMiddleware())
-	UsersRouter(r,db)
+
+	// Register routers
+	UsersRouter(r, db)
 	AgentDetailRouter(r, db)
 	FrameworkRouter(r, db)
 	RoleRouter(r, db)
@@ -74,11 +74,11 @@ func main() {
 	StylePromptRouter(r, db)
 	UploadRouter(r, client)
 	GenerateMessageRouter(r, db, ctrl)
-	CustomerGetListsAgentUsage(r,db)
+	CustomerGetListsAgentUsage(r, db)
 	ReviewRouter(r, db)
-	RealtimeGenCreateHistory(r,db)
-	RealtimeGenGetFullPromptByAgentID (r,db)
-
+	RealtimeGenCreateHistory(r, db)
+	RealtimeGenGetFullPromptByAgentID(r, db)
+	CoinsRouter(r, db)
 
 	port := config.Val.Port
 	if port == "" {

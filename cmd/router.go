@@ -18,6 +18,7 @@ import (
 	"github.com/promptlabth/ms-ai-marketplace/auth"
 	"github.com/promptlabth/ms-ai-marketplace/config"
 	"github.com/promptlabth/ms-ai-marketplace/middleware"
+	"github.com/promptlabth/ms-ai-marketplace/app/payment/coins"
 	"go.opentelemetry.io/otel/propagation"
 	"go.uber.org/mock/gomock"
 
@@ -30,9 +31,14 @@ import (
 )
 
 func AgentDetailRouter(router *gin.Engine, db *gorm.DB) {
+	// Initialize coins usecase
+	coinsAdaptor := coins.NewAdaptor(db)
+	coinsCore := coins.NewCore(db)
+	coinsUsecase := coins.NewUsecase(coinsCore, coinsAdaptor)
+
 	agentDetailValidation := agentdetail.NewAdaptor(db)
 	agentDetailCore := agentdetail.NewCore(db)
-	agentDetailUsecase := agentdetail.NewUsecase(agentDetailCore, agentDetailValidation)
+	agentDetailUsecase := agentdetail.NewUsecase(agentDetailCore, agentDetailValidation, *coinsUsecase)
 	agentDetailHandler := agentdetail.NewHandler(agentDetailUsecase)
 
 	protected := router.Group("/creator")
@@ -212,4 +218,18 @@ func ReviewRouter(router *gin.Engine, db *gorm.DB) {
 	protected.Use(middleware.JWTMiddleware())
 	protected.POST("/", reviewHandler.NewReview)
 	protected.GET("/latest/:agent_id", reviewHandler.GetLatestReviewByAgentID)
+}
+
+func CoinsRouter(router *gin.Engine, db *gorm.DB) {
+	coinsAdaptor := coins.NewAdaptor(db)
+	coinsCore := coins.NewCore(db)
+	coinsUsecase := coins.NewUsecase(coinsCore, coinsAdaptor)
+	coinsHandler := coins.NewHandler(coinsUsecase)
+
+	protected := router.Group("/coins")
+	protected.Use(middleware.JWTMiddleware())
+	protected.POST("/", coinsHandler.CreateCoins)
+	protected.POST("/add", coinsHandler.AddCoins)
+	protected.GET("/:agentID", coinsHandler.GetCoins)
+	protected.POST("/reset/:agentID", coinsHandler.SetCoinsToZero)
 }
