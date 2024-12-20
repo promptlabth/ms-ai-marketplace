@@ -20,14 +20,6 @@ func (c *Core) CreateCoins(ctx context.Context, coins CoinsEntity) (*uint, error
 	return &coins.ID, nil
 }
 
-func (c *Core) GetSumOfCoinsByFirebaseID(ctx context.Context, firebaseID string) (int, error) {
-	var totalCoins int
-	if err := c.db.Model(&CoinsEntity{}).Where("firebase_id = ?", firebaseID).Select("SUM(coins)").Scan(&totalCoins).Error; err != nil {
-		return 0, err
-	}
-	return totalCoins, nil
-}
-
 func (c *Core) GetSumOfCoinsByFirebaseIDAndAgentID(ctx context.Context, firebaseID string, agentID int) (int, error) {
 	var totalCoins int
 	if err := c.db.Model(&CoinsEntity{}).Where("firebase_id = ? AND agent_id = ?", firebaseID, agentID).Select("SUM(coins)").Scan(&totalCoins).Error; err != nil {
@@ -45,6 +37,14 @@ func (c *Core) SetCoinsToZeroByFirebaseID(ctx context.Context, firebaseID string
 
 func (c *Core) SetCoinsToZeroByFirebaseIDAndAgentID(ctx context.Context, firebaseID string, agentID int) error {
 	if err := c.db.Model(&CoinsEntity{}).Where("firebase_id = ? AND agent_id = ?", firebaseID, agentID).Update("coins", 0).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+// IncreaseCoinsByFirebaseIDAndAgentID increases the coins by 1 for a specific firebase_id and agent_id
+func (c *Core) IncreaseCoinsByFirebaseIDAndAgentID(ctx context.Context, firebaseID string, agentID int) error {
+	if err := c.db.Model(&CoinsEntity{}).Where("firebase_id = ? AND agent_id = ?", firebaseID, agentID).Update("coins", gorm.Expr("coins + ?", 1)).Error; err != nil {
 		return err
 	}
 	return nil

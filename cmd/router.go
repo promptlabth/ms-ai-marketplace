@@ -179,26 +179,43 @@ func GenerateMessageRouter(router *gin.Engine, db *gorm.DB, ctrl *gomock.Control
 }
 
 func CustomerGetListsAgentUsage(router *gin.Engine, db *gorm.DB) {
+	// Initialize coins usecase
+	coinsAdaptor := coins.NewAdaptor(db)
+	coinsCore := coins.NewCore(db)
+	coinsUsecase := coins.NewUsecase(coinsCore, coinsAdaptor)
+
+	// Initialize history components
 	agentHistoryUsageValidation := history.NewAdaptor(db)
 	agentHistoryUsageCore := history.NewCore(db)
-	agentHistoryUsageUsecase := history.NewUsecase(agentHistoryUsageCore, agentHistoryUsageValidation)
+	agentHistoryUsageUsecase := history.NewUsecase(agentHistoryUsageCore, agentHistoryUsageValidation, *coinsUsecase) // Pass coinsUsecase
+
+	// Initialize the handler
 	agentHistoryUsageHandler := history.NewHandler(agentHistoryUsageUsecase)
 
+	// Define the route
 	protected := router.Group("/customer")
 	protected.Use(middleware.JWTMiddleware())
 	protected.GET("/agent_usage", agentHistoryUsageHandler.GetHistoryByFirebaseID)
 }
 
 func RealtimeGenCreateHistory(router *gin.Engine, db *gorm.DB) {
-	agentHistoryUsageValidation := history.NewAdaptor(db)
-	agentHistoryUsageCore := history.NewCore(db)
-	agentHistoryUsageUsecase := history.NewUsecase(agentHistoryUsageCore, agentHistoryUsageValidation)
-	agentHistoryUsageHandler := history.NewHandler(agentHistoryUsageUsecase)
+    // Initialize coins usecase
+    coinsAdaptor := coins.NewAdaptor(db)
+    coinsCore := coins.NewCore(db)
+    coinsUsecase := coins.NewUsecase(coinsCore, coinsAdaptor)
 
-	protected := router.Group("/customer")
-	protected.Use(middleware.JWTMiddleware())
-	protected.POST("/create_history/:language", agentHistoryUsageHandler.CreateHistoryByFirebaseID)
+    // Initialize history components
+    agentHistoryUsageValidation := history.NewAdaptor(db)
+    agentHistoryUsageCore := history.NewCore(db)
+    agentHistoryUsageUsecase := history.NewUsecase(agentHistoryUsageCore, agentHistoryUsageValidation, *coinsUsecase) // Pass coinsUsecase
+    agentHistoryUsageHandler := history.NewHandler(agentHistoryUsageUsecase)
+
+    // Define the route
+    protected := router.Group("/customer")
+    protected.Use(middleware.JWTMiddleware())
+    protected.POST("/create_history/:language", agentHistoryUsageHandler.CreateHistoryByFirebaseID)
 }
+
 
 func RealtimeGenGetFullPromptByAgentID(router *gin.Engine, db *gorm.DB) {
 	realtimeGenCore := realtimegen.NewCore(db)

@@ -7,10 +7,9 @@ import (
 
 type storage interface {
 	CreateCoins(ctx context.Context, coins CoinsEntity) (*uint, error)
-	GetSumOfCoinsByFirebaseID(ctx context.Context, firebaseID string) (int, error)
 	GetSumOfCoinsByFirebaseIDAndAgentID(ctx context.Context, firebaseID string, agentID int) (int, error)
-	SetCoinsToZeroByFirebaseID(ctx context.Context, firebaseID string) error
 	SetCoinsToZeroByFirebaseIDAndAgentID(ctx context.Context, firebaseID string, agentID int) error
+	IncreaseCoinsByFirebaseIDAndAgentID(ctx context.Context, firebaseID string, agentID int) error
 }
 
 type domain interface {
@@ -38,23 +37,27 @@ func (u *Usecase) CreateCoins(ctx context.Context, coins CoinsEntity) (*uint, er
 	return u.storage.CreateCoins(ctx, coins)
 }
 
-func (u *Usecase) GetSumOfCoinsByFirebaseID(ctx context.Context, firebaseID string) (int, error) {
-	totalCoins, err := u.storage.GetSumOfCoinsByFirebaseID(ctx, firebaseID)
+func (u *Usecase) AddCoins(ctx context.Context, coins CoinsEntity) error {
+	existingCoins, err := u.storage.GetSumOfCoinsByFirebaseIDAndAgentID(ctx, coins.FirebaseID, coins.AgentID)
 	if err != nil {
-		return 0, err
+		return err
 	}
-	return totalCoins, nil
+
+	coins.Coins += existingCoins
+
+	_, err = u.storage.CreateCoins(ctx, coins)
+	return err
 }
 
 func (u *Usecase) GetSumOfCoinsByFirebaseIDAndAgentID(ctx context.Context, firebaseID string, agentID int) (int, error) {
 	return u.storage.GetSumOfCoinsByFirebaseIDAndAgentID(ctx, firebaseID, agentID)
 }
 
-func (u *Usecase) SetCoinsToZeroByFirebaseID(ctx context.Context, firebaseID string) error {
-	err := u.storage.SetCoinsToZeroByFirebaseID(ctx, firebaseID)
-	return err
-}
-
 func (u *Usecase) SetCoinsToZeroByFirebaseIDAndAgentID(ctx context.Context, firebaseID string, agentID int) error {
 	return u.storage.SetCoinsToZeroByFirebaseIDAndAgentID(ctx, firebaseID, agentID)
+}
+
+// IncreaseCoinsByFirebaseIDAndAgentID increases the coins by 1 for a specific firebase_id and agent_id
+func (u *Usecase) IncreaseCoinsByFirebaseIDAndAgentID(ctx context.Context, firebaseID string, agentID int) error {
+	return u.storage.IncreaseCoinsByFirebaseIDAndAgentID(ctx, firebaseID, agentID)
 }
