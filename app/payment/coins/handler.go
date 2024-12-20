@@ -2,6 +2,7 @@ package coins
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -30,7 +31,7 @@ func (h *Handler) CreateCoins(c *gin.Context) {
 	}
 
 	firebaseID, exists := c.Get("firebase_id")
-	if (!exists) {
+	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Firebase ID not found in token"})
 		return
 	}
@@ -119,11 +120,18 @@ func (h *Handler) SetCoinsToZero(c *gin.Context) {
 		return
 	}
 
+	totalCoins, err := h.usecase.GetSumOfCoinsByFirebaseIDAndAgentID(c.Request.Context(), firebaseID.(string), agentID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
+	fmt.Println("totalCoins", totalCoins)
+
 	err = h.usecase.SetCoinsToZeroByFirebaseIDAndAgentID(c.Request.Context(), firebaseID.(string), agentID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Coins set to zero"})
+	c.JSON(http.StatusOK, gin.H{"message": "Coins set to zero", "totalCoins": totalCoins})
 }
