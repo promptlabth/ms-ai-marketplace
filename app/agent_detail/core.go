@@ -60,7 +60,7 @@ func (c *Core) ListAgentDetailsThatApprove(ctx context.Context) (*[]AgentDetailE
         return nil, err
     }
     for i := range agents {
-        agents[i].Language = agents[i].Role.Language
+        agents[i].Role_Language = agents[i].Role.Language
     }
     return &agents, nil
 }
