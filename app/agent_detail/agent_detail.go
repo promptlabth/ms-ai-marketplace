@@ -18,6 +18,7 @@ type AgentDetail struct {
 	RoleFrameID int
 	TotalUsed   int
 	Status      string
+	Language    string
 }
 
 type AgentDetailInterface interface {
@@ -40,6 +41,7 @@ type NewAgentDetailRequest struct {
 	RoleFrameID int             `json:"role_framework_id"`
 	TotalUsed   int             `json:"total_used"`
 	Status      string          `json:"status"`
+	Language    string          `json:"language"`
 	// Include other fields as necessary
 }
 type UpdateAgentDetailRequest struct {

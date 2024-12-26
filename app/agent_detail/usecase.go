@@ -48,6 +48,7 @@ func (u *Usecase) NewAgentDetail(ctx context.Context, agentDetail AgentDetail) e
         RoleFrameID: agentDetail.RoleFrameID,
         TotalUsed:   agentDetail.TotalUsed,
         Status:      agentDetail.Status,
+        Language:   agentDetail.Language,
     }
     log.Printf("AgentDetailEntity : %+v\n", agentDetailEntity)
 

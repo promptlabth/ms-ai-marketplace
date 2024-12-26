@@ -13,7 +13,7 @@ type AgentDetailEntity struct {
     RoleFrameID int             `gorm:"column:role_framework_id"`
     TotalUsed   int             `gorm:"column:total_used"`
     Status      string          `gorm:"column:status"`
-    Language    string          `gorm:"-"`
+    Language    string          `gorm:"column:language"`
     Role        RoleEntity      `gorm:"foreignKey:RoleFrameID;references:ID"`
 }
 

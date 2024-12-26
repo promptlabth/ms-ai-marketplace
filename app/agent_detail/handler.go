@@ -45,6 +45,7 @@ func (h *Handler) NewAgentDetail(c *gin.Context) {
 		FrameworkID: req.FrameworkID,
 		RoleFrameID: req.RoleFrameID,
 		TotalUsed:   req.TotalUsed,
+		Language:    req.Language,
 		Status:      "pending",
 	}
 
