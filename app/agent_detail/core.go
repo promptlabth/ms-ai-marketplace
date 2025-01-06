@@ -55,14 +55,14 @@ func (c *Core) ListAgentDetails(ctx context.Context) (*[]AgentDetailEntity, erro
 }
 
 func (c *Core) ListAgentDetailsThatApprove(ctx context.Context) (*[]AgentDetailEntity, error) {
-    var agents []AgentDetailEntity
-    if err := c.db.Preload("Role").Where("status = ?", "approve").Find(&agents).Error; err != nil {
-        return nil, err
-    }
-    for i := range agents {
-        agents[i].Role_Language = agents[i].Role.Language
-    }
-    return &agents, nil
+	var agents []AgentDetailEntity
+	if err := c.db.Preload("Role").Where("status = ?", "approve").Find(&agents).Error; err != nil {
+		return nil, err
+	}
+	for i := range agents {
+		agents[i].Language = agents[i].Role.Language
+	}
+	return &agents, nil
 }
 
 func (c *Core) UpdateAgentDetail(ctx context.Context, agentDetail AgentDetailEntity) error {
@@ -77,9 +77,9 @@ func (c *Core) UpdateAgentDetail(ctx context.Context, agentDetail AgentDetailEnt
 }
 
 func (c *Core) IncrementTotalUsed(ctx context.Context, agentID int) error {
-    return c.db.Model(&AgentDetailEntity{}).Where("id = ?", agentID).Update("total_used", gorm.Expr("total_used + ?", 1)).Error
+	return c.db.Model(&AgentDetailEntity{}).Where("id = ?", agentID).Update("total_used", gorm.Expr("total_used + ?", 1)).Error
 }
 
 func (c *Core) UpdateAgentStatus(ctx context.Context, agentID int, status string) error {
-    return c.db.Model(&AgentDetailEntity{}).Where("id = ?", agentID).Update("status", status).Error
+	return c.db.Model(&AgentDetailEntity{}).Where("id = ?", agentID).Update("status", status).Error
 }
