@@ -83,3 +83,7 @@ func (c *Core) IncrementTotalUsed(ctx context.Context, agentID int) error {
 func (c *Core) UpdateAgentStatus(ctx context.Context, agentID int, status string) error {
 	return c.db.Model(&AgentDetailEntity{}).Where("id = ?", agentID).Update("status", status).Error
 }
+
+func (c *Core) DeleteAgentDetail(ctx context.Context, agentID int) error {
+	return c.db.Delete(&AgentDetailEntity{}, agentID).Error
+}

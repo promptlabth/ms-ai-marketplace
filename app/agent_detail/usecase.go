@@ -17,6 +17,7 @@ type storage interface {
     UpdateAgentDetail(context.Context, AgentDetailEntity) error
     IncrementTotalUsed(context.Context, int) error
     UpdateAgentStatus(context.Context, int, string) error
+    DeleteAgentDetail(context.Context, int) error
 }
 
 type domain interface {
@@ -48,7 +49,7 @@ func (u *Usecase) NewAgentDetail(ctx context.Context, agentDetail AgentDetail) e
         RoleFrameID: agentDetail.RoleFrameID,
         TotalUsed:   agentDetail.TotalUsed,
         Status:      agentDetail.Status,
-        Language:   agentDetail.Language,
+        Language:    agentDetail.Language,
     }
     log.Printf("AgentDetailEntity : %+v\n", agentDetailEntity)
 
@@ -129,4 +130,8 @@ func (u *Usecase) IncrementTotalUsed(ctx context.Context, agentID int) error {
 
 func (u *Usecase) UpdateAgentStatus(ctx context.Context, agentID int, status string) error {
     return u.storage.UpdateAgentStatus(ctx, agentID, status)
+}
+
+func (u *Usecase) DeleteAgentDetail(ctx context.Context, agentID int) error {
+    return u.storage.DeleteAgentDetail(ctx, agentID)
 }

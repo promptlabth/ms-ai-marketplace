@@ -53,6 +53,7 @@ func AgentDetailRouter(router *gin.Engine, db *gorm.DB) {
     router.GET("/customer/:id", agentDetailHandler.GetAgentByID)
     router.POST("/customer/increase_used/:agent_id", agentDetailHandler.IncrementTotalUsed)
     router.POST("/admin/:agent_id/:status", agentDetailHandler.UpdateAgentStatus)
+    protected.DELETE("/admin/:agent_id", agentDetailHandler.DeleteAgentDetail) // New route
 }
 
 func FrameworkRouter(router *gin.Engine, db *gorm.DB) {

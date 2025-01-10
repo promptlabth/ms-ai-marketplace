@@ -17,6 +17,7 @@ type usecase interface {
 	UpdateAgentDetail(c context.Context, agentDetail AgentDetail) error
 	IncrementTotalUsed(c context.Context, agentID int) error
 	UpdateAgentStatus(c context.Context, agentID int, status string) error
+	DeleteAgentDetail(c context.Context, agentID int) error
 }
 
 type Handler struct {
@@ -206,4 +207,23 @@ func (h *Handler) UpdateAgentStatus(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Agent status updated successfully"})
+}
+
+func (h *Handler) DeleteAgentDetail(c *gin.Context) {
+	agentID, err := strconv.Atoi(c.Param("agent_id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "Invalid agent ID",
+		})
+		return
+	}
+
+	if err := h.usecase.DeleteAgentDetail(c.Request.Context(), agentID); err != nil {
+		c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Agent deleted successfully"})
 }
