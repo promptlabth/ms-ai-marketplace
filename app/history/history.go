@@ -39,3 +39,4 @@ type NewHistoryRequest struct {
 	Completion_tokens int    `json:"completion_tokens"`
 	Prompt_tokens     int    `json:"prompt_tokens"`
 }
+

@@ -2,7 +2,10 @@ package history
 
 import (
 	"context"
+	"regexp"
+	// "strings"
 	"time"
+
 	"github.com/promptlabth/ms-ai-marketplace/app/payment/coins"
 )
 
@@ -29,11 +32,21 @@ func NewUsecase(s storage, d domain, cu coins.Usecase) *Usecase {
 	}
 }
 
+func countTokens(text string) int {
+    // Define a regular expression to match words and punctuation marks
+    re := regexp.MustCompile(`\w+|[^\w\s]`)
+    // Find all matches and return the count
+    return len(re.FindAllString(text, -1))
+}
 func (u *Usecase) CreateHistory(ctx context.Context, history History) error {
 	err := u.domain.ValidateNewHistory(ctx, history)
 	if err != nil {
 		return err
 	}
+
+	// Calculate tokens
+	history.Completion_tokens = countTokens(history.Result)
+	history.Prompt_tokens = countTokens(history.Prompt)
 
 	historyEntity := HistoryEntity{
 		FirebaseID:        history.FirebaseID,

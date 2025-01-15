@@ -49,9 +49,8 @@ func (h *Handler) GenerateMessage(c *gin.Context) {
 		Prompt:            req.Prompt,
 		StyleMessageID:    req.StyleMessageID,
 		Language:          language,
+		Result:            req.Result,
 		Model:             req.Model,
-		Completion_tokens: req.Completion_tokens,
-		Prompt_tokens:     req.Prompt_tokens,
 	}
 
 	if err := h.usecase.CreateHistory(ctx, history); err != nil {
@@ -115,8 +114,6 @@ func (h *Handler) CreateHistoryByFirebaseID(c *gin.Context) {
 		StyleMessageID:    req.StyleMessageID,
 		Result:            req.Result,
 		Model:             req.Model,
-		Completion_tokens: req.Completion_tokens,
-		Prompt_tokens:     req.Prompt_tokens,
 	}
 	if err := h.usecase.CreateHistory(ctx, history); err != nil {
 		c.AbortWithStatus(500)
