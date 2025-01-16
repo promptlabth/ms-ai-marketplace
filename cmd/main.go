@@ -79,6 +79,7 @@ func main() {
 	RealtimeGenCreateHistory(r, db)
 	RealtimeGenGetFullPromptByAgentID(r, db)
 	CoinsRouter(r, db)
+	HistoryRouter(r, db)
 
 	port := config.Val.Port
 	if port == "" {

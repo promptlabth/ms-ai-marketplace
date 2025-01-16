@@ -38,3 +38,16 @@ func (c *Core) GetHistoryByFirebaseID(ctx context.Context, firebaseID string) ([
     }
     return histories, nil
 }
+
+func (c *Core) GetHistoriesByAgentIDs(ctx context.Context, agentIDs []int) ([]HistoryWithAgentDetail, error) {
+    var histories []HistoryWithAgentDetail
+    if err := c.db.Table("histories").
+        Select("histories.*, agent_details.name, agent_details.description, agent_details.image_url, agent_details.prompt, agent_details.framework_id, agent_details.role_framework_id, agent_details.total_used").
+        Joins("left join agent_details on agent_details.id = histories.agent_id").
+        Where("histories.agent_id IN ?", agentIDs).
+        Order("histories.time_stamp DESC").
+        Scan(&histories).Error; err != nil {
+        return nil, err
+    }
+    return histories, nil
+}

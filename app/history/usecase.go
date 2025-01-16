@@ -2,16 +2,20 @@ package history
 
 import (
 	"context"
+	"fmt"
 	"regexp"
+
 	// "strings"
 	"time"
 
+	"github.com/promptlabth/ms-ai-marketplace/app/agent_detail"
 	"github.com/promptlabth/ms-ai-marketplace/app/payment/coins"
 )
 
 type storage interface {
 	CreateHistory(ctx context.Context, history HistoryEntity) (*int, error)
 	GetHistoryByFirebaseID(ctx context.Context, firebaseID string) ([]HistoryWithAgentDetail, error)
+	GetHistoriesByAgentIDs(ctx context.Context, agentIDs []int) ([]HistoryWithAgentDetail, error)
 }
 
 type domain interface {
@@ -22,13 +26,15 @@ type Usecase struct {
 	storage     storage
 	domain      domain
 	coinsUsecase coins.Usecase
+	agentDetail  agentdetail.Core
 }
 
-func NewUsecase(s storage, d domain, cu coins.Usecase) *Usecase {
+func NewUsecase(s storage, d domain, cu coins.Usecase, ad agentdetail.Core) *Usecase {
 	return &Usecase{
 		storage:     s,
 		domain:      d,
 		coinsUsecase: cu,
+		agentDetail:  ad,
 	}
 }
 
@@ -104,4 +110,54 @@ func (u *Usecase) GetHistoryByFirebaseID(ctx context.Context, firebaseID string)
 	}
 
 	return result, nil
+}
+
+func (u *Usecase) GetHistoriesByFirebaseID(ctx context.Context, firebaseID string) ([]HistoryWithAgentDetail, error) {
+    // Get the list of Agent IDs from firebaseID
+    agentDetails, err := u.agentDetail.GetAgentDetailsByUserID(ctx, firebaseID)
+    if err != nil {
+        return nil, err
+    }
+
+    // Extract the Agent IDs
+    var agentIDs []int
+    for _, agent := range *agentDetails {
+        agentIDs = append(agentIDs, agent.ID)
+    }
+
+    // Query the histories table using the list of Agent IDs
+    histories, err := u.storage.GetHistoriesByAgentIDs(ctx, agentIDs)
+	
+    if err != nil {
+        return nil, err
+    }
+	fmt.Printf("Histories: %+v\n", histories)
+
+    return histories, nil
+	
+}
+
+func (u *Usecase) GetHistoriesStatPerAgents(ctx context.Context, firebaseID string) ([]HistoryWithAgentDetail, error) {
+    // Get the list of Agent IDs from firebaseID
+    agentDetails, err := u.agentDetail.GetAgentDetailsByUserID(ctx, firebaseID)
+    if err != nil {
+        return nil, err
+    }
+
+    // Extract the Agent IDs
+    var agentIDs []int
+    for _, agent := range *agentDetails {
+        agentIDs = append(agentIDs, agent.ID)
+    }
+
+    // Query the histories table using the list of Agent IDs
+    histories, err := u.storage.GetHistoriesByAgentIDs(ctx, agentIDs)
+	
+    if err != nil {
+        return nil, err
+    }
+	fmt.Printf("Histories: %+v\n", histories)
+	
+    return histories, nil
+	
 }

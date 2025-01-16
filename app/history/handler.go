@@ -11,6 +11,7 @@ import (
 type usecase interface {
 	CreateHistory(ctx context.Context, history History) error
 	GetHistoryByFirebaseID(ctx context.Context, firebaseID string) ([]HistoryWithAgentDetail, error)
+	GetHistoriesByFirebaseID(ctx context.Context, firebaseID string) ([]HistoryWithAgentDetail, error)
 }
 
 type Handler struct {
@@ -84,6 +85,31 @@ func (h *Handler) GetHistoryByFirebaseID(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, histories)
+}
+
+func (h *Handler) GetHistoriesByFirebaseID(c *gin.Context) {
+    firebaseID, exists := c.Get("firebase_id")
+    if !exists {
+        c.JSON(http.StatusUnauthorized, gin.H{"error": "Firebase ID not found in token"})
+        return
+    }
+
+    // Type assertion to convert firebaseID from any to string
+    firebaseIDStr, ok := firebaseID.(string)
+    if !ok {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid Firebase ID type"})
+        return
+    }
+
+    histories, err := h.usecase.GetHistoriesByFirebaseID(c.Request.Context(), firebaseIDStr)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, map[string]string{
+            "error": err.Error(),
+        })
+        return
+    }
+
+    c.JSON(http.StatusOK, histories)
 }
 
 func (h *Handler) CreateHistoryByFirebaseID(c *gin.Context) {

@@ -56,6 +56,22 @@ func AgentDetailRouter(router *gin.Engine, db *gorm.DB) {
     protected.DELETE("/admin/:agent_id", agentDetailHandler.DeleteAgentDetail) // New route
 }
 
+func HistoryRouter(router *gin.Engine, db *gorm.DB) {
+    historyCore := history.NewCore(db)
+    historyAdaptor := history.NewAdaptor(db)
+    coinsAdaptor := coins.NewAdaptor(db)
+    coinsCore := coins.NewCore(db)
+    coinsUsecase := coins.NewUsecase(coinsCore, coinsAdaptor)
+    agentDetailCore := agentdetail.NewCore(db)
+    historyUsecase := history.NewUsecase(historyCore, historyAdaptor, *coinsUsecase, *agentDetailCore)
+    historyHandler := history.NewHandler(historyUsecase)
+
+    protected := router.Group("/history")
+    protected.Use(middleware.JWTMiddleware())
+
+    protected.GET("/agent_histories", historyHandler.GetHistoriesByFirebaseID) // New route
+}
+
 func FrameworkRouter(router *gin.Engine, db *gorm.DB) {
     frameworkValidation := framework.NewAdaptor(db)
     frameworkCore := framework.NewCore(db)
@@ -185,10 +201,13 @@ func CustomerGetListsAgentUsage(router *gin.Engine, db *gorm.DB) {
     coinsCore := coins.NewCore(db)
     coinsUsecase := coins.NewUsecase(coinsCore, coinsAdaptor)
 
+    
+
     // Initialize history components
     agentHistoryUsageValidation := history.NewAdaptor(db)
     agentHistoryUsageCore := history.NewCore(db)
-    agentHistoryUsageUsecase := history.NewUsecase(agentHistoryUsageCore, agentHistoryUsageValidation, *coinsUsecase) // Pass coinsUsecase
+    agentDetailCore := agentdetail.NewCore(db)
+    agentHistoryUsageUsecase := history.NewUsecase(agentHistoryUsageCore, agentHistoryUsageValidation, *coinsUsecase ,*agentDetailCore) // Pass coinsUsecase
 
     // Initialize the handler
     agentHistoryUsageHandler := history.NewHandler(agentHistoryUsageUsecase)
@@ -208,7 +227,8 @@ func RealtimeGenCreateHistory(router *gin.Engine, db *gorm.DB) {
     // Initialize history components
     agentHistoryUsageValidation := history.NewAdaptor(db)
     agentHistoryUsageCore := history.NewCore(db)
-    agentHistoryUsageUsecase := history.NewUsecase(agentHistoryUsageCore, agentHistoryUsageValidation, *coinsUsecase) // Pass coinsUsecase
+    agentDetailCore := agentdetail.NewCore(db)
+    agentHistoryUsageUsecase := history.NewUsecase(agentHistoryUsageCore, agentHistoryUsageValidation, *coinsUsecase, *agentDetailCore) // Pass coinsUsecase
     agentHistoryUsageHandler := history.NewHandler(agentHistoryUsageUsecase)
 
     // Define the route
