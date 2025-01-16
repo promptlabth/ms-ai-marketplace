@@ -45,10 +45,11 @@ type AgentUsageResponse struct {
     AgentID   int    `json:"agent_id"`
     ImageURL  string `json:"image"`
     UserUsage []UserUsage `json:"user_usage"`
+	TotalUsage int `json:"total_usage"`
 }
 
 type UserUsage struct {
-    FirebaseID string `json:"firebase_id"`
+    // FirebaseID string `json:"firebase_id"`
 	UserName  string `json:"user_name"`
     UsageCount int    `json:"usage_count"`
 }

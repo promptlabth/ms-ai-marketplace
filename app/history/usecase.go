@@ -41,10 +41,10 @@ func NewUsecase(s storage, d domain, cu coins.Usecase, ad agentdetail.Core, us s
 }
 
 func countTokens(text string) int {
-    // Define a regular expression to match words and punctuation marks
-    re := regexp.MustCompile(`\w+|[^\w\s]`)
-    // Find all matches and return the count
-    return len(re.FindAllString(text, -1))
+	// Define a regular expression to match words and punctuation marks
+	re := regexp.MustCompile(`\w+|[^\w\s]`)
+	// Find all matches and return the count
+	return len(re.FindAllString(text, -1))
 }
 
 func (u *Usecase) CreateHistory(ctx context.Context, history History) error {
@@ -116,88 +116,95 @@ func (u *Usecase) GetHistoryByFirebaseID(ctx context.Context, firebaseID string)
 }
 
 func (u *Usecase) GetHistoriesByFirebaseID(ctx context.Context, firebaseID string) ([]HistoryWithAgentDetail, error) {
-    // Get the list of Agent IDs from firebaseID
-    agentDetails, err := u.agentDetail.GetAgentDetailsByUserID(ctx, firebaseID)
-    if err != nil {
-        return nil, err
-    }
+	// Get the list of Agent IDs from firebaseID
+	agentDetails, err := u.agentDetail.GetAgentDetailsByUserID(ctx, firebaseID)
+	if err != nil {
+		return nil, err
+	}
 
-    // Extract the Agent IDs
-    var agentIDs []int
-    for _, agent := range *agentDetails {
-        agentIDs = append(agentIDs, agent.ID)
-    }
+	// Extract the Agent IDs
+	var agentIDs []int
+	for _, agent := range *agentDetails {
+		agentIDs = append(agentIDs, agent.ID)
+	}
 
-    // Query the histories table using the list of Agent IDs
-    histories, err := u.storage.GetHistoriesByAgentIDs(ctx, agentIDs)
-	
-    if err != nil {
-        return nil, err
-    }
+	// Query the histories table using the list of Agent IDs
+	histories, err := u.storage.GetHistoriesByAgentIDs(ctx, agentIDs)
+
+	if err != nil {
+		return nil, err
+	}
 	fmt.Printf("Histories: %+v\n", histories)
 
-    return histories, nil
-	
+	return histories, nil
+
 }
 
-
 func (u *Usecase) GetHistoriesByFirebaseID_Extracted(ctx context.Context, firebaseID string) ([]AgentUsageResponse, error) {
-    // Get the list of Agent IDs from firebaseID
-    agentDetails, err := u.agentDetail.GetAgentDetailsByUserID(ctx, firebaseID)
-    if err != nil {
-        return nil, err
-    }
-	fmt.Printf("FirebaseID: %+v\n", firebaseID)
-    // Extract the Agent IDs
-    var agentIDs []int
-    for _, agent := range *agentDetails {
-        agentIDs = append(agentIDs, agent.ID)
-    }
+	// Get the list of Agent IDs from firebaseID
+	agentDetails, err := u.agentDetail.GetAgentDetailsByUserID(ctx, firebaseID)
+	if err != nil {
+		return nil, err
+	}
 
-    // Query the histories table using the list of Agent IDs
-    histories, err := u.storage.GetHistoriesByAgentIDs(ctx, agentIDs)
-    if err != nil {
-        return nil, err
-    }
+	// Extract the Agent IDs
+	var agentIDs []int
+	for _, agent := range *agentDetails {
+		agentIDs = append(agentIDs, agent.ID)
+	}
 
-    // Aggregate the data
-    agentUsageMap := make(map[int]map[string]int)
-    agentDetailsMap := make(map[int]HistoryWithAgentDetail)
-    for _, history := range histories {
-        if _, exists := agentUsageMap[history.AgentID]; !exists {
-            agentUsageMap[history.AgentID] = make(map[string]int)
-            agentDetailsMap[history.AgentID] = history
-        }
-        agentUsageMap[history.AgentID][history.FirebaseID]++
-    }
+	// Query the histories table using the list of Agent IDs
+	histories, err := u.storage.GetHistoriesByAgentIDs(ctx, agentIDs)
+	if err != nil {
+		return nil, err
+	}
 
-    // Format the response
-    var response []AgentUsageResponse
-    for agentID, userUsageMap := range agentUsageMap {
-        var userUsageList []UserUsage
-        for firebaseID, usageCount := range userUsageMap {
-            user, err := u.userService.GetUser(firebaseID)
-            if err != nil {
-                return nil, err
-            }
-            userUsageList = append(userUsageList, UserUsage{
-                FirebaseID: firebaseID,
-                UserName:   user.Name,
-                UsageCount: usageCount,
-            })
-        }
-        // Sort the user usage list by usage count in descending order
-        sort.Slice(userUsageList, func(i, j int) bool {
-            return userUsageList[i].UsageCount > userUsageList[j].UsageCount
-        })
-        agentDetail := agentDetailsMap[agentID]
-        response = append(response, AgentUsageResponse{
-            AgentName: agentDetail.Name,
-            AgentID:   agentDetail.AgentID,
-            ImageURL:  agentDetail.ImageURL,
-            UserUsage: userUsageList,
-        })
-    }
+	// Aggregate the data
+	agentUsageMap := make(map[int]map[string]int)
+	agentDetailsMap := make(map[int]HistoryWithAgentDetail)
+	for _, history := range histories {
+		if _, exists := agentUsageMap[history.AgentID]; !exists {
+			agentUsageMap[history.AgentID] = make(map[string]int)
+			agentDetailsMap[history.AgentID] = history
+		}
+		agentUsageMap[history.AgentID][history.FirebaseID]++
+	}
 
-    return response, nil
+	// Format the response
+	var response []AgentUsageResponse
+	for agentID, userUsageMap := range agentUsageMap {
+		var userUsageList []UserUsage
+		totalUsage := 0
+		for firebaseID, usageCount := range userUsageMap {
+			user, err := u.userService.GetUser(firebaseID)
+			if err != nil {
+				return nil, err
+			}
+			userUsageList = append(userUsageList, UserUsage{
+				// FirebaseID: firebaseID,
+				UserName:       user.Name,
+				UsageCount: usageCount,
+			})
+			totalUsage += usageCount // Increment total usage
+		}
+		// Sort the user usage list by usage count in descending order
+		sort.Slice(userUsageList, func(i, j int) bool {
+			return userUsageList[i].UsageCount > userUsageList[j].UsageCount
+		})
+		agentDetail := agentDetailsMap[agentID]
+		response = append(response, AgentUsageResponse{
+			AgentName:  agentDetail.Name,
+			AgentID:    agentDetail.AgentID,
+			ImageURL:   agentDetail.ImageURL,
+			UserUsage:  userUsageList,
+			TotalUsage: totalUsage, // Set total usage
+		})
+	}
+
+	// Sort the response by total usage in descending order
+	sort.Slice(response, func(i, j int) bool {
+		return response[i].TotalUsage > response[j].TotalUsage
+	})
+
+	return response, nil
 }
