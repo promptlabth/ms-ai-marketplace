@@ -70,6 +70,9 @@ func HistoryRouter(router *gin.Engine, db *gorm.DB) {
     protected.Use(middleware.JWTMiddleware())
 
     protected.GET("/agent_histories", historyHandler.GetHistoriesByFirebaseID) // New route
+    protected.GET("/agent_usage", historyHandler.GetHistoriesByFirebaseID_Extracted) // New route
+
+
 }
 
 func FrameworkRouter(router *gin.Engine, db *gorm.DB) {

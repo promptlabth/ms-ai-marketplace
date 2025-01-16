@@ -40,3 +40,14 @@ type NewHistoryRequest struct {
 	Prompt_tokens     int    `json:"prompt_tokens"`
 }
 
+type AgentUsageResponse struct {
+    AgentName string `json:"agent_name"`
+    AgentID   int    `json:"agent_id"`
+    ImageURL  string `json:"image"`
+    UserUsage []UserUsage `json:"user_usage"`
+}
+
+type UserUsage struct {
+    FirebaseID string `json:"firebase_id"`
+    UsageCount int    `json:"usage_count"`
+}

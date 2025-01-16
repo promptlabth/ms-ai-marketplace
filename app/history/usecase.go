@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"regexp"
+	"sort"
 
 	// "strings"
 	"time"
@@ -137,7 +138,7 @@ func (u *Usecase) GetHistoriesByFirebaseID(ctx context.Context, firebaseID strin
 	
 }
 
-func (u *Usecase) GetHistoriesStatPerAgents(ctx context.Context, firebaseID string) ([]HistoryWithAgentDetail, error) {
+func (u *Usecase) GetHistoriesByFirebaseID_Extracted(ctx context.Context, firebaseID string) ([]AgentUsageResponse, error) {
     // Get the list of Agent IDs from firebaseID
     agentDetails, err := u.agentDetail.GetAgentDetailsByUserID(ctx, firebaseID)
     if err != nil {
@@ -152,12 +153,43 @@ func (u *Usecase) GetHistoriesStatPerAgents(ctx context.Context, firebaseID stri
 
     // Query the histories table using the list of Agent IDs
     histories, err := u.storage.GetHistoriesByAgentIDs(ctx, agentIDs)
-	
     if err != nil {
         return nil, err
     }
-	fmt.Printf("Histories: %+v\n", histories)
-	
-    return histories, nil
-	
+
+    // Aggregate the data
+    agentUsageMap := make(map[int]map[string]int)
+    agentDetailsMap := make(map[int]HistoryWithAgentDetail)
+    for _, history := range histories {
+        if _, exists := agentUsageMap[history.AgentID]; !exists {
+            agentUsageMap[history.AgentID] = make(map[string]int)
+            agentDetailsMap[history.AgentID] = history
+        } 
+        agentUsageMap[history.AgentID][history.FirebaseID]++
+    }
+
+    // Format the response
+    var response []AgentUsageResponse
+    for agentID, userUsageMap := range agentUsageMap {
+        var userUsageList []UserUsage
+        for firebaseID, usageCount := range userUsageMap {
+            userUsageList = append(userUsageList, UserUsage{
+                FirebaseID: firebaseID,
+                UsageCount: usageCount,
+            })
+        }
+        // Sort the user usage list by usage count in descending order
+        sort.Slice(userUsageList, func(i, j int) bool {
+            return userUsageList[i].UsageCount > userUsageList[j].UsageCount
+        })
+        agentDetail := agentDetailsMap[agentID]
+        response = append(response, AgentUsageResponse{
+            AgentName: agentDetail.Name,
+            AgentID:   agentDetail.AgentID,
+            ImageURL:  agentDetail.ImageURL,
+            UserUsage: userUsageList,
+        })
+    }
+
+    return response, nil
 }
