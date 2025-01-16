@@ -1,8 +1,10 @@
 package repository
 
 import (
-    "errors"
-    "gorm.io/gorm"
+	"errors"
+	"log"
+
+	"gorm.io/gorm"
 )
 
 type userRepositoryDB struct {
@@ -21,12 +23,15 @@ func (r *userRepositoryDB) Create(user User) (*User, error) {
 }
 
 func (r *userRepositoryDB) GetUserByFirebaseID(firebaseID string) (*User, error) {
+    // log.Printf("FirebaseID in service: %s", firebaseID)
+    // fmt.Println("FirebaseID in service: %s", firebaseID)
     if firebaseID == "" {
         return nil, errors.New("firebaseID cannot be empty")
     }
 
     var user User
     if err := r.db.First(&user, "firebase_id = ?", firebaseID).Error; err != nil {
+        log.Printf("Error querying user: %v", err)
         return nil, err
     }
     return &user, nil

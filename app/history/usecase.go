@@ -5,12 +5,11 @@ import (
 	"fmt"
 	"regexp"
 	"sort"
-
-	// "strings"
 	"time"
 
 	"github.com/promptlabth/ms-ai-marketplace/app/agent_detail"
 	"github.com/promptlabth/ms-ai-marketplace/app/payment/coins"
+	"github.com/promptlabth/ms-ai-marketplace/app/user/service"
 )
 
 type storage interface {
@@ -24,18 +23,20 @@ type domain interface {
 }
 
 type Usecase struct {
-	storage     storage
-	domain      domain
+	storage      storage
+	domain       domain
 	coinsUsecase coins.Usecase
 	agentDetail  agentdetail.Core
+	userService  service.UserService // Add userService to Usecase
 }
 
-func NewUsecase(s storage, d domain, cu coins.Usecase, ad agentdetail.Core) *Usecase {
+func NewUsecase(s storage, d domain, cu coins.Usecase, ad agentdetail.Core, us service.UserService) *Usecase {
 	return &Usecase{
-		storage:     s,
-		domain:      d,
+		storage:      s,
+		domain:       d,
 		coinsUsecase: cu,
 		agentDetail:  ad,
+		userService:  us,
 	}
 }
 
@@ -45,6 +46,7 @@ func countTokens(text string) int {
     // Find all matches and return the count
     return len(re.FindAllString(text, -1))
 }
+
 func (u *Usecase) CreateHistory(ctx context.Context, history History) error {
 	err := u.domain.ValidateNewHistory(ctx, history)
 	if err != nil {
@@ -138,13 +140,14 @@ func (u *Usecase) GetHistoriesByFirebaseID(ctx context.Context, firebaseID strin
 	
 }
 
+
 func (u *Usecase) GetHistoriesByFirebaseID_Extracted(ctx context.Context, firebaseID string) ([]AgentUsageResponse, error) {
     // Get the list of Agent IDs from firebaseID
     agentDetails, err := u.agentDetail.GetAgentDetailsByUserID(ctx, firebaseID)
     if err != nil {
         return nil, err
     }
-
+	fmt.Printf("FirebaseID: %+v\n", firebaseID)
     // Extract the Agent IDs
     var agentIDs []int
     for _, agent := range *agentDetails {
@@ -164,7 +167,7 @@ func (u *Usecase) GetHistoriesByFirebaseID_Extracted(ctx context.Context, fireba
         if _, exists := agentUsageMap[history.AgentID]; !exists {
             agentUsageMap[history.AgentID] = make(map[string]int)
             agentDetailsMap[history.AgentID] = history
-        } 
+        }
         agentUsageMap[history.AgentID][history.FirebaseID]++
     }
 
@@ -173,8 +176,13 @@ func (u *Usecase) GetHistoriesByFirebaseID_Extracted(ctx context.Context, fireba
     for agentID, userUsageMap := range agentUsageMap {
         var userUsageList []UserUsage
         for firebaseID, usageCount := range userUsageMap {
+            user, err := u.userService.GetUser(firebaseID)
+            if err != nil {
+                return nil, err
+            }
             userUsageList = append(userUsageList, UserUsage{
                 FirebaseID: firebaseID,
+                UserName:   user.Name,
                 UsageCount: usageCount,
             })
         }

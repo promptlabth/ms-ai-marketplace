@@ -63,7 +63,9 @@ func HistoryRouter(router *gin.Engine, db *gorm.DB) {
     coinsCore := coins.NewCore(db)
     coinsUsecase := coins.NewUsecase(coinsCore, coinsAdaptor)
     agentDetailCore := agentdetail.NewCore(db)
-    historyUsecase := history.NewUsecase(historyCore, historyAdaptor, *coinsUsecase, *agentDetailCore)
+    userRepo := repository.NewUserRepository(db)
+    userService := service.NewUserService(userRepo)
+    historyUsecase := history.NewUsecase(historyCore, historyAdaptor, *coinsUsecase, *agentDetailCore,userService)
     historyHandler := history.NewHandler(historyUsecase)
 
     protected := router.Group("/history")
@@ -210,7 +212,9 @@ func CustomerGetListsAgentUsage(router *gin.Engine, db *gorm.DB) {
     agentHistoryUsageValidation := history.NewAdaptor(db)
     agentHistoryUsageCore := history.NewCore(db)
     agentDetailCore := agentdetail.NewCore(db)
-    agentHistoryUsageUsecase := history.NewUsecase(agentHistoryUsageCore, agentHistoryUsageValidation, *coinsUsecase ,*agentDetailCore) // Pass coinsUsecase
+    userRepo := repository.NewUserRepository(db)
+    userService := service.NewUserService(userRepo)
+    agentHistoryUsageUsecase := history.NewUsecase(agentHistoryUsageCore, agentHistoryUsageValidation, *coinsUsecase ,*agentDetailCore, userService) // Pass coinsUsecase
 
     // Initialize the handler
     agentHistoryUsageHandler := history.NewHandler(agentHistoryUsageUsecase)
@@ -231,7 +235,9 @@ func RealtimeGenCreateHistory(router *gin.Engine, db *gorm.DB) {
     agentHistoryUsageValidation := history.NewAdaptor(db)
     agentHistoryUsageCore := history.NewCore(db)
     agentDetailCore := agentdetail.NewCore(db)
-    agentHistoryUsageUsecase := history.NewUsecase(agentHistoryUsageCore, agentHistoryUsageValidation, *coinsUsecase, *agentDetailCore) // Pass coinsUsecase
+    userRepo := repository.NewUserRepository(db)
+    userService := service.NewUserService(userRepo)
+    agentHistoryUsageUsecase := history.NewUsecase(agentHistoryUsageCore, agentHistoryUsageValidation, *coinsUsecase, *agentDetailCore ,userService) // Pass coinsUsecase
     agentHistoryUsageHandler := history.NewHandler(agentHistoryUsageUsecase)
 
     // Define the route
