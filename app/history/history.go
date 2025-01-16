@@ -50,6 +50,7 @@ type AgentUsageResponse struct {
 
 type UserUsage struct {
     // FirebaseID string `json:"firebase_id"`
+	ProfilePicture string `json:"profile_picture"`
 	UserName  string `json:"user_name"`
     UsageCount int    `json:"usage_count"`
 }

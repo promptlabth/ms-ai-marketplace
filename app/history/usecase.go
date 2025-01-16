@@ -183,6 +183,7 @@ func (u *Usecase) GetHistoriesByFirebaseID_Extracted(ctx context.Context, fireba
 			userUsageList = append(userUsageList, UserUsage{
 				// FirebaseID: firebaseID,
 				UserName:       user.Name,
+				ProfilePicture: user.ProfilePicture,
 				UsageCount: usageCount,
 			})
 			totalUsage += usageCount // Increment total usage
