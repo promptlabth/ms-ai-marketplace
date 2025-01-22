@@ -12,6 +12,7 @@ type User struct {
 	ProfilePicture     string `db:"profile_pic"`
 	AccessToken        string `db:"access_token"`
 	Role               string `db:"role"`
+	MaxMessages        int    `db:"max_messages"`
 }
 
 type UserRepository interface {

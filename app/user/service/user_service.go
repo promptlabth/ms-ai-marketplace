@@ -21,19 +21,22 @@ const maxMessagesKey contextKey = "maxMessages"
 
 var jwtSecret = []byte("your-secret-key")
 
+
 type userService struct {
 	userRepository repository.UserRepository
 }
 
 func callExternalAPI(url string, method string, payload interface{}, headers map[string]string) (*http.Response, error) {
 	// Convert payload to JSON
+	req_url := url + "/v1/login"
+	fmt.Println("URL:>", req_url)
 	jsonData, err := json.Marshal(payload)
 	if err != nil {
 		return nil, err
 	}
 
 	// Create a new HTTP request
-	req, err := http.NewRequest(method, url, bytes.NewBuffer(jsonData))
+	req, err := http.NewRequest(method, req_url, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +63,7 @@ func callExternalAPI(url string, method string, payload interface{}, headers map
 	return resp, nil
 }
 
-func NewUserService(userRepository repository.UserRepository) *userService {
+func NewUserService(userRepository repository.UserRepository) UserService {
 	return &userService{userRepository: userRepository}
 }
 
@@ -75,6 +78,10 @@ func (s userService) NewUser(ctx context.Context, request NewUserRequest) (*User
 	headers := map[string]string{
 		"Authorization": "Bearer " + request.AccessToken,
 	}
+
+	// Declare promplabResponse outside of the if block
+    var promplabResponse PromplabResponse
+
 	Promplab_res, err := callExternalAPI(url, "POST", payload, headers)
 	if err != nil {
 		log.Printf("Error calling external API: %v", err)
@@ -96,8 +103,7 @@ func (s userService) NewUser(ctx context.Context, request NewUserRequest) (*User
             log.Printf("Error reading response body: %v", err)
             return nil, err
         }
-		var promplabResponse PromplabResponse
-        err = json.Unmarshal(body, &promplabResponse)
+		err = json.Unmarshal(body, &promplabResponse)
         if err != nil {
             log.Printf("Error unmarshalling response body: %v", err)
             return nil, err
@@ -110,13 +116,12 @@ func (s userService) NewUser(ctx context.Context, request NewUserRequest) (*User
 		
 	}
 
-	
-	
-
 	existingUser, err := s.userRepository.GetUserByFirebaseID(request.FirebaseID)
 	if err == nil && existingUser != nil {
 		// User exists, update DatetimeLastActive
 		existingUser.DatetimeLastActive = time.Now().Format(time.RFC3339)
+		existingUser.PlanID = promplabResponse.Plan.Product.PlanType
+		existingUser.MaxMessages = promplabResponse.Plan.Product.MaxMessages
 		updatedUser, err := s.userRepository.Update(*existingUser)
 		if err != nil {
 			log.Fatal(err)
@@ -129,7 +134,7 @@ func (s userService) NewUser(ctx context.Context, request NewUserRequest) (*User
 			Name:           updatedUser.Name,
 			Email:          updatedUser.Email,
 			Platform:       updatedUser.Platform,
-			PlanID:         updatedUser.PlanID,
+			PlanID:         promplabResponse.Plan.Product.PlanType, // Correct field name
 			ProfilePicture: updatedUser.ProfilePicture,
 			AccessToken:    updatedUser.AccessToken,
 		}
