@@ -137,6 +137,7 @@ func (s userService) NewUser(ctx context.Context, request NewUserRequest) (*User
 			PlanID:         promplabResponse.Plan.Product.PlanType, // Correct field name
 			ProfilePicture: updatedUser.ProfilePicture,
 			AccessToken:    updatedUser.AccessToken,
+			MaxMessages:    updatedUser.MaxMessages,
 		}
 
 		return &response, nil
@@ -153,6 +154,7 @@ func (s userService) NewUser(ctx context.Context, request NewUserRequest) (*User
 		DatetimeLastActive: time.Now().Format(time.RFC3339),
 		ProfilePicture:     request.ProfilePicture,
 		AccessToken:        request.AccessToken,
+		MaxMessages: 	  promplabResponse.Plan.Product.MaxMessages,
 	}
 
 	newUser, err := s.userRepository.Create(user)
@@ -170,6 +172,8 @@ func (s userService) NewUser(ctx context.Context, request NewUserRequest) (*User
 		PlanID:         newUser.PlanID,
 		ProfilePicture: newUser.ProfilePicture,
 		AccessToken:    newUser.AccessToken,
+		MaxMessages:  	newUser.MaxMessages,
+
 	}
 
 	return &response, nil
