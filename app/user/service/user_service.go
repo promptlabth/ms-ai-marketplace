@@ -193,6 +193,8 @@ func (s userService) GetUser(firebaseID string) (UserResponse, error) {
 		ProfilePicture: user.ProfilePicture,
 		AccessToken:    user.AccessToken,
 		Role:           user.Role,
+		MaxMessages:    user.MaxMessages,
+
 	}
 
 	return response, nil
