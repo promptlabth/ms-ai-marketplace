@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -30,8 +31,9 @@ func (h userHandler) NewUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error decoding JSON", http.StatusBadRequest)
 		return
 	}
+    ctx := context.Background()
 
-	response, err := h.userService.NewUser(request)
+	response, err := h.userService.NewUser(ctx,request)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -67,7 +69,9 @@ func (h userHandler) LoginHandler(c *gin.Context) {
         return
     }
 
-    response, err := h.userService.NewUser(request)
+    ctx := context.Background()
+
+    response, err := h.userService.NewUser(ctx,request)
     if err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return

@@ -90,7 +90,7 @@ func FrameworkRouter(router *gin.Engine, db *gorm.DB) {
     protected.GET("/framework/:id", frameworkHandler.GetFrameworkByID)
 }
 
-func UsersRouter(router *gin.Engine, db *gorm.DB) {
+func UsersRouter(ctx context.Context,router *gin.Engine, db *gorm.DB) {
     userRepositoryDB := repository.NewUserRepository(db)
     userService := service.NewUserService(userRepositoryDB)
     userHandler := handler.NewUserHandler(userService)

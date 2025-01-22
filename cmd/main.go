@@ -64,7 +64,7 @@ func main() {
 	r.Use(CORSMiddleware())
 
 	// Register routers
-	UsersRouter(r, db)
+	UsersRouter(ctx,r, db)
 	AgentDetailRouter(r, db)
 	FrameworkRouter(r, db)
 	RoleRouter(r, db)
