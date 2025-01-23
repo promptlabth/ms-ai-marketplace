@@ -1,7 +1,8 @@
 package service
 
 import (
-	"bytes"
+	// "bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -9,10 +10,12 @@ import (
 	"log"
 	"net/http"
 	"os"
+	
 	"time"
-	"context"
+
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/promptlabth/ms-ai-marketplace/app/user/repository"
+	"github.com/promptlabth/ms-ai-marketplace/app/utils"
 )
 
 type contextKey string
@@ -26,42 +29,6 @@ type userService struct {
 	userRepository repository.UserRepository
 }
 
-func callExternalAPI(url string, method string, payload interface{}, headers map[string]string) (*http.Response, error) {
-	// Convert payload to JSON
-	req_url := url + "/v1/login"
-	fmt.Println("URL:>", req_url)
-	jsonData, err := json.Marshal(payload)
-	if err != nil {
-		return nil, err
-	}
-
-	// Create a new HTTP request
-	req, err := http.NewRequest(method, req_url, bytes.NewBuffer(jsonData))
-	if err != nil {
-		return nil, err
-	}
-
-	// Set headers
-	for key, value := range headers {
-		req.Header.Set(key, value)
-	}
-
-	// Create an HTTP client and set a timeout
-	client := &http.Client{Timeout: 10 * time.Second}
-
-	// Make the HTTP request
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	// Check for non-200 status codes
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("received non-200 response code: %d", resp.StatusCode)
-	}
-
-	return resp, nil
-}
 
 func NewUserService(userRepository repository.UserRepository) UserService {
 	return &userService{userRepository: userRepository}
@@ -69,6 +36,7 @@ func NewUserService(userRepository repository.UserRepository) UserService {
 
 func (s userService) NewUser(ctx context.Context, request NewUserRequest) (*UserResponse, error) {
 	// Check if the user already exists
+	path := "/v1/login"
 	url := os.Getenv("PROMPTLAB_MAIN")
 	payload := map[string]interface{}{
 		"platform":     "gmail",
@@ -82,7 +50,7 @@ func (s userService) NewUser(ctx context.Context, request NewUserRequest) (*User
 	// Declare promplabResponse outside of the if block
     var promplabResponse PromplabResponse
 
-	Promplab_res, err := callExternalAPI(url, "POST", payload, headers)
+	Promplab_res, err := utils.CallExternalAPI(url, "POST", payload, headers , path)
 	if err != nil {
 		log.Printf("Error calling external API: %v", err)
 		// Handle the error as needed
