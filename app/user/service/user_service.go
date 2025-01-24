@@ -36,45 +36,50 @@ func NewUserService(userRepository repository.UserRepository) UserService {
 }
 
 func (s *userService) NewUser(ctx context.Context, request NewUserRequest) (*UserResponse, error) {
+    s.AccessTokenPromptlab = request.AccessToken
 
-	s.AccessTokenPromptlab = request.AccessToken
-	// Check if the user already exists
-	path := "/v1/login"
-	url := os.Getenv("PROMPTLAB_MAIN")
-	payload := map[string]interface{}{
-		"platform":     "gmail",
-		"access_token": "",
-	}
+    // Check if the user already exists
+    path := "/v1/login"
+    url := os.Getenv("PROMPTLAB_MAIN")
+    if url == "" {
+        return nil, errors.New("PROMPTLAB_MAIN environment variable is not set")
+    }
 
-	headers := map[string]string{
-		"Authorization": "Bearer " + request.AccessToken,
-	}
+    payload := map[string]interface{}{
+        "platform":     "gmail",
+        "access_token": "",
+    }
 
-	// Declare promplabResponse outside of the if block
+    headers := map[string]string{
+        "Authorization": "Bearer " + request.AccessToken,
+    }
+
+    // Declare promplabResponse outside of the if block
     var promplabResponse PromplabResponse
 
-	Promplab_res, err := utils.CallExternalAPI(url, "POST", payload, headers , path)
-	if err != nil {
-		log.Printf("Error calling external API: %v", err)
-		// Handle the error as needed
-		return nil, err
-	}
-	if Promplab_res != nil {
-		defer Promplab_res.Body.Close()
-		if Promplab_res.StatusCode == http.StatusUnauthorized {
-			log.Printf("Received 401 Unauthorized response code")
-			return nil, errors.New("received 401 Unauthorized response code")
-		}
-		if Promplab_res.StatusCode != http.StatusOK {
-			log.Printf("Received non-200 response code: %d", Promplab_res.StatusCode)
-			return nil, fmt.Errorf("received non-200 response code: %d", Promplab_res.StatusCode)
-		}
-		body, err := io.ReadAll(Promplab_res.Body)
+    Promplab_res, err := utils.CallExternalAPI(url, "POST", payload, headers, path)
+    if err != nil {
+        log.Printf("Error calling external API: %v", err)
+        return nil, err
+    }
+
+    // Handle the response from the external API
+    if (Promplab_res != nil) {
+        defer Promplab_res.Body.Close()
+        if Promplab_res.StatusCode == http.StatusUnauthorized {
+            log.Printf("Received 401 Unauthorized response code")
+            return nil, errors.New("received 401 Unauthorized response code")
+        }
+        if Promplab_res.StatusCode != http.StatusOK {
+            log.Printf("Received non-200 response code: %d", Promplab_res.StatusCode)
+            return nil, fmt.Errorf("received non-200 response code: %d", Promplab_res.StatusCode)
+        }
+        body, err := io.ReadAll(Promplab_res.Body)
         if err != nil {
             log.Printf("Error reading response body: %v", err)
             return nil, err
         }
-		err = json.Unmarshal(body, &promplabResponse)
+        err = json.Unmarshal(body, &promplabResponse)
         if err != nil {
             log.Printf("Error unmarshalling response body: %v", err)
             return nil, err
@@ -82,74 +87,72 @@ func (s *userService) NewUser(ctx context.Context, request NewUserRequest) (*Use
 
         fmt.Printf("Max Messages: %d\n", promplabResponse.Plan.Product.MaxMessages)
 
-		ctx = context.WithValue(ctx, maxMessagesKey, promplabResponse.Plan.Product.MaxMessages)
-		printContextValue(ctx)
-		
-	}
+        ctx = context.WithValue(ctx, maxMessagesKey, promplabResponse.Plan.Product.MaxMessages)
+        printContextValue(ctx)
+    }
 
-	existingUser, err := s.userRepository.GetUserByFirebaseID(request.FirebaseID)
-	if err == nil && existingUser != nil {
-		// User exists, update DatetimeLastActive
-		existingUser.DatetimeLastActive = time.Now().Format(time.RFC3339)
-		existingUser.PlanID = promplabResponse.Plan.Product.PlanType
-		existingUser.MaxMessages = promplabResponse.Plan.Product.MaxMessages
-		updatedUser, err := s.userRepository.Update(*existingUser)
-		if err != nil {
-			log.Fatal(err)
-			return nil, err
-		}
+    existingUser, err := s.userRepository.GetUserByFirebaseID(request.FirebaseID)
+    if err == nil && existingUser != nil {
+        // User exists, update DatetimeLastActive
+        existingUser.DatetimeLastActive = time.Now().Format(time.RFC3339)
+        existingUser.PlanID = promplabResponse.Plan.Product.PlanType
+        existingUser.MaxMessages = promplabResponse.Plan.Product.MaxMessages
+        updatedUser, err := s.userRepository.Update(*existingUser)
+        if err != nil {
+            log.Fatal(err)
+            return nil, err
+        }
 
-		response := UserResponse{
-			ID:             updatedUser.ID,
-			FirbaseID:      updatedUser.FirebaseID,
-			Name:           updatedUser.Name,
-			Email:          updatedUser.Email,
-			Platform:       updatedUser.Platform,
-			PlanID:         promplabResponse.Plan.Product.PlanType, // Correct field name
-			ProfilePicture: updatedUser.ProfilePicture,
-			AccessToken:    updatedUser.AccessToken,
-			MaxMessages:    updatedUser.MaxMessages,
-		}
+        response := UserResponse{
+            ID:             updatedUser.ID,
+            FirbaseID:      updatedUser.FirebaseID,
+            Name:           updatedUser.Name,
+            Email:          updatedUser.Email,
+            Platform:       updatedUser.Platform,
+            PlanID:         promplabResponse.Plan.Product.PlanType, // Correct field name
+            ProfilePicture: updatedUser.ProfilePicture,
+            AccessToken:    updatedUser.AccessToken,
+            MaxMessages:    updatedUser.MaxMessages,
+        }
 
-		return &response, nil
-	}
+        return &response, nil
+    }
 
-	// User does not exist, create a new user
-	user := repository.User{
-		FirebaseID:         request.FirebaseID,
-		Name:               request.Name,
-		Email:              request.Email,
-		Platform:           request.Platform,
-		StripeID:           request.StripeID,
-		PlanID:             request.PlanID,
-		DatetimeLastActive: time.Now().Format(time.RFC3339),
-		ProfilePicture:     request.ProfilePicture,
-		AccessToken:        request.AccessToken,
-		MaxMessages: 	  promplabResponse.Plan.Product.MaxMessages,
-	}
+    // User does not exist, create a new user
+    user := repository.User{
+        FirebaseID:         request.FirebaseID,
+        Name:               request.Name,
+        Email:              request.Email,
+        Platform:           request.Platform,
+        StripeID:           request.StripeID,
+        PlanID:             request.PlanID,
+        DatetimeLastActive: time.Now().Format(time.RFC3339),
+        ProfilePicture:     request.ProfilePicture,
+        AccessToken:        request.AccessToken,
+        MaxMessages: 	  promplabResponse.Plan.Product.MaxMessages,
+    }
 
-	newUser, err := s.userRepository.Create(user)
-	if err != nil {
-		log.Fatal(err)
-		return nil, err
-	}
+    newUser, err := s.userRepository.Create(user)
+    if err != nil {
+        log.Fatal(err)
+        return nil, err
+    }
 
-	response := UserResponse{
-		ID:             newUser.ID,
-		FirbaseID:      newUser.FirebaseID,
-		Name:           newUser.Name,
-		Email:          newUser.Email,
-		Platform:       newUser.Platform,
-		PlanID:         newUser.PlanID,
-		ProfilePicture: newUser.ProfilePicture,
-		AccessToken:    newUser.AccessToken,
-		MaxMessages:  	newUser.MaxMessages,
+    response := UserResponse{
+        ID:             newUser.ID,
+        FirbaseID:      newUser.FirebaseID,
+        Name:           newUser.Name,
+        Email:          newUser.Email,
+        Platform:       newUser.Platform,
+        PlanID:         newUser.PlanID,
+        ProfilePicture: newUser.ProfilePicture,
+        AccessToken:    newUser.AccessToken,
+        MaxMessages:  	newUser.MaxMessages,
 
-	}
+    }
 
-	return &response, nil
+    return &response, nil
 }
-
 
 func (s *userService) GetUser(firebaseID string) (UserResponse, error) {
     user, err := s.userRepository.GetUserByFirebaseID(firebaseID)
