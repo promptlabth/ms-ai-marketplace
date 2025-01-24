@@ -25,6 +25,7 @@ type UserResponse struct {
 	AccessToken    string `json:"access_token"`
 	Role           string `json:"role"`
 	MaxMessages    int    `json:"max_messages"`
+	UsedMessages   int    `json:"used_messages"`
 }
 
 type UserService interface {

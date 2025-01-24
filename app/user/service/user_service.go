@@ -27,6 +27,7 @@ var jwtSecret = []byte("your-secret-key")
 
 type userService struct {
 	userRepository repository.UserRepository
+	AccessTokenPromptlab    string
 }
 
 
@@ -34,7 +35,9 @@ func NewUserService(userRepository repository.UserRepository) UserService {
 	return &userService{userRepository: userRepository}
 }
 
-func (s userService) NewUser(ctx context.Context, request NewUserRequest) (*UserResponse, error) {
+func (s *userService) NewUser(ctx context.Context, request NewUserRequest) (*UserResponse, error) {
+
+	s.AccessTokenPromptlab = request.AccessToken
 	// Check if the user already exists
 	path := "/v1/login"
 	url := os.Getenv("PROMPTLAB_MAIN")
@@ -148,28 +151,72 @@ func (s userService) NewUser(ctx context.Context, request NewUserRequest) (*User
 }
 
 
-func (s userService) GetUser(firebaseID string) (UserResponse, error) {
-	user, err := s.userRepository.GetUserByFirebaseID(firebaseID)
-	if err != nil {
-		log.Println(err) // Use log.Println instead of log.Fatal
-		return UserResponse{}, err
-	}
+func (s *userService) GetUser(firebaseID string) (UserResponse, error) {
+    user, err := s.userRepository.GetUserByFirebaseID(firebaseID)
+    if err != nil {
+        log.Println(err) // Use log.Println instead of log.Fatal
+        return UserResponse{}, err
+    }
+    // fmt.Println("Promplab Access Token: ", s.AccessTokenPromptlab)
+    path := "/v1/user/remaining-message"
+    url := os.Getenv("PROMPTLAB_MAIN")
 
-	response := UserResponse{
-		ID:             user.ID,
-		FirbaseID:      user.FirebaseID,
-		Name:           user.Name,
-		Email:          user.Email,
-		Platform:       user.Platform,
-		PlanID:         user.PlanID,
-		ProfilePicture: user.ProfilePicture,
-		AccessToken:    user.AccessToken,
-		Role:           user.Role,
-		MaxMessages:    user.MaxMessages,
+    headers := map[string]string{
+        "Authorization": "Bearer " + s.AccessTokenPromptlab,
+    }
+    Promplab_res, err := utils.CallExternalAPI(url, "GET", nil, headers, path) // Pass nil as payload
+    if err != nil {
+        log.Printf("Error calling external API: %v", err)
+        return UserResponse{}, err
+    }
+    fmt.Println("Promplab Response: ", Promplab_res)
 
-	}
+    var usedMessages int
+    if Promplab_res != nil {
+        defer Promplab_res.Body.Close()
+        if Promplab_res.StatusCode == http.StatusOK {
+            body, err := io.ReadAll(Promplab_res.Body)
+            if err != nil {
+                log.Printf("Error reading response body: %v", err)
+                return UserResponse{}, err
+            }
+            fmt.Println("Response Body: ", string(body)) // Print the response body for debugging
 
-	return response, nil
+            // Check if the response body is a number
+            var responseNumber float64
+            err = json.Unmarshal(body, &responseNumber)
+            if err == nil {
+                usedMessages = int(responseNumber)
+            } else {
+                // If not a number, try to unmarshal into a map
+                var responseMap map[string]interface{}
+                err = json.Unmarshal(body, &responseMap)
+                if err != nil {
+                    log.Printf("Error unmarshalling response body: %v", err)
+                    return UserResponse{}, err
+                }
+                if usedMessagesValue, ok := responseMap["used_messages"].(float64); ok {
+                    usedMessages = int(usedMessagesValue)
+                }
+            }
+        }
+    }
+
+    response := UserResponse{
+        ID:             user.ID,
+        FirbaseID:      user.FirebaseID,
+        Name:           user.Name,
+        Email:          user.Email,
+        Platform:       user.Platform,
+        PlanID:         user.PlanID,
+        ProfilePicture: user.ProfilePicture,
+        AccessToken:    user.AccessToken,
+        Role:           user.Role,
+        MaxMessages:    user.MaxMessages,
+        UsedMessages:   usedMessages,
+    }
+
+    return response, nil
 }
 
 func GenerateJWT(firebaseID string) (string, error) {
