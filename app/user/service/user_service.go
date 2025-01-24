@@ -40,7 +40,9 @@ func (s *userService) NewUser(ctx context.Context, request NewUserRequest) (*Use
 
     // Check if the user already exists
     path := "/v1/login"
-    url := os.Getenv("PROMPTLAB_MAIN")
+    // url := os.Getenv("PROMPTLAB_MAIN")
+	url := "https://prompt-lab-be-uu4qhhj35a-as.a.run.app"
+
     if url == "" {
         return nil, errors.New("PROMPTLAB_MAIN environment variable is not set")
     }
@@ -162,7 +164,8 @@ func (s *userService) GetUser(firebaseID string) (UserResponse, error) {
     }
     // fmt.Println("Promplab Access Token: ", s.AccessTokenPromptlab)
     path := "/v1/user/remaining-message"
-    url := os.Getenv("PROMPTLAB_MAIN")
+    // url := os.Getenv("PROMPTLAB_MAIN")
+	url := "https://prompt-lab-be-uu4qhhj35a-as.a.run.app"
 
     headers := map[string]string{
         "Authorization": "Bearer " + s.AccessTokenPromptlab,
