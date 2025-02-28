@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// History Entity
 type HistoryEntity struct {
 	ID                int       `gorm:"autoIncrement;column:id"`
 	FirebaseID        string    `gorm:"column:firebase_id"`
