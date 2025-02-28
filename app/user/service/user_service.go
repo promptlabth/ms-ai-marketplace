@@ -58,7 +58,7 @@ func (s *userService) NewUser(ctx context.Context, request NewUserRequest) (*Use
 
     // Declare promplabResponse outside of the if block
     var promplabResponse PromplabResponse
-
+    fmt.Println(headers)
     Promplab_res, err := utils.CallExternalAPI(url, "POST", payload, headers, path)
     if err != nil {
         log.Printf("Error calling external API: %v", err)
@@ -69,11 +69,13 @@ func (s *userService) NewUser(ctx context.Context, request NewUserRequest) (*Use
     if (Promplab_res != nil) {
         defer Promplab_res.Body.Close()
         if Promplab_res.StatusCode == http.StatusUnauthorized {
-            log.Printf("Received 401 Unauthorized response code")
+            fmt.Printf("/service/user_service.go := Received code: %d\n", Promplab_res.StatusCode)
+            log.Println("Received 401 Unauthorized response code")
             return nil, errors.New("received 401 Unauthorized response code")
         }
         if Promplab_res.StatusCode != http.StatusOK {
-            log.Printf("Received non-200 response code: %d", Promplab_res.StatusCode)
+            log.Printf("/service/user_service.go := Received non-200 response code: %d", Promplab_res.StatusCode)
+            log.Println("Received code: %d\n" , Promplab_res.StatusCode)
             return nil, fmt.Errorf("received non-200 response code: %d", Promplab_res.StatusCode)
         }
         body, err := io.ReadAll(Promplab_res.Body)
@@ -170,10 +172,13 @@ func (s *userService) GetUser(firebaseID string) (UserResponse, error) {
     headers := map[string]string{
         "Authorization": "Bearer " + s.AccessTokenPromptlab,
     }
+    // fmt.Println("Get user API :" + s.AccessTokenPromptlab)
     Promplab_res, err := utils.CallExternalAPI(url, "GET", nil, headers, path) // Pass nil as payload
     if err != nil {
         log.Printf("Error calling external API: %v", err)
+        fmt.Println("Err at := :GetUser ")
         return UserResponse{}, err
+        
     }
     fmt.Println("Promplab Response: ", Promplab_res)
 

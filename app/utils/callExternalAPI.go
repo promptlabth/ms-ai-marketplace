@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 )
@@ -23,6 +24,7 @@ func CallExternalAPI(url string, method string, payload interface{}, headers map
 
     // Create a new HTTP request
     req_url := url + path
+    
     fmt.Println("URL:>", req_url)
     var req *http.Request
     if payload != nil {
@@ -39,6 +41,7 @@ func CallExternalAPI(url string, method string, payload interface{}, headers map
         req.Header.Set(key, value)
     }
 
+
     // Create an HTTP client and set a timeout
     client := &http.Client{Timeout: 10 * time.Second}
 
@@ -50,7 +53,9 @@ func CallExternalAPI(url string, method string, payload interface{}, headers map
 
     // Check for non-200 status codes
     if resp.StatusCode != http.StatusOK {
+        log.Printf("/app/utils/callExternalAPI.go := Received code: %d\n" , resp.StatusCode)
         return nil, fmt.Errorf("received non-200 response code: %d", resp.StatusCode)
+        
     }
 
     return resp, nil
